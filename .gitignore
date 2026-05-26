@@ -51,3 +51,13 @@ htmlcov/
 
 # Generated zip files
 *.zip
+
+
+.agent/
+.claude/
+.cline/
+.clinerules/
+.codex/
+.cursor/
+.windsurf/
+*.zip

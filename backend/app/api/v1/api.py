@@ -17,6 +17,7 @@ from app.api.v1.endpoints import (
     student_csp,
     student_enrollments,
     students,
+    sustainability,
     teachers,
     users,
 )
@@ -139,4 +140,9 @@ api_router.include_router(
 api_router.include_router(
     environmental_impact.router,
     tags=["Environmental Impact"],
+)
+
+api_router.include_router(
+    sustainability.router,
+    tags=["Sustainability"],
 )

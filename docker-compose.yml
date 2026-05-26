@@ -72,3 +72,4 @@ services:
 
 volumes:
   mysql_data:
+    name: optiacademic_greenframe_mysql_data

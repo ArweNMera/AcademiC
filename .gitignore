@@ -39,3 +39,15 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# AI agent local config
+.agent/
+.claude/
+.cline/
+.clinerules/
+.codex/
+.cursor/
+.windsurf/
+
+# Generated zip files
+*.zip

@@ -2,6 +2,8 @@
   "name": "optiacademic",
   "private": true,
   "scripts": {
+    "docker:up": "docker compose --env-file .docker.env up --build -d",
+    "docker:down": "docker compose --env-file .docker.env down",
     "sustainability:analyze": "greenframe analyze > backend/public/assets/greenframe-latest.txt",
     "sustainability:analyze:ps": "greenframe analyze | Tee-Object -FilePath backend/public/assets/greenframe-latest.txt"
   }

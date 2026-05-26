@@ -1,16 +1,68 @@
-# React + Vite
+# Frontend React - OptiAcademic
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripcion
 
-Currently, two official plugins are available:
+La interfaz web de OptiAcademic ofrece navegacion por roles para gestion
+academica, generacion de horarios y consulta de indicadores ambientales.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tecnologias
 
-## React Compiler
+- React con Vite.
+- Tailwind CSS.
+- React Router.
+- Axios para consumo de la API.
+- Zustand para estado de autenticacion.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Estructura
 
-## Expanding the ESLint configuration
+```text
+frontend/
+|-- public/
+|-- src/
+|   |-- api/            # Cliente Axios
+|   |-- components/     # Layout y componentes reutilizables
+|   |-- pages/          # Pantallas por rol
+|   |-- services/       # Consumo de endpoints
+|   `-- stores/         # Sesion del usuario
+|-- package.json
+`-- vite.config.js
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Variable De Entorno
+
+Crear `.env` local sin versionarlo:
+
+```env
+VITE_API_URL=http://127.0.0.1:8000/api/v1
+```
+
+## Comandos
+
+```powershell
+npm install
+npm run dev
+npm run build
+npm run lint
+npm run preview
+```
+
+## Rutas Principales
+
+| Ruta | Vista |
+| --- | --- |
+| `/login` | Inicio de sesion. |
+| `/admin/dashboard` | Resumen institucional. |
+| `/admin/environmental-impact` | Dashboard ambiental. |
+| `/admin/schedules` | Gestion/generacion institucional. |
+| `/admin/schedule-quality` | Validacion de calidad. |
+| `/student` | Inicio estudiante. |
+| `/student/schedule-generator` | Generacion personal. |
+
+## Roles Y Vistas
+
+| Rol | Alcance en interfaz |
+| --- | --- |
+| `ADMIN` | Gestion integral y dashboards. |
+| `COORDINATOR` | Planificacion y publicacion academica. |
+| `TEACHER` | Informacion docente. |
+| `STUDENT` | Oferta, preferencias y horarios personales. |

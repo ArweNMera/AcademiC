@@ -12,11 +12,8 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY alembic.ini .
 COPY alembic ./alembic
 COPY app ./app
-<<<<<<< HEAD
-=======
 COPY public ./public
 COPY seed_realistic_demo.py .
->>>>>>> feature/evaluar-greenframe
 
 EXPOSE 8000
 

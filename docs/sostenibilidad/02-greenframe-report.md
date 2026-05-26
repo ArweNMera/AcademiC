@@ -120,6 +120,8 @@ backend/public/assets/greenframe-latest.txt
 ```
 
 Se ejecutan tres muestras del escenario para obtener una medicion mas estable.
+El archivo es un resultado generado localmente y esta ignorado por Git; solo
+debe presentarse como evidencia cuando el escenario termine exitosamente.
 
 ## Consultar el reporte publico
 
@@ -139,6 +141,12 @@ No se ha ejecutado un análisis GreenFrame todavía.
 La ruta del reporte queda excluida de las metricas HTTP internas del dashboard
 para que consultar el resultado no modifique el conjunto de solicitudes que
 se esta observando.
+
+## Resultado Actual
+
+El repositorio no versiona un resultado GreenFrame pre-generado. En una
+instalacion nueva, el endpoint devuelve el mensaje de ausencia hasta que se
+ejecute el analisis local y se cree `greenframe-latest.txt`.
 
 ## Seguridad
 

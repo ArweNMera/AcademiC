@@ -1,50 +1,44 @@
-# Documentación de OptiAcademic
+# Documentacion De OptiAcademic
 
-**OptiAcademic** es un sistema web inteligente para la gestión y optimización de horarios académicos universitarios. El proyecto está orientado inicialmente a la carrera de **Ingeniería de Sistemas e Informática**, desde el ciclo 1 hasta el ciclo 10.
+Este directorio reune la documentacion tecnica y academica del sistema. Las
+guias por area permiten una lectura rapida para presentacion; los documentos
+numerados preservan el desarrollo detallado ya elaborado.
 
-## Índice
+## Guias Por Area
 
-1. [Introducción](01-introduccion.md)
-2. [Arquitectura general](02-arquitectura-general.md)
-3. [Instalación y configuración](03-instalacion-configuracion.md)
-4. [Base de datos y malla curricular](04-base-datos-malla.md)
-5. [Roles y permisos](05-roles-permisos.md)
-6. [Módulo administrador y coordinador](06-modulo-admin-coordinador.md)
-7. [Motor CSP institucional](07-motor-csp-institucional.md)
-8. [Módulo estudiante](08-modulo-estudiante.md)
-9. [API backend](09-api-backend.md)
-10. [Frontend React](10-frontend-react.md)
-11. [Flujo de demostración](11-flujo-demostracion.md)
-12. [Validaciones y calidad](12-validaciones-calidad.md)
-13. [Decisiones técnicas](13-decisiones-tecnicas.md)
-14. [Mantenimiento y Git](14-mantenimiento-git.md)
-15. [Sostenibilidad: dashboard de impacto ambiental](sostenibilidad/01-dashboard-impacto-ambiental.md)
+| Area | Documento principal | Contenido |
+| --- | --- | --- |
+| Arquitectura | [arquitectura/arquitectura-general.md](arquitectura/arquitectura-general.md) | Componentes y flujos clave. |
+| Instalacion | [instalacion/guia-docker.md](instalacion/guia-docker.md) | Puesta en marcha reproducible. |
+| Base de datos | [base-datos/README.md](base-datos/README.md) | MySQL, Alembic y seeds. |
+| API | [api/README.md](api/README.md) | Acceso, endpoints y Swagger. |
+| Sostenibilidad | [sostenibilidad/README.md](sostenibilidad/README.md) | Dashboard y GreenFrame. |
+| Presentacion | [presentacion/README.md](presentacion/README.md) | Guion y evidencias sugeridas. |
 
-## Tecnologías principales
+## Requerimientos Y Validacion
 
-| Capa | Tecnología |
-|---|---|
-| Frontend | React, Vite, Tailwind CSS, Axios, Zustand |
-| Backend | FastAPI, Python, SQLAlchemy, Pydantic |
-| Base de datos | MySQL |
-| Algoritmo | CSP con backtracking, MRV, validación de restricciones y scoring |
-| Seguridad | JWT, roles y rutas protegidas |
-| Exportación | PDF del horario final del estudiante |
+| Conjunto | Indice |
+| --- | --- |
+| Requerimientos | [requerimientos/README.md](requerimientos/README.md) |
+| Validacion del problema | [validacion-problema/README.md](validacion-problema/README.md) |
+| Pruebas/TDD | [tdd/README.md](tdd/README.md) |
 
-## Flujo general
+## Documentos Tecnicos Existentes
 
-```text
-Administrador / Coordinador
-→ Gestiona datos académicos
-→ Genera horario institucional con CSP
-→ Valida conflictos
-→ Publica la oferta académica
-
-Estudiante
-→ Visualiza la oferta publicada
-→ Selecciona cursos y preferencias
-→ Genera alternativas de horario
-→ Compara opciones
-→ Elige horario final
-→ Exporta PDF
-```
+| Documento | Tema |
+| --- | --- |
+| [01-introduccion.md](01-introduccion.md) | Contexto inicial. |
+| [02-arquitectura-general.md](02-arquitectura-general.md) | Arquitectura original. |
+| [03-instalacion-configuracion.md](03-instalacion-configuracion.md) | Instalacion manual. |
+| [04-base-datos-malla.md](04-base-datos-malla.md) | Datos academicos. |
+| [05-roles-permisos.md](05-roles-permisos.md) | Seguridad y perfiles. |
+| [06-modulo-admin-coordinador.md](06-modulo-admin-coordinador.md) | Flujo administrativo. |
+| [07-motor-csp-institucional.md](07-motor-csp-institucional.md) | Optimizacion. |
+| [08-modulo-estudiante.md](08-modulo-estudiante.md) | Flujo estudiante. |
+| [09-api-backend.md](09-api-backend.md) | API. |
+| [10-frontend-react.md](10-frontend-react.md) | Frontend. |
+| [11-flujo-demostracion.md](11-flujo-demostracion.md) | Demo. |
+| [12-validaciones-calidad.md](12-validaciones-calidad.md) | Validaciones. |
+| [13-decisiones-tecnicas.md](13-decisiones-tecnicas.md) | Decisiones. |
+| [14-mantenimiento-git.md](14-mantenimiento-git.md) | Versionamiento. |
+| [15-tecnologias-utilizadas.md](15-tecnologias-utilizadas.md) | Stack extendido. |

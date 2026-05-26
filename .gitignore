@@ -9,12 +9,14 @@ __pycache__/
 # Env
 .env
 *.env
+.docker.env
 
 # Node
 frontend/node_modules/
 node_modules/
 frontend/dist/
 dist/
+build/
 
 # Logs
 *.log
@@ -40,6 +42,9 @@ Thumbs.db
 .coverage
 htmlcov/
 
+# Generated sustainability reports
+backend/public/assets/greenframe-latest.txt
+
 # AI agent local config
 .agent/
 .claude/
@@ -49,15 +54,5 @@ htmlcov/
 .cursor/
 .windsurf/
 
-# Generated zip files
-*.zip
-
-
-.agent/
-.claude/
-.cline/
-.clinerules/
-.codex/
-.cursor/
-.windsurf/
+# Generated archives
 *.zip

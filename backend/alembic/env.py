@@ -30,6 +30,7 @@ from app.models import (
     CourseSection,
     Classroom,
     AcademicSchedule,
+    EnvironmentalMetric,
     ScheduleBlock,
     StudentSchedule,
 )

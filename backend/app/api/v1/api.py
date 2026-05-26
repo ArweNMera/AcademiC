@@ -7,6 +7,7 @@ from app.api.v1.endpoints import (
     csp_diagnostics,
     dashboard,
     data_readiness,
+    environmental_impact,
     institutional_csp,
     schedule_blocks,
     schedule_publication,
@@ -133,4 +134,9 @@ api_router.include_router(
     student_enrollments.router,
     prefix="/student-enrollments",
     tags=["Student Enrollments"],
+)
+
+api_router.include_router(
+    environmental_impact.router,
+    tags=["Environmental Impact"],
 )

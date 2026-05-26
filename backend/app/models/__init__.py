@@ -11,6 +11,7 @@ from app.models.schedule import (
     StudentSchedule,
     StudentScheduleBlock,
 )
+from app.models.environmental_metric import EnvironmentalMetric
 
 __all__ = [
     "Base",
@@ -26,6 +27,7 @@ __all__ = [
     "AcademicSchedule",
     "ScheduleBlock",
     "StudentSchedule",
+    "EnvironmentalMetric",
     "ScheduleStatus",
     "ScheduleType",
 ]

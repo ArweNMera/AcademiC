@@ -18,6 +18,7 @@
 12. [Validaciones y calidad](12-validaciones-calidad.md)
 13. [Decisiones técnicas](13-decisiones-tecnicas.md)
 14. [Mantenimiento y Git](14-mantenimiento-git.md)
+15. [Sostenibilidad: dashboard de impacto ambiental](sostenibilidad/01-dashboard-impacto-ambiental.md)
 
 ## Tecnologías principales
 

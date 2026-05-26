@@ -1,13 +1,15 @@
 from app.core.database import Base
 
 from app.models.user import User, UserRole
-from app.models.student import Student
+from app.models.student import Student, StudentCourseEnrollment
 from app.models.teacher import Teacher, TeacherAvailability
 from app.models.course import Course, CourseSection
 from app.models.classroom import Classroom, ClassroomType
 from app.models.schedule import (
     AcademicSchedule,
     ScheduleBlock,
+    ScheduleStatus,
+    ScheduleType,
     StudentSchedule,
     StudentScheduleBlock,
 )
@@ -18,6 +20,7 @@ __all__ = [
     "User",
     "UserRole",
     "Student",
+    "StudentCourseEnrollment",
     "Teacher",
     "TeacherAvailability",
     "Course",
@@ -27,6 +30,7 @@ __all__ = [
     "AcademicSchedule",
     "ScheduleBlock",
     "StudentSchedule",
+    "StudentScheduleBlock",
     "EnvironmentalMetric",
     "ScheduleStatus",
     "ScheduleType",

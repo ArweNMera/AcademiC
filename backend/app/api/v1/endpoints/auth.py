@@ -10,7 +10,7 @@ from app.schemas.auth_schema import (
     TokenResponse,
     CurrentUserResponse,
 )
-from app.schemas.user_schema import UserCreate
+from app.schemas.user_schema import PublicUserRegister
 from app.services.auth_service import AuthService
 
 
@@ -23,7 +23,7 @@ router = APIRouter()
     summary="Registrar nuevo usuario",
 )
 def register(
-    user_data: UserCreate,
+    user_data: PublicUserRegister,
     db: Session = Depends(get_db),
 ):
     auth_service = AuthService(db)

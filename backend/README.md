@@ -71,6 +71,22 @@ El seed principal crea la cuenta demo:
 admin@optiacademic.com / admin123
 ```
 
+## Reglas De Estabilizacion
+
+- `POST /api/v1/auth/register` es registro publico exclusivo para estudiantes;
+  no acepta el campo `role`.
+- Los usuarios `ADMIN`, `COORDINATOR` y `TEACHER` se crean desde
+  `/api/v1/users` con credenciales de administrador o mediante seeds.
+- La publicacion de horarios siempre ejecuta validacion de preparacion de
+  datos y calidad. La ruta compatible `/schedules/{id}/publish` delega al
+  mismo flujo seguro de `/schedule-publication/{id}/publish-safe`.
+- La creacion y edicion general de horarios rechaza `status=PUBLISHED`;
+  publicar solo es posible mediante el flujo seguro.
+- Un estudiante solo puede consultar horarios institucionales y bloques de
+  horarios activos con estado `PUBLISHED`.
+- Un docente solo puede consultar o modificar su propia disponibilidad; admin
+  y coordinador pueden administrar disponibilidades de cualquier docente.
+
 ## Ejecutar La API
 
 ```powershell
@@ -84,9 +100,11 @@ Swagger: <http://127.0.0.1:8000/docs>
 | Metodo | Ruta | Acceso |
 | --- | --- | --- |
 | `POST` | `/api/v1/auth/login-json` | Publico |
+| `POST` | `/api/v1/auth/register` | Publico, solo crea `STUDENT` |
 | `GET` | `/api/v1/auth/me` | Autenticado |
 | `GET` | `/api/v1/dashboard/admin-summary` | Admin/coordinador |
 | `POST` | `/api/v1/institutional-csp/generate` | Admin/coordinador |
+| `PATCH` | `/api/v1/schedule-publication/{id}/publish-safe` | Admin/coordinador |
 | `GET` | `/api/v1/environmental-impact` | Publico |
 | `GET` | `/api/v1/environmental-impact/summary` | Admin/coordinador |
 | `GET` | `/api/v1/sustainability` | Publico |

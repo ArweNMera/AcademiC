@@ -3,20 +3,18 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import require_roles
-from app.models.schedule import (
-    AcademicSchedule,
-    ScheduleBlock,
-    ScheduleStatus,
-    ScheduleType,
-)
+from app.models.schedule import ScheduleStatus, ScheduleType
 from app.models.user import User, UserRole
+from app.schemas.schedule_publication_schema import SchedulePublicationResponse
 from app.schemas.schedule_schema import (
     AcademicScheduleCreate,
     AcademicScheduleListResponse,
     AcademicScheduleResponse,
     AcademicScheduleUpdate,
 )
+from app.services.schedule_publication_service import SchedulePublicationService
 from app.services.schedule_service import ScheduleService
+
 
 router = APIRouter()
 
@@ -24,7 +22,7 @@ router = APIRouter()
 @router.get(
     "",
     response_model=AcademicScheduleListResponse,
-    summary="Listar horarios académicos",
+    summary="Listar horarios academicos",
 )
 def list_schedules(
     skip: int = Query(default=0, ge=0),
@@ -43,6 +41,11 @@ def list_schedules(
         )
     ),
 ):
+    if current_user.role == UserRole.STUDENT:
+        schedule_type = ScheduleType.INSTITUTIONAL
+        status_filter = ScheduleStatus.PUBLISHED
+        is_active = True
+
     schedule_service = ScheduleService(db)
     return schedule_service.list_schedules(
         skip=skip,
@@ -58,7 +61,7 @@ def list_schedules(
     "",
     response_model=AcademicScheduleResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Crear horario académico",
+    summary="Crear horario academico",
 )
 def create_schedule(
     schedule_data: AcademicScheduleCreate,
@@ -71,12 +74,10 @@ def create_schedule(
     return schedule_service.create_schedule(schedule_data)
 
 
-# --------------------------------------------------------------------------
-# Endpoint para publicar horario institucional (corregido y mejorado)
-# --------------------------------------------------------------------------
 @router.patch(
     "/{schedule_id}/publish",
-    summary="Publicar horario institucional",
+    response_model=SchedulePublicationResponse,
+    summary="Publicar horario institucional mediante validacion segura",
 )
 def publish_academic_schedule(
     schedule_id: int,
@@ -85,83 +86,13 @@ def publish_academic_schedule(
         require_roles(UserRole.ADMIN, UserRole.COORDINATOR)
     ),
 ):
-    schedule = (
-        db.query(AcademicSchedule)
-        .filter(AcademicSchedule.id == schedule_id)
-        .first()
-    )
-
-    if not schedule:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Horario académico no encontrado",
-        )
-
-    if not schedule.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No se puede publicar un horario inactivo",
-        )
-
-    total_blocks = (
-        db.query(ScheduleBlock)
-        .filter(ScheduleBlock.schedule_id == schedule_id)
-        .count()
-    )
-
-    if total_blocks == 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No se puede publicar un horario sin bloques generados",
-        )
-
-    current_status = schedule.status
-    if hasattr(current_status, "value"):
-        current_status = current_status.value
-
-    # Si ya está publicado, responder sin modificar
-    if current_status == "PUBLISHED":
-        return {
-            "success": True,
-            "message": "El horario ya estaba publicado",
-            "schedule_id": schedule.id,
-            "status": schedule.status,
-            "total_blocks": total_blocks,
-        }
-
-    # No permitir publicar desde DRAFT
-    if current_status == "DRAFT":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No se puede publicar un horario en DRAFT. Primero genera el horario institucional.",
-        )
-
-    # Rechazar ARCHIVED (opcional pero recomendado)
-    if current_status == "ARCHIVED":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No se puede publicar un horario archivado",
-        )
-
-    # Cambiar estado a PUBLISHED
-    schedule.status = ScheduleStatus.PUBLISHED
-    db.add(schedule)
-    db.commit()
-    db.refresh(schedule)
-
-    return {
-        "success": True,
-        "message": "Horario institucional publicado correctamente",
-        "schedule_id": schedule.id,
-        "status": schedule.status,
-        "total_blocks": total_blocks,
-    }
+    return SchedulePublicationService(db).publish_safely(schedule_id=schedule_id)
 
 
 @router.get(
     "/{schedule_id}",
     response_model=AcademicScheduleResponse,
-    summary="Obtener horario académico por ID",
+    summary="Obtener horario academico por ID",
 )
 def get_schedule(
     schedule_id: int,
@@ -176,13 +107,28 @@ def get_schedule(
     ),
 ):
     schedule_service = ScheduleService(db)
-    return schedule_service.get_schedule_by_id(schedule_id)
+    schedule = schedule_service.get_schedule_by_id(schedule_id)
+
+    if (
+        current_user.role == UserRole.STUDENT
+        and (
+            schedule.schedule_type != ScheduleType.INSTITUTIONAL
+            or schedule.status != ScheduleStatus.PUBLISHED
+            or not schedule.is_active
+        )
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Horario publicado no encontrado",
+        )
+
+    return schedule
 
 
 @router.put(
     "/{schedule_id}",
     response_model=AcademicScheduleResponse,
-    summary="Actualizar horario académico",
+    summary="Actualizar horario academico",
 )
 def update_schedule(
     schedule_id: int,
@@ -199,7 +145,7 @@ def update_schedule(
 @router.patch(
     "/{schedule_id}/approve",
     response_model=AcademicScheduleResponse,
-    summary="Aprobar horario académico",
+    summary="Aprobar horario academico",
 )
 def approve_schedule(
     schedule_id: int,
@@ -215,7 +161,7 @@ def approve_schedule(
 @router.patch(
     "/{schedule_id}/archive",
     response_model=AcademicScheduleResponse,
-    summary="Archivar horario académico",
+    summary="Archivar horario academico",
 )
 def archive_schedule(
     schedule_id: int,
@@ -231,7 +177,7 @@ def archive_schedule(
 @router.patch(
     "/{schedule_id}/deactivate",
     response_model=AcademicScheduleResponse,
-    summary="Desactivar horario académico",
+    summary="Desactivar horario academico",
 )
 def deactivate_schedule(
     schedule_id: int,
@@ -247,7 +193,7 @@ def deactivate_schedule(
 @router.patch(
     "/{schedule_id}/activate",
     response_model=AcademicScheduleResponse,
-    summary="Activar horario académico",
+    summary="Activar horario academico",
 )
 def activate_schedule(
     schedule_id: int,
@@ -263,7 +209,7 @@ def activate_schedule(
 @router.delete(
     "/{schedule_id}",
     status_code=status.HTTP_200_OK,
-    summary="Eliminar horario académico",
+    summary="Eliminar horario academico",
 )
 def delete_schedule(
     schedule_id: int,

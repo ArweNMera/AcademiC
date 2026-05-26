@@ -2,8 +2,9 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.security import verify_password, create_access_token
+from app.models.user import UserRole
 from app.repositories.user_repository import UserRepository
-from app.schemas.user_schema import UserCreate
+from app.schemas.user_schema import PublicUserRegister, UserCreate
 from app.schemas.auth_schema import LoginRequest
 
 
@@ -12,7 +13,7 @@ class AuthService:
         self.db = db
         self.user_repository = UserRepository(db)
 
-    def register(self, user_data: UserCreate):
+    def register(self, user_data: PublicUserRegister):
         existing_user = self.user_repository.get_by_email(user_data.email)
 
         if existing_user:
@@ -21,7 +22,14 @@ class AuthService:
                 detail="El correo ya está registrado",
             )
 
-        user = self.user_repository.create(user_data)
+        user = self.user_repository.create(
+            UserCreate(
+                full_name=user_data.full_name,
+                email=user_data.email,
+                password=user_data.password,
+                role=UserRole.STUDENT,
+            )
+        )
 
         access_token = create_access_token(subject=user.id)
 

@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models.schedule import AcademicSchedule, ScheduleStatus
+from app.services.data_readiness_service import DataReadinessService
 from app.services.schedule_quality_service import ScheduleQualityService
 
 
@@ -11,6 +12,7 @@ class SchedulePublicationService:
     def __init__(self, db: Session):
         self.db = db
         self.quality_service = ScheduleQualityService(db)
+        self.readiness_service = DataReadinessService(db)
 
     def publish_safely(
         self,
@@ -25,6 +27,35 @@ class SchedulePublicationService:
         schedule = self._get_schedule(schedule_id)
 
         previous_status = self._enum_to_str(schedule.status)
+
+        readiness = self.readiness_service.get_readiness_report(
+            career_filter=career_filter,
+            academic_period=schedule.academic_period,
+        )
+        readiness_summary = readiness["summary"]
+        readiness_critical_checks = int(
+            readiness_summary.get("critical_checks", 0)
+        )
+
+        if readiness_critical_checks > 0:
+            failing_checks = [
+                check
+                for check in readiness["checks"]
+                if check.get("severity") == "CRITICAL"
+            ]
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "message": (
+                        "No se puede publicar el horario porque la preparacion "
+                        "de datos tiene validaciones criticas pendientes."
+                    ),
+                    "schedule_id": schedule_id,
+                    "readiness_status": readiness_summary.get("status"),
+                    "readiness_critical_checks": readiness_critical_checks,
+                    "checks": failing_checks[:20],
+                },
+            )
 
         report = self.quality_service.get_quality_report(
             schedule_id=schedule_id,
@@ -103,6 +134,8 @@ class SchedulePublicationService:
             "critical_issues": critical_issues,
             "warning_issues": warning_issues,
             "info_issues": info_issues,
+            "readiness_status": readiness_summary.get("status", "READY"),
+            "readiness_critical_checks": readiness_critical_checks,
             "warnings": warnings[:20],
         }
 

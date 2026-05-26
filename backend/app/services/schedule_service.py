@@ -58,6 +58,8 @@ class ScheduleService:
         return schedule
 
     def create_schedule(self, schedule_data: AcademicScheduleCreate):
+        self._reject_direct_publication(schedule_data.status)
+
         if schedule_data.generated_by_user_id is not None:
             user = self.user_repository.get_by_id(
                 schedule_data.generated_by_user_id
@@ -77,6 +79,7 @@ class ScheduleService:
         schedule_data: AcademicScheduleUpdate,
     ):
         schedule = self.get_schedule_by_id(schedule_id)
+        self._reject_direct_publication(schedule_data.status)
 
         if schedule_data.generated_by_user_id is not None:
             user = self.user_repository.get_by_id(
@@ -107,22 +110,13 @@ class ScheduleService:
         return self.schedule_repository.update(schedule, schedule_data)
 
     def publish_schedule(self, schedule_id: int):
-        schedule = self.get_schedule_by_id(schedule_id)
-
-        if schedule.status not in [
-            ScheduleStatus.APPROVED,
-            ScheduleStatus.GENERATED,
-        ]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Solo se pueden publicar horarios aprobados o generados",
-            )
-
-        schedule_data = AcademicScheduleUpdate(
-            status=ScheduleStatus.PUBLISHED
+        from app.services.schedule_publication_service import (
+            SchedulePublicationService,
         )
 
-        return self.schedule_repository.update(schedule, schedule_data)
+        return SchedulePublicationService(self.db).publish_safely(
+            schedule_id=schedule_id,
+        )
 
     def archive_schedule(self, schedule_id: int):
         schedule = self.get_schedule_by_id(schedule_id)
@@ -151,6 +145,19 @@ class ScheduleService:
         )
 
         return self.schedule_repository.update(schedule, schedule_data)
+
+    @staticmethod
+    def _reject_direct_publication(
+        requested_status: ScheduleStatus | None,
+    ) -> None:
+        if requested_status == ScheduleStatus.PUBLISHED:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    "La publicacion requiere el flujo seguro de "
+                    "validacion de readiness y calidad"
+                ),
+            )
 
     def delete_schedule(self, schedule_id: int):
         schedule = self.get_schedule_by_id(schedule_id)

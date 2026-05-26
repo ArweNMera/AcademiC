@@ -24,6 +24,7 @@ from app.core.database import Base
 from app.models import (
     User,
     Student,
+    StudentCourseEnrollment,
     Teacher,
     TeacherAvailability,
     Course,
@@ -33,6 +34,7 @@ from app.models import (
     EnvironmentalMetric,
     ScheduleBlock,
     StudentSchedule,
+    StudentScheduleBlock,
 )
 
 # ============================================================

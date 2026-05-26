@@ -41,7 +41,9 @@ export const scheduleService = {
 
     // Publicar un horario existente
     async publishSchedule(scheduleId) {
-        const response = await api.patch(`/schedules/${scheduleId}/publish`)
+        const response = await api.patch(
+            `/schedule-publication/${scheduleId}/publish-safe`
+        )
         return response.data
     },
 }

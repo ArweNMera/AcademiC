@@ -19,5 +19,7 @@ class SchedulePublicationResponse(BaseModel):
     critical_issues: int
     warning_issues: int
     info_issues: int
+    readiness_status: str
+    readiness_critical_checks: int
 
     warnings: list[dict[str, Any]] = []

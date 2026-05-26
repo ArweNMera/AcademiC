@@ -28,12 +28,14 @@ class ScheduleBlockService:
         section_id: int | None = None,
         classroom_id: int | None = None,
         day_of_week: int | None = None,
+        published_institutional_only: bool = False,
     ):
         total = self.block_repository.count_all(
             schedule_id=schedule_id,
             section_id=section_id,
             classroom_id=classroom_id,
             day_of_week=day_of_week,
+            published_institutional_only=published_institutional_only,
         )
 
         blocks = self.block_repository.get_all(
@@ -43,6 +45,7 @@ class ScheduleBlockService:
             section_id=section_id,
             classroom_id=classroom_id,
             day_of_week=day_of_week,
+            published_institutional_only=published_institutional_only,
         )
 
         return {

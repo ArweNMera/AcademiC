@@ -52,6 +52,8 @@ Login React
 ```
 
 Los roles implementados son `ADMIN`, `COORDINATOR`, `TEACHER` y `STUDENT`.
+El registro anonimo solo crea usuarios `STUDENT`; los roles operativos se
+provisionan desde administracion autenticada o seeds.
 
 ## Flujo De Generacion De Horarios
 
@@ -59,7 +61,8 @@ Los roles implementados son `ADMIN`, `COORDINATOR`, `TEACHER` y `STUDENT`.
 2. Se valida disponibilidad y preparacion de los datos.
 3. El motor CSP genera soluciones respetando restricciones institucionales.
 4. Se revisan conflictos y calidad del horario.
-5. La solucion seleccionada puede publicarse para los estudiantes.
+5. La solucion seleccionada solo se publica si supera validaciones de
+   preparacion de datos y calidad.
 
 ## Flujo Estudiante
 
@@ -67,6 +70,16 @@ Los roles implementados son `ADMIN`, `COORDINATOR`, `TEACHER` y `STUDENT`.
 2. Selecciona cursos y preferencias.
 3. El servicio CSP estudiantil produce alternativas compatibles.
 4. El estudiante compara, guarda y exporta su horario final.
+
+Los endpoints genericos de horarios y bloques tambien restringen al
+estudiante a horarios institucionales activos con estado `PUBLISHED`, para
+que un borrador no quede expuesto fuera del flujo de oferta.
+
+## Proteccion Docente
+
+Los endpoints de disponibilidad verifican propiedad del perfil: `TEACHER`
+solo gestiona su propia disponibilidad. `ADMIN` y `COORDINATOR` conservan
+permisos globales para planificacion institucional.
 
 ## Flujo De Sostenibilidad
 

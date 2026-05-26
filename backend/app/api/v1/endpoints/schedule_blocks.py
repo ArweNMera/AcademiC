@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session, joinedload
 
 from app.core.database import get_db
@@ -7,7 +7,12 @@ from app.models.user import User, UserRole
 
 # Nuevos imports de Modelos
 from app.models.course import CourseSection
-from app.models.schedule import ScheduleBlock
+from app.models.schedule import (
+    AcademicSchedule,
+    ScheduleBlock,
+    ScheduleStatus,
+    ScheduleType,
+)
 from app.models.teacher import Teacher
 from app.models.classroom import Classroom
 
@@ -57,6 +62,7 @@ def list_schedule_blocks(
         section_id=section_id,
         classroom_id=classroom_id,
         day_of_week=day_of_week,
+        published_institutional_only=current_user.role == UserRole.STUDENT,
     )
 
 
@@ -99,6 +105,24 @@ def get_enriched_schedule_blocks(
         )
     ),
 ):
+    if current_user.role == UserRole.STUDENT:
+        visible_schedule = (
+            db.query(AcademicSchedule)
+            .filter(
+                AcademicSchedule.id == schedule_id,
+                AcademicSchedule.schedule_type == ScheduleType.INSTITUTIONAL,
+                AcademicSchedule.status == ScheduleStatus.PUBLISHED,
+                AcademicSchedule.is_active == True,
+            )
+            .first()
+        )
+
+        if visible_schedule is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Horario publicado no encontrado",
+            )
+
     blocks = (
         db.query(ScheduleBlock)
         .options(
@@ -174,7 +198,27 @@ def get_schedule_block(
     ),
 ):
     block_service = ScheduleBlockService(db)
-    return block_service.get_block_by_id(block_id)
+    block = block_service.get_block_by_id(block_id)
+
+    if current_user.role == UserRole.STUDENT:
+        visible_schedule = (
+            db.query(AcademicSchedule)
+            .filter(
+                AcademicSchedule.id == block.schedule_id,
+                AcademicSchedule.schedule_type == ScheduleType.INSTITUTIONAL,
+                AcademicSchedule.status == ScheduleStatus.PUBLISHED,
+                AcademicSchedule.is_active == True,
+            )
+            .first()
+        )
+
+        if visible_schedule is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Bloque de horario publicado no encontrado",
+            )
+
+    return block
 
 
 @router.put(

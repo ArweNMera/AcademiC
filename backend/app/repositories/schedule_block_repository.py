@@ -1,6 +1,11 @@
 from sqlalchemy.orm import Session
 
-from app.models.schedule import ScheduleBlock
+from app.models.schedule import (
+    AcademicSchedule,
+    ScheduleBlock,
+    ScheduleStatus,
+    ScheduleType,
+)
 from app.schemas.schedule_block_schema import (
     ScheduleBlockCreate,
     ScheduleBlockUpdate,
@@ -17,8 +22,16 @@ class ScheduleBlockRepository:
         section_id: int | None = None,
         classroom_id: int | None = None,
         day_of_week: int | None = None,
+        published_institutional_only: bool = False,
     ) -> int:
         query = self.db.query(ScheduleBlock)
+
+        if published_institutional_only:
+            query = query.join(AcademicSchedule).filter(
+                AcademicSchedule.schedule_type == ScheduleType.INSTITUTIONAL,
+                AcademicSchedule.status == ScheduleStatus.PUBLISHED,
+                AcademicSchedule.is_active == True,
+            )
 
         if schedule_id is not None:
             query = query.filter(ScheduleBlock.schedule_id == schedule_id)
@@ -42,8 +55,16 @@ class ScheduleBlockRepository:
         section_id: int | None = None,
         classroom_id: int | None = None,
         day_of_week: int | None = None,
+        published_institutional_only: bool = False,
     ) -> list[ScheduleBlock]:
         query = self.db.query(ScheduleBlock)
+
+        if published_institutional_only:
+            query = query.join(AcademicSchedule).filter(
+                AcademicSchedule.schedule_type == ScheduleType.INSTITUTIONAL,
+                AcademicSchedule.status == ScheduleStatus.PUBLISHED,
+                AcademicSchedule.is_active == True,
+            )
 
         if schedule_id is not None:
             query = query.filter(ScheduleBlock.schedule_id == schedule_id)

@@ -117,7 +117,10 @@ def list_teacher_availability(
     ),
 ):
     availability_service = TeacherAvailabilityService(db)
-    return availability_service.list_teacher_availabilities(teacher_id)
+    return availability_service.list_teacher_availabilities(
+        teacher_id,
+        current_user,
+    )
 
 
 @router.post(
@@ -134,7 +137,10 @@ def create_teacher_availability(
     ),
 ):
     availability_service = TeacherAvailabilityService(db)
-    return availability_service.create_availability(availability_data)
+    return availability_service.create_availability(
+        availability_data,
+        current_user,
+    )
 
 
 @router.put(
@@ -154,6 +160,7 @@ def update_teacher_availability(
     return availability_service.update_availability(
         availability_id,
         availability_data,
+        current_user,
     )
 
 
@@ -170,4 +177,7 @@ def delete_teacher_availability(
     ),
 ):
     availability_service = TeacherAvailabilityService(db)
-    return availability_service.delete_availability(availability_id)
+    return availability_service.delete_availability(
+        availability_id,
+        current_user,
+    )

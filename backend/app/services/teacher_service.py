@@ -117,7 +117,7 @@ class TeacherAvailabilityService:
         self.teacher_repository = TeacherRepository(db)
         self.availability_repository = TeacherAvailabilityRepository(db)
 
-    def list_teacher_availabilities(self, teacher_id: int):
+    def list_teacher_availabilities(self, teacher_id: int, current_user):
         teacher = self.teacher_repository.get_by_id(teacher_id)
 
         if not teacher:
@@ -125,6 +125,8 @@ class TeacherAvailabilityService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Docente no encontrado",
             )
+
+        self._ensure_teacher_access(teacher_id, current_user)
 
         availabilities = self.availability_repository.get_by_teacher(
             teacher_id
@@ -151,6 +153,7 @@ class TeacherAvailabilityService:
     def create_availability(
         self,
         availability_data: TeacherAvailabilityCreate,
+        current_user,
     ):
         teacher = self.teacher_repository.get_by_id(
             availability_data.teacher_id
@@ -161,6 +164,8 @@ class TeacherAvailabilityService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Docente no encontrado",
             )
+
+        self._ensure_teacher_access(teacher.id, current_user)
 
         if availability_data.start_time >= availability_data.end_time:
             raise HTTPException(
@@ -174,8 +179,10 @@ class TeacherAvailabilityService:
         self,
         availability_id: int,
         availability_data: TeacherAvailabilityUpdate,
+        current_user,
     ):
         availability = self.get_availability_by_id(availability_id)
+        self._ensure_teacher_access(availability.teacher_id, current_user)
 
         new_start_time = (
             availability_data.start_time
@@ -199,10 +206,27 @@ class TeacherAvailabilityService:
             availability_data,
         )
 
-    def delete_availability(self, availability_id: int):
+    def delete_availability(self, availability_id: int, current_user):
         availability = self.get_availability_by_id(availability_id)
+        self._ensure_teacher_access(availability.teacher_id, current_user)
         self.availability_repository.delete(availability)
 
         return {
             "message": "Disponibilidad eliminada correctamente",
         }
+
+    def _ensure_teacher_access(self, teacher_id: int, current_user) -> None:
+        if current_user.role in (UserRole.ADMIN, UserRole.COORDINATOR):
+            return
+
+        own_profile = self.teacher_repository.get_by_user_id(current_user.id)
+
+        if (
+            current_user.role != UserRole.TEACHER
+            or own_profile is None
+            or own_profile.id != teacher_id
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Solo puedes gestionar tu propia disponibilidad docente",
+            )

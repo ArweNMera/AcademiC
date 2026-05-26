@@ -21,6 +21,16 @@ Las rutas protegidas reciben:
 Authorization: Bearer <token>
 ```
 
+El registro publico es deliberadamente restringido:
+
+```http
+POST /api/v1/auth/register
+```
+
+Acepta `full_name`, `email` y `password`, y siempre crea un usuario
+`STUDENT`. El campo `role` es rechazado. Usuarios con privilegios se crean
+solo mediante `/users` autenticado como `ADMIN` o scripts de carga.
+
 ## Grupos De Endpoints
 
 | Prefijo | Funcion |
@@ -34,6 +44,20 @@ Authorization: Bearer <token>
 | `/dashboard`, `/schedule-quality`, `/data-readiness` | Control administrativo. |
 | `/environmental-impact` | Indicadores ambientales. |
 | `/sustainability` | Reporte publico GreenFrame. |
+
+## Controles De Fase 0
+
+| Operacion | Regla aplicada |
+| --- | --- |
+| `PATCH /schedules/{id}/publish` | Compatibilidad: delega al flujo de publicacion segura. |
+| `PATCH /schedule-publication/{id}/publish-safe` | Exige readiness sin fallas criticas y calidad publicable. |
+| `POST /schedules`, `PUT /schedules/{id}` con `status=PUBLISHED` | Rechazado; no se permite saltar validaciones. |
+| `GET /schedules`, `GET /schedules/{id}` para `STUDENT` | Solo horarios institucionales activos `PUBLISHED`. |
+| `GET /schedule-blocks*` para `STUDENT` | Solo bloques pertenecientes a horarios institucionales activos `PUBLISHED`. |
+| `/teachers/*/availability` para `TEACHER` | Solo el perfil docente asociado al usuario autenticado. |
+
+La migracion `c6217d0e4a12_add_student_course_enrollments` agrega la tabla
+de inscripciones por curso y periodo usada por `/student-enrollments`.
 
 ## Rutas Publicas Destacadas
 

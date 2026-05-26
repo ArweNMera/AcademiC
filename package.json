@@ -1,0 +1,8 @@
+{
+  "name": "optiacademic",
+  "private": true,
+  "scripts": {
+    "sustainability:analyze": "greenframe analyze > backend/public/assets/greenframe-latest.txt",
+    "sustainability:analyze:ps": "greenframe analyze | Tee-Object -FilePath backend/public/assets/greenframe-latest.txt"
+  }
+}

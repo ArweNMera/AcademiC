@@ -18,6 +18,7 @@ class EnvironmentalImpactMiddleware:
             "/api/v1/environmental-impact/summary",
             "/api/v1/environmental-impact/metrics",
             "/api/v1/environmental-impact/ranking",
+            "/api/v1/sustainability",
             "/docs",
             "/openapi.json",
             "/redoc",

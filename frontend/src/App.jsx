@@ -13,7 +13,7 @@ import NotFoundPage from './pages/NotFoundPage'
 
 // Páginas: Dashboards Principales
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
-import CoordinatorDashboard from './pages/coordinator/CoordinatorDashboard'
+import EnvironmentalImpactPage from './pages/admin/EnvironmentalImpactPage'
 import TeacherDashboard from './pages/teacher/TeacherDashboard'
 import StudentDashboard from './pages/student/StudentDashboard'
 
@@ -113,6 +113,7 @@ export default function App() {
                         {/* ADMIN y COORDINATOR */}
                         <Route element={<RoleRoute allowedRoles={['ADMIN', 'COORDINATOR']} />}>
                             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+                            <Route path="/admin/environmental-impact" element={<EnvironmentalImpactPage />} />
 
                             <Route path="/admin/users" element={<UsersPage />} />
                             <Route path="/admin/teachers" element={<TeachersPage />} />

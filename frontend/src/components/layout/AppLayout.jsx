@@ -7,6 +7,7 @@ import {
     ClipboardList,
     GraduationCap,
     LayoutDashboard,
+    Leaf,
     Layers,
     LogOut,
     School,
@@ -27,6 +28,7 @@ const roleLabels = {
 
 const pageTitles = {
     '/admin/dashboard': 'Dashboard institucional',
+    '/admin/environmental-impact': 'Impacto ambiental',
     '/admin/data-readiness': 'Preparación de datos',
     '/admin/users': 'Usuarios',
     '/admin/teachers': 'Docentes',
@@ -106,6 +108,13 @@ export default function AppLayout() {
                                 icon={<ClipboardList size={19} />}
                             >
                                 Preparación de datos
+                            </NavItem>
+
+                            <NavItem
+                                to="/admin/environmental-impact"
+                                icon={<Leaf size={19} />}
+                            >
+                                Impacto ambiental
                             </NavItem>
 
                             <NavItem to="/admin/users" icon={<Users size={19} />}>

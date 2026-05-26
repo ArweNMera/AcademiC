@@ -2,7 +2,7 @@
 
 ## 5.1 Finalidad de la interfaz gráfica
 
-La interfaz gráfica de OptiAcademic facilita la interacción entre usuarios y el motor de generación de horarios.
+La interfaz gráfica de OptiAcademic tiene como finalidad facilitar la interacción entre los usuarios y el motor de generación de horarios.
 
 El problema de horarios involucra múltiples datos, restricciones y resultados. Por ello, una GUI es necesaria para que el usuario pueda:
 
@@ -44,7 +44,7 @@ Esto mejora la experiencia del estudiante porque transforma un problema complejo
 
 ## 5.4 Visualización de resultados
 
-La GUI representa resultados mediante:
+La GUI permite representar resultados mediante:
 
 - Tarjetas de métricas.
 - Grillas semanales.
@@ -53,7 +53,7 @@ La GUI representa resultados mediante:
 - Acordeones de diagnóstico.
 - Mensajes de éxito y error.
 - Comparadores de soluciones.
-- Exportación PDF.
+- Exportación en PDF.
 
 ## 5.5 Validación operativa
 
@@ -67,4 +67,4 @@ La interfaz ayuda a validar el sistema porque permite observar si:
 
 ## 5.6 Conclusión
 
-La GUI no es solo una capa visual; es un componente clave para validar operativamente el sistema y apoyar la toma de decisiones académicas.
+La GUI no es solo una capa visual, sino un componente clave para validar operativamente el sistema. Permite que usuarios no técnicos interactúen con el motor CSP y tomen decisiones basadas en resultados comprensibles.

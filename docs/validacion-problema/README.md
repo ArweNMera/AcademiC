@@ -12,7 +12,7 @@ Esta carpeta contiene la documentación de análisis y validación del problema 
 | [04-indicadores-exito.md](04-indicadores-exito.md) | Indicadores verificables para evaluar la optimización |
 | [05-justificacion-gui.md](05-justificacion-gui.md) | Finalidad de la interfaz gráfica |
 | [06-alineacion-consigna.md](06-alineacion-consigna.md) | Relación entre la consigna y el MVP desarrollado |
-| [07-decision-stack-tecnico.md](07-decision-stack-tecnico.md) | Justificación del stack usado frente al stack MERN solicitado |
+| [07-decision-stack-tecnico.md](07-decision-stack-tecnico.md) | Justificación del stack tecnológico implementado |
 
 ## Objetivo
 

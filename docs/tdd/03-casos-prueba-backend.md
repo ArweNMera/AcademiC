@@ -1,20 +1,82 @@
 # 3. Casos de prueba backend
 
-| Código | Caso de prueba | Entrada | Resultado esperado |
-|---|---|---|---|
-| CP-BE-001 | Login correcto | Email y contraseña válidos | Token JWT y datos del usuario |
-| CP-BE-002 | Login incorrecto | Contraseña incorrecta | Error 401 Unauthorized |
-| CP-BE-003 | Acceso sin token | Petición a endpoint protegido sin token | Error 401 o 403 |
-| CP-BE-004 | Listar cursos | Base poblada | Lista de cursos con código, nombre, ciclo y créditos |
-| CP-BE-005 | Crear horario base | Nombre, periodo y tipo | Horario institucional creado |
-| CP-BE-006 | Diagnóstico CSP institucional | schedule_id y periodo | Diagnóstico con secciones programables/problemáticas |
-| CP-BE-007 | Generar horario institucional | Configuración CSP | Una o más soluciones generadas |
-| CP-BE-008 | Publicar horario sin bloques | schedule_id sin bloques | Error de validación |
-| CP-BE-009 | Publicar horario con bloques | schedule_id con bloques válidos | Horario publicado correctamente |
-| CP-BE-010 | Obtener oferta estudiantil | Horario publicado | Cursos y bloques disponibles |
+## CP-BE-001: Login correcto
 
-## Comando sugerido para futuras pruebas
+| Campo | Descripción |
+|---|---|
+| Módulo | Autenticación |
+| Precondición | Usuario registrado y activo |
+| Entrada | Email y contraseña válidos |
+| Resultado esperado | Token JWT y datos del usuario |
 
-```powershell
-pytest
-```
+## CP-BE-002: Login incorrecto
+
+| Campo | Descripción |
+|---|---|
+| Módulo | Autenticación |
+| Entrada | Contraseña incorrecta |
+| Resultado esperado | Error 401 Unauthorized |
+
+## CP-BE-003: Acceso sin token
+
+| Campo | Descripción |
+|---|---|
+| Módulo | Seguridad |
+| Entrada | Petición a endpoint protegido sin token |
+| Resultado esperado | Error 401 o 403 |
+
+## CP-BE-004: Listar cursos
+
+| Campo | Descripción |
+|---|---|
+| Módulo | Cursos |
+| Precondición | Base de datos poblada |
+| Resultado esperado | Lista de cursos con código, nombre, ciclo y créditos |
+
+## CP-BE-005: Crear horario base
+
+| Campo | Descripción |
+|---|---|
+| Módulo | Horarios |
+| Entrada | Nombre, periodo académico y tipo |
+| Resultado esperado | Horario institucional creado |
+
+## CP-BE-006: Diagnóstico CSP institucional
+
+| Campo | Descripción |
+|---|---|
+| Módulo | CSP institucional |
+| Entrada | schedule_id y periodo académico |
+| Resultado esperado | Diagnóstico con secciones programables y problemáticas |
+
+## CP-BE-007: Generar horario institucional
+
+| Campo | Descripción |
+|---|---|
+| Módulo | CSP institucional |
+| Entrada | Configuración CSP |
+| Resultado esperado | Una o más soluciones generadas |
+
+## CP-BE-008: Publicar horario sin bloques
+
+| Campo | Descripción |
+|---|---|
+| Módulo | Publicación |
+| Entrada | schedule_id sin bloques |
+| Resultado esperado | Error de validación |
+
+## CP-BE-009: Publicar horario con bloques
+
+| Campo | Descripción |
+|---|---|
+| Módulo | Publicación |
+| Entrada | schedule_id con bloques válidos |
+| Resultado esperado | Horario publicado correctamente |
+
+## CP-BE-010: Obtener oferta estudiantil
+
+| Campo | Descripción |
+|---|---|
+| Módulo | Student CSP |
+| Precondición | Horario publicado |
+| Resultado esperado | Cursos y bloques disponibles para estudiante |

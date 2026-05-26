@@ -80,3 +80,16 @@ El repositorio final debe contener:
 - Estrategia TDD.
 - Commits organizados.
 - TOC sincronizado.
+
+## 6.7 Stack tecnológico del proyecto
+
+El proyecto utiliza una arquitectura full-stack compuesta por React en el frontend, FastAPI en el backend y MySQL como base de datos.
+
+Esta arquitectura es adecuada para el problema porque:
+
+- React permite construir una GUI dinámica y modular.
+- FastAPI permite crear una API REST clara, documentada y mantenible.
+- MySQL permite representar adecuadamente entidades académicas relacionales.
+- Python facilita la implementación del motor CSP y la lógica de optimización.
+
+La consigna no exige de forma obligatoria un stack específico; por ello, el stack implementado se justifica por la naturaleza del problema, el modelado relacional y la necesidad de ejecutar algoritmos de optimización.

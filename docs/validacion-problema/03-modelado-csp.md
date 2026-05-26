@@ -20,11 +20,15 @@ Donde:
 
 En el caso institucional, las variables representan secciones o bloques académicos que deben ser programados.
 
+Ejemplo:
+
 ```text
 X1 = Sección SIS101-A, bloque 1
 X2 = Sección SIS101-A, bloque 2
 X3 = Sección SIS204-B, bloque 1
 ```
+
+Cada variable necesita recibir una asignación válida.
 
 ## 3.3 Dominios del CSP institucional
 
@@ -41,7 +45,11 @@ Lunes, 08:40, Aula 301, Docente 15
 Martes, 10:20, Laboratorio 2, Docente 15
 ```
 
-## 3.4 Restricciones duras
+## 3.4 Restricciones del CSP institucional
+
+### Restricciones duras
+
+Las restricciones duras deben cumplirse obligatoriamente.
 
 | Código | Restricción |
 |---|---|
@@ -52,7 +60,9 @@ Martes, 10:20, Laboratorio 2, Docente 15
 | C5 | La hora debe estar dentro del rango académico |
 | C6 | El aula debe existir y estar habilitada |
 
-## 3.5 Restricciones blandas
+### Restricciones blandas
+
+Las restricciones blandas mejoran la calidad de la solución.
 
 | Código | Restricción |
 |---|---|
@@ -62,7 +72,7 @@ Martes, 10:20, Laboratorio 2, Docente 15
 | B4 | Favorecer horarios intermedios |
 | B5 | Balancear carga semanal |
 
-## 3.6 CSP estudiantil
+## 3.5 CSP estudiantil
 
 El CSP estudiantil se aplica después de publicar el horario institucional.
 
@@ -94,9 +104,11 @@ D = Secciones publicadas del curso
 | E4 | Se debe considerar el rango de créditos 7 a 25 |
 | E5 | Se deben considerar preferencias de docentes |
 
-## 3.7 Criterios de evaluación
+## 3.6 Criterios de evaluación
 
-Las soluciones se evalúan mediante un score considerando:
+Las soluciones se evalúan mediante un score.
+
+Criterios considerados:
 
 - Ausencia de conflictos.
 - Cantidad de créditos.
@@ -107,16 +119,16 @@ Las soluciones se evalúan mediante un score considerando:
 - Penalización de horarios extremos.
 - Balance semanal.
 
-## 3.8 Impacto de restricciones
+## 3.7 Impacto de las restricciones en el comportamiento del sistema
 
 Las restricciones reducen el espacio de búsqueda y determinan qué soluciones son válidas.
 
-Ejemplos:
+Ejemplo:
 
-- Si un docente no está disponible en la mañana, se eliminan combinaciones de mañana.
-- Si un aula ya está ocupada a una hora, no puede usarse para otra sección.
-- Si el estudiante marca sábado como no disponible, se eliminan bloques de sábado.
+- Si un docente no está disponible en la mañana, se eliminan todas las combinaciones de mañana para ese docente.
+- Si un aula ya está ocupada a una hora, no se puede usar para otra sección.
+- Si el estudiante marca el sábado como no disponible, se eliminan los bloques de sábado de sus soluciones.
 
-## 3.9 Conclusión técnica
+## 3.8 Conclusión técnica
 
-El modelo CSP es adecuado porque permite representar formalmente un problema altamente combinatorio, validar restricciones y generar soluciones evaluables por calidad.
+El modelo CSP es adecuado porque permite representar formalmente un problema altamente combinatorio, validar restricciones y generar soluciones que pueden ser evaluadas por calidad.

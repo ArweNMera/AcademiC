@@ -41,7 +41,7 @@ Oferta académica → Horario personal del estudiante
 
 Si una entidad no está correctamente registrada, el motor CSP puede no generar soluciones válidas.
 
-## 2.4 Posibles conflictos asociados
+## 2.4 Posibles conflictos asociados a la asignación de horarios
 
 | Conflicto | Ejemplo |
 |---|---|

@@ -45,6 +45,8 @@ git status
 
 ## 6.4 Resultado esperado final
 
+El sistema debe demostrar el flujo completo:
+
 ```text
 Admin genera y publica horario institucional
 → Estudiante visualiza oferta

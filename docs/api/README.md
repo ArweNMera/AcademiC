@@ -44,6 +44,8 @@ solo mediante `/users` autenticado como `ADMIN` o scripts de carga.
 | `/academic-periods`, `/academic-programs` | Periodos y carreras. |
 | `/curriculum-plans`, `/curriculum-courses` | Plan curricular y malla por ciclos. |
 | `/course-prerequisites`, `/elective-bank-courses` | Reglas y sugerencias editables. |
+| `/section-offerings`, `/section-requirements` | Oferta por periodo y requerimientos. |
+| `/offering-conflicts`, `/coordinator/dashboard` | Validacion y operacion coordinador. |
 | `/dashboard`, `/schedule-quality`, `/data-readiness` | Control administrativo. |
 | `/environmental-impact` | Indicadores ambientales. |
 | `/sustainability` | Reporte publico GreenFrame. |
@@ -78,6 +80,23 @@ de inscripciones por curso y periodo usada por `/student-enrollments`.
 La malla `ISI-UC-2026` es base editable proporcionada por el usuario. Los
 electivos y prerrequisitos `RECOMMENDED` cargados no sustituyen confirmación
 documental oficial.
+
+## Oferta Academica - Fase 2
+
+| Ruta | Escritura | Regla |
+| --- | --- | --- |
+| `/section-offerings` | `ADMIN`, `COORDINATOR` | CRUD con filtros de periodo, plan, ciclo, estado y docente. |
+| `/section-offerings/bulk-from-curriculum` | `ADMIN`, `COORDINATOR` | Crea secciones `DRAFT` sin duplicar curso/seccion/periodo. |
+| `/section-offerings/{id}/status` | `ADMIN`, `COORDINATOR` | Solo publica desde `APPROVED` y tras validacion completa. |
+| `/section-requirements` | `ADMIN`, `COORDINATOR` | Requisitos tecnicos de aula. |
+| `/offering-conflicts/analyze` | `ADMIN`, `COORDINATOR` | Registra conflictos operativos. |
+| `/coordinator/dashboard` | Sin escritura | Resumen del periodo activo. |
+| `/section-offerings/published/me` | Sin escritura | Estudiante: solo `PUBLISHED` del periodo activo/ciclo propio. |
+| `/institutional-csp/generate-from-offerings` | `ADMIN`, `COORDINATOR` | Valida nueva fuente y conserva fallback actual. |
+
+Las ofertas incompletas pueden permanecer `DRAFT`, pero no pueden aprobarse
+ni publicarse. La integracion CSP prepara la fuente sin reemplazar el
+generador de `course_sections`.
 
 ## Rutas Publicas Destacadas
 

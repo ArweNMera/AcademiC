@@ -84,3 +84,8 @@ class Classroom(Base, TimestampMixin):
         "ScheduleBlock",
         back_populates="classroom",
     )
+
+    section_offerings = relationship(
+        "SectionOffering",
+        back_populates="classroom",
+    )

@@ -62,6 +62,11 @@ class Teacher(Base, TimestampMixin):
         back_populates="teacher",
     )
 
+    section_offerings = relationship(
+        "SectionOffering",
+        back_populates="teacher",
+    )
+
 
 class TeacherAvailability(Base, TimestampMixin):
     __tablename__ = "teacher_availabilities"

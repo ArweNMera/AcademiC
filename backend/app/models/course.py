@@ -71,6 +71,12 @@ class Course(Base, TimestampMixin):
         cascade="all, delete-orphan",
     )
 
+    section_offerings = relationship(
+        "SectionOffering",
+        back_populates="course",
+        cascade="all, delete-orphan",
+    )
+
 
 class CourseSection(Base, TimestampMixin):
     __tablename__ = "course_sections"

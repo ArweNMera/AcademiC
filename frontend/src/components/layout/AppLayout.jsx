@@ -40,6 +40,10 @@ const pageTitles = {
     '/admin/academic-programs': 'Programas académicos',
     '/admin/curriculum-plans': 'Planes curriculares',
     '/admin/curriculum': 'Malla curricular',
+    '/coordinator/dashboard': 'Dashboard del coordinador',
+    '/coordinator/offerings': 'Oferta academica',
+    '/coordinator/offerings/create': 'Crear oferta',
+    '/coordinator/conflicts': 'Conflictos de oferta',
     '/admin/schedules': 'Generador CSP institucional',
     '/admin/student-generator': 'Simulador estudiantil',
     '/admin/student-schedules': 'Horarios de estudiantes',
@@ -64,8 +68,12 @@ export default function AppLayout() {
     }
 
     const getDashboardPath = () => {
-        if (user?.role === 'ADMIN' || user?.role === 'COORDINATOR') {
+        if (user?.role === 'ADMIN') {
             return '/admin/dashboard'
+        }
+
+        if (user?.role === 'COORDINATOR') {
+            return '/coordinator/dashboard'
         }
 
         if (user?.role === 'TEACHER') {
@@ -104,7 +112,7 @@ export default function AppLayout() {
                         Dashboard
                     </NavItem>
 
-                    {(user?.role === 'ADMIN' || user?.role === 'COORDINATOR') && (
+                    {user?.role === 'ADMIN' && (
                         <>
                             <SidebarGroupTitle>Gestión institucional</SidebarGroupTitle>
 
@@ -164,6 +172,14 @@ export default function AppLayout() {
                                 Malla curricular
                             </NavItem>
 
+                            <NavItem to="/coordinator/offerings" icon={<Layers size={19} />}>
+                                Oferta academica
+                            </NavItem>
+
+                            <NavItem to="/coordinator/conflicts" icon={<ClipboardCheck size={19} />}>
+                                Conflictos de oferta
+                            </NavItem>
+
                             <SidebarGroupTitle>Horarios</SidebarGroupTitle>
 
                             <NavItem
@@ -201,6 +217,22 @@ export default function AppLayout() {
                                 icon={<Star size={19} />}
                             >
                                 Horarios estudiantes
+                            </NavItem>
+                        </>
+                    )}
+
+                    {user?.role === 'COORDINATOR' && (
+                        <>
+                            <SidebarGroupTitle>Oferta academica</SidebarGroupTitle>
+                            <NavItem to="/coordinator/offerings" icon={<Layers size={19} />}>
+                                Gestionar oferta
+                            </NavItem>
+                            <NavItem to="/coordinator/conflicts" icon={<ClipboardCheck size={19} />}>
+                                Conflictos
+                            </NavItem>
+                            <SidebarGroupTitle>Planificacion</SidebarGroupTitle>
+                            <NavItem to="/admin/schedules" icon={<CalendarDays size={19} />}>
+                                Generar horario
                             </NavItem>
                         </>
                     )}

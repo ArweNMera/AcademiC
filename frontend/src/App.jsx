@@ -33,6 +33,10 @@ import AcademicPeriodsPage from './pages/admin/AcademicPeriodsPage'
 import AcademicProgramsPage from './pages/admin/AcademicProgramsPage'
 import CurriculumPlansPage from './pages/admin/CurriculumPlansPage'
 import CurriculumPage from './pages/admin/CurriculumPage'
+import CoordinatorDashboard from './pages/coordinator/CoordinatorDashboard'
+import OfferingsPage from './pages/coordinator/OfferingsPage'
+import OfferingFormPage from './pages/coordinator/OfferingFormPage'
+import OfferingConflictsPage from './pages/coordinator/OfferingConflictsPage'
 
 // Páginas: Estudiantes
 import MySavedSchedulesPage from './pages/student/MySavedSchedulesPage'
@@ -50,8 +54,12 @@ function HomeRedirect() {
         return <Navigate to="/login" replace />
     }
 
-    if (user?.role === 'ADMIN' || user?.role === 'COORDINATOR') {
+    if (user?.role === 'ADMIN') {
         return <Navigate to="/admin/dashboard" replace />
+    }
+
+    if (user?.role === 'COORDINATOR') {
+        return <Navigate to="/coordinator/dashboard" replace />
     }
 
     if (user?.role === 'TEACHER') {
@@ -112,11 +120,11 @@ export default function App() {
 
                         <Route
                             path="/coordinator"
-                            element={<Navigate to="/admin/dashboard" replace />}
+                            element={<Navigate to="/coordinator/dashboard" replace />}
                         />
 
-                        {/* ADMIN y COORDINATOR */}
-                        <Route element={<RoleRoute allowedRoles={['ADMIN', 'COORDINATOR']} />}>
+                        {/* ADMIN */}
+                        <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
                             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
                             <Route path="/admin/environmental-impact" element={<EnvironmentalImpactPage />} />
 
@@ -131,17 +139,24 @@ export default function App() {
                             <Route path="/admin/curriculum-plans" element={<CurriculumPlansPage />} />
                             <Route path="/admin/curriculum" element={<CurriculumPage />} />
 
-                            <Route path="/admin/schedules" element={<InstitutionalCSPPage />} />
-                            <Route path="/admin/schedule-view" element={<InstitutionalScheduleViewPage />} />
-                            <Route path="/admin/schedule-quality" element={<ScheduleQualityPage />} />
-                            <Route path="/admin/data-readiness" element={<DataReadinessPage />} />
-
-                            <Route path="/admin/institutional-csp" element={<InstitutionalCspGeneratorPage />} />
-
                             <Route path="/admin/student-generator" element={<StudentScheduleGeneratorPage />} />
                             <Route path="/admin/student-schedules" element={<MySavedSchedulesPage />} />
 
                             <Route path="/admin/student-offer" element={<StudentOfferPage />} />
+                        </Route>
+
+                        {/* ADMIN y COORDINATOR: oferta academica */}
+                        <Route element={<RoleRoute allowedRoles={['ADMIN', 'COORDINATOR']} />}>
+                            <Route path="/coordinator/dashboard" element={<CoordinatorDashboard />} />
+                            <Route path="/coordinator/offerings" element={<OfferingsPage />} />
+                            <Route path="/coordinator/offerings/create" element={<OfferingFormPage />} />
+                            <Route path="/coordinator/offerings/:id" element={<OfferingFormPage />} />
+                            <Route path="/coordinator/conflicts" element={<OfferingConflictsPage />} />
+                            <Route path="/admin/schedules" element={<InstitutionalCSPPage />} />
+                            <Route path="/admin/schedule-view" element={<InstitutionalScheduleViewPage />} />
+                            <Route path="/admin/schedule-quality" element={<ScheduleQualityPage />} />
+                            <Route path="/admin/data-readiness" element={<DataReadinessPage />} />
+                            <Route path="/admin/institutional-csp" element={<InstitutionalCspGeneratorPage />} />
                         </Route>
 
                         {/* TEACHER */}

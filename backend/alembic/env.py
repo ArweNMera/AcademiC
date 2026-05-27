@@ -41,6 +41,9 @@ from app.models import (
     CurriculumCourse,
     CoursePrerequisite,
     ElectiveBankCourse,
+    SectionOffering,
+    SectionRequirement,
+    OfferingConflict,
 )
 
 # ============================================================

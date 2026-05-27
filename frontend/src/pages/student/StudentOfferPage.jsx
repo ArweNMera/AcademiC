@@ -20,6 +20,7 @@ import toast from 'react-hot-toast'
 
 import { studentCspService } from '../../services/studentCspService'
 import { scheduleService } from '../../services/scheduleService'
+import { sectionOfferingService } from '../../services/sectionOfferingService'
 
 const DAYS = {
     1: 'Lunes',
@@ -53,6 +54,7 @@ export default function StudentOfferPage() {
     const [studentProfile, setStudentProfile] = useState(null)
     const [institutionalSchedules, setInstitutionalSchedules] = useState([])
     const [offerDetail, setOfferDetail] = useState(null)
+    const [publishedSectionOfferings, setPublishedSectionOfferings] = useState([])
 
     const [form, setForm] = useState({
         student_id: '',
@@ -197,6 +199,7 @@ export default function StudentOfferPage() {
 
             const profile = await studentCspService.getMyStudentProfile()
             setStudentProfile(profile)
+            setPublishedSectionOfferings(await sectionOfferingService.getMyPublishedOfferings())
 
             const selectedSchedule =
                 publishedSchedules.find((schedule) => {
@@ -472,6 +475,35 @@ export default function StudentOfferPage() {
             </section>
 
             <StudentFlowGuide currentStep="offer" />
+
+            {publishedSectionOfferings.length > 0 && (
+                <section className="rounded-3xl border border-emerald-200 bg-white p-5 shadow-sm">
+                    <div className="mb-4">
+                        <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">Oferta oficial publicada</p>
+                        <h2 className="text-xl font-black text-slate-900">Secciones disponibles para tu ciclo</h2>
+                        <p className="text-sm text-slate-500">Solo se muestran ofertas publicadas del periodo activo. El generador de horarios mantiene el horario institucional publicado como fuente de bloques.</p>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full text-sm">
+                            <thead className="bg-slate-50 text-left">
+                                <tr><th className="p-3">Curso</th><th>Seccion</th><th>Docente</th><th>Cupos</th><th>Modalidad</th><th>Turno</th></tr>
+                            </thead>
+                            <tbody>
+                                {publishedSectionOfferings.map((offering) => (
+                                    <tr key={offering.id} className="border-t">
+                                        <td className="p-3 font-semibold">{offering.course_name}</td>
+                                        <td>{offering.section_code}</td>
+                                        <td>{offering.teacher_name || 'Por asignar'}</td>
+                                        <td>{offering.estimated_students} / {offering.capacity}</td>
+                                        <td>{offering.modality}</td>
+                                        <td>{offering.shift}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            )}
 
             <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

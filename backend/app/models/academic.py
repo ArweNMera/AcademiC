@@ -59,6 +59,10 @@ class AcademicPeriod(Base, TimestampMixin):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
+    section_offerings = relationship(
+        "SectionOffering", back_populates="academic_period", cascade="all, delete-orphan"
+    )
+
 
 class AcademicProgram(Base, TimestampMixin):
     __tablename__ = "academic_programs"
@@ -75,6 +79,9 @@ class AcademicProgram(Base, TimestampMixin):
 
     curriculum_plans = relationship(
         "CurriculumPlan", back_populates="program", cascade="all, delete-orphan"
+    )
+    section_offerings = relationship(
+        "SectionOffering", back_populates="academic_program", cascade="all, delete-orphan"
     )
 
 
@@ -101,6 +108,9 @@ class CurriculumPlan(Base, TimestampMixin):
     )
     elective_bank_courses = relationship(
         "ElectiveBankCourse", back_populates="curriculum_plan", cascade="all, delete-orphan"
+    )
+    section_offerings = relationship(
+        "SectionOffering", back_populates="curriculum_plan", cascade="all, delete-orphan"
     )
 
 
@@ -143,6 +153,9 @@ class CurriculumCourse(Base, TimestampMixin):
         foreign_keys="CoursePrerequisite.prerequisite_course_id",
         back_populates="prerequisite_course",
         passive_deletes=True,
+    )
+    section_offerings = relationship(
+        "SectionOffering", back_populates="curriculum_course", cascade="all, delete-orphan"
     )
 
 

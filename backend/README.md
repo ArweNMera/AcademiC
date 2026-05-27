@@ -64,6 +64,7 @@ alembic upgrade head
 ```powershell
 python seed_realistic_demo.py
 python seed_uc_ingenieria_sistemas_curriculum.py
+python seed_uc_isi_offerings_2026.py
 ```
 
 El seed principal crea la cuenta demo:
@@ -76,6 +77,13 @@ El seed curricular crea el período `2026-I`, la carrera `ISI`, el plan
 `ISI-UC-2026`, sus cursos por ciclo, electivos sugeridos editables y
 prerrequisitos iniciales `RECOMMENDED`. La malla es una base proporcionada
 por el usuario y no acredita oficialidad de los electivos.
+
+El seed de oferta crea secciones `DRAFT` para ciclos 1, 2 y 3 en `2026-I`,
+sin inventar aulas ni docentes. Tambien habilita la cuenta demo:
+
+```text
+coordinator@optiacademic.com / coordinator123
+```
 
 ## Reglas De Estabilizacion
 
@@ -117,6 +125,12 @@ Swagger: <http://127.0.0.1:8000/docs>
 | `GET/POST/PATCH` | `/api/v1/curriculum-courses` | Lectura autenticada/admin-coordinador escritura |
 | `GET` | `/api/v1/students/me/curriculum` | Estudiante |
 | `GET` | `/api/v1/students/me/eligible-courses` | Estudiante |
+| `GET/POST/PATCH` | `/api/v1/section-offerings` | Lectura por rol/admin-coordinador escritura |
+| `POST` | `/api/v1/section-offerings/bulk-from-curriculum` | Admin/coordinador |
+| `POST` | `/api/v1/offering-conflicts/analyze` | Admin/coordinador |
+| `GET` | `/api/v1/coordinator/dashboard` | Admin/coordinador |
+| `GET` | `/api/v1/section-offerings/published/me` | Estudiante, solo publicadas |
+| `POST` | `/api/v1/institutional-csp/generate-from-offerings` | Admin/coordinador |
 | `GET` | `/api/v1/environmental-impact` | Publico |
 | `GET` | `/api/v1/environmental-impact/summary` | Admin/coordinador |
 | `GET` | `/api/v1/sustainability` | Publico |

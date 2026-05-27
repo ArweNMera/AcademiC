@@ -10,10 +10,25 @@ from app.schemas.csp_schema import (
     InstitutionalCSPPreviewResponse,
     InstitutionalCSPSaveSelectedRequest,
 )
+from app.schemas.offering_schema import OfferingsCSPPrepareRequest, OfferingsCSPPrepareResponse
 from app.services.institutional_csp_service import InstitutionalCSPService
+from app.services.offering_service import OfferingsCSPPreparationService
 
 
 router = APIRouter()
+
+
+@router.post(
+    "/generate-from-offerings",
+    response_model=OfferingsCSPPrepareResponse,
+    summary="Validar ofertas academicas como fuente de entrada CSP",
+)
+def generate_from_offerings(
+    request: OfferingsCSPPrepareRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.COORDINATOR)),
+):
+    return OfferingsCSPPreparationService(db).prepare(request)
 
 
 @router.post(

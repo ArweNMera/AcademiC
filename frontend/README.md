@@ -1,5 +1,14 @@
 # Frontend React - OptiAcademic
 
+## Oferta Academica - Fase 2
+
+El rol `COORDINATOR` dispone de navegacion propia en
+`/coordinator/dashboard`, `/coordinator/offerings`,
+`/coordinator/offerings/create` y `/coordinator/conflicts`. Admin tambien
+puede gestionar esas pantallas. El estudiante ve en `/student/offer`
+exclusivamente `section_offerings` con estado `PUBLISHED` del periodo activo;
+el generador personal conserva el flujo institucional existente.
+
 ## Descripcion
 
 La interfaz web de OptiAcademic ofrece navegacion por roles para gestion

@@ -11,6 +11,10 @@ from app.api.v1.endpoints import (
     dashboard,
     data_readiness,
     elective_bank_courses,
+    section_offerings,
+    section_requirements,
+    offering_conflicts,
+    coordinator_dashboard,
     environmental_impact,
     institutional_csp,
     schedule_blocks,
@@ -81,6 +85,30 @@ api_router.include_router(
     elective_bank_courses.router,
     prefix="/elective-bank-courses",
     tags=["Elective Bank Courses"],
+)
+
+api_router.include_router(
+    section_offerings.router,
+    prefix="/section-offerings",
+    tags=["Section Offerings"],
+)
+
+api_router.include_router(
+    section_requirements.router,
+    prefix="/section-requirements",
+    tags=["Section Requirements"],
+)
+
+api_router.include_router(
+    offering_conflicts.router,
+    prefix="/offering-conflicts",
+    tags=["Offering Conflicts"],
+)
+
+api_router.include_router(
+    coordinator_dashboard.router,
+    prefix="/coordinator/dashboard",
+    tags=["Coordinator Dashboard"],
 )
 
 api_router.include_router(

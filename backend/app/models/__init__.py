@@ -28,6 +28,16 @@ from app.models.academic import (
     ElectiveBankCourse,
     PrerequisiteType,
 )
+from app.models.offering import (
+    OfferingConflict,
+    OfferingConflictSeverity,
+    OfferingConflictType,
+    OfferingModality,
+    OfferingShift,
+    OfferingStatus,
+    SectionOffering,
+    SectionRequirement,
+)
 
 __all__ = [
     "Base",
@@ -60,4 +70,12 @@ __all__ = [
     "PrerequisiteType",
     "ElectiveBankCourse",
     "ElectiveArea",
+    "SectionOffering",
+    "SectionRequirement",
+    "OfferingConflict",
+    "OfferingModality",
+    "OfferingShift",
+    "OfferingStatus",
+    "OfferingConflictType",
+    "OfferingConflictSeverity",
 ]

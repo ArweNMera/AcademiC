@@ -189,6 +189,8 @@ migraciones y cargar datos demo.
 ## Documentacion
 
 El indice general se encuentra en [docs/README.md](docs/README.md).
+La guia de sustentacion esta en
+[docs/presentacion/demo-flow.md](docs/presentacion/demo-flow.md).
 
 ## Autores
 

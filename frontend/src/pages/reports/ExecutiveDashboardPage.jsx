@@ -5,6 +5,8 @@ import toast from 'react-hot-toast'
 
 import { reportService } from '../../services/reportService'
 import { useAuthStore } from '../../stores/authStore'
+import LoadingState from '../../components/common/LoadingState'
+import EmptyState from '../../components/common/EmptyState'
 
 export default function ExecutiveDashboardPage() {
     const [data, setData] = useState(null)
@@ -55,10 +57,10 @@ export default function ExecutiveDashboardPage() {
     }, [])
 
     if (loading) {
-        return <div className="rounded-2xl border bg-white p-10 text-slate-500">Cargando indicadores ejecutivos...</div>
+        return <LoadingState title="Cargando indicadores ejecutivos..." />
     }
     if (!data) {
-        return <div className="rounded-2xl border bg-white p-10 text-slate-500">No hay datos disponibles para el panel ejecutivo.</div>
+        return <EmptyState title="No hay datos disponibles para el panel ejecutivo." />
     }
 
     const cards = [
@@ -77,6 +79,7 @@ export default function ExecutiveDashboardPage() {
     const usedRooms = [...(support?.rooms?.classrooms || [])]
         .sort((a, b) => b.used_hours - a.used_hours)
         .slice(0, 5)
+    const sustainabilityMetrics = support?.sustainability?.environmental_metrics || {}
 
     return <div className="space-y-6">
         <header className="rounded-3xl bg-gradient-to-r from-slate-950 to-orange-700 p-7 text-white">
@@ -125,9 +128,9 @@ export default function ExecutiveDashboardPage() {
                 ))}
             </Panel>
             <Panel title="Sostenibilidad">
-                <Line label="Requests medidos" value={support?.sustainability.environmental_metrics.total_requests || 0} />
-                <Line label="CO2 estimado (g)" value={Number(support?.sustainability.environmental_metrics.total_co2 || 0).toFixed(8)} />
-                <p className="mt-4 text-sm text-slate-500">{support?.sustainability.message}</p>
+                <Line label="Requests medidos" value={sustainabilityMetrics.total_requests || 0} />
+                <Line label="CO2 estimado (g)" value={Number(sustainabilityMetrics.total_co2 || 0).toFixed(8)} />
+                <p className="mt-4 text-sm text-slate-500">{support?.sustainability?.message || 'Sin reporte ambiental disponible.'}</p>
             </Panel>
         </section>
 

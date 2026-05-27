@@ -1,4 +1,5 @@
 import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1'
 
@@ -25,6 +26,11 @@ api.interceptors.response.use(
         if (error.response?.status === 401) {
             localStorage.removeItem('optiacademic_token')
             localStorage.removeItem('optiacademic_user')
+            window.dispatchEvent(new Event('optiacademic:auth-expired'))
+            if (!window.location.pathname.startsWith('/login')) {
+                toast.error('Tu sesion expiro. Inicia sesion nuevamente.')
+                window.location.assign('/login')
+            }
         }
 
         return Promise.reject(error)

@@ -5,6 +5,10 @@ import { academicPeriodService } from '../../services/academicPeriodService'
 import { academicProgramService } from '../../services/academicProgramService'
 import { curriculumService } from '../../services/curriculumService'
 import { offeringCspService } from '../../services/offeringCspService'
+import EmptyState from '../../components/common/EmptyState'
+import ErrorState from '../../components/common/ErrorState'
+import LoadingState from '../../components/common/LoadingState'
+import { safeArray } from '../../utils/safeData'
 
 export default function CoordinatorCspPage() {
     const [periods, setPeriods] = useState([])
@@ -12,6 +16,8 @@ export default function CoordinatorCspPage() {
     const [plans, setPlans] = useState([])
     const [result, setResult] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [initialLoading, setInitialLoading] = useState(true)
+    const [initialError, setInitialError] = useState(false)
     const [saving, setSaving] = useState(null)
     const [form, setForm] = useState({
         academic_period_id: '',
@@ -43,7 +49,8 @@ export default function CoordinatorCspPage() {
                 academic_program_id: current.academic_program_id || nextPrograms[0]?.id || '',
                 curriculum_plan_id: current.curriculum_plan_id || nextPlans[0]?.id || '',
             }))
-        }).catch(() => toast.error('No se pudo cargar el dominio academico.'))
+        }).catch(() => { setInitialError(true); toast.error('No se pudo cargar el dominio academico.') })
+            .finally(() => setInitialLoading(false))
     }, [])
 
     const payload = () => ({
@@ -92,6 +99,9 @@ export default function CoordinatorCspPage() {
             <h1 className="flex items-center gap-3 text-2xl font-bold"><Sparkles /> CSP desde oferta academica</h1>
             <p className="mt-2 text-slate-300">Genera horarios institucionales a partir de secciones READY o APPROVED y los guarda en DRAFT.</p>
         </section>
+        {initialLoading && <LoadingState title="Cargando dominio academico..." />}
+        {initialError && !initialLoading && <ErrorState onRetry={() => window.location.reload()} />}
+        {!initialLoading && !initialError && !periods.length && <EmptyState title="No hay periodos disponibles para generar CSP." />}
         <section className="grid gap-4 rounded-3xl bg-white p-6 shadow-sm md:grid-cols-3">
             <Select label="Periodo" value={form.academic_period_id} onChange={(value) => setForm({ ...form, academic_period_id: value })} items={periods} />
             <Select label="Programa" value={form.academic_program_id} onChange={(value) => setForm({ ...form, academic_program_id: value })} items={programs} />
@@ -103,13 +113,14 @@ export default function CoordinatorCspPage() {
                 {loading ? <Loader2 className="animate-spin" size={18} /> : <Sparkles size={18} />} Generar desde oferta academica
             </button>
         </section>
-        {result?.solutions?.map((solution) => <section key={solution.solution_index} className="rounded-3xl bg-white p-6 shadow-sm">
+        {result && !safeArray(result.solutions).length && <EmptyState title="El CSP no devolvio soluciones." text="Revisa que existan ofertas READY o APPROVED con docente, aula y disponibilidad." />}
+        {safeArray(result?.solutions).map((solution) => <section key={solution.solution_index} className="rounded-3xl bg-white p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div><h2 className="font-bold">Opcion {solution.solution_index + 1}</h2><p className="text-sm text-slate-500">Score {solution.score_total} | {solution.blocks.length} bloques</p></div>
                 <button onClick={() => save(solution.solution_index)} disabled={saving === solution.solution_index} className="flex gap-2 rounded-xl bg-slate-900 px-4 py-2 text-white"><Save size={17} /> Guardar DRAFT</button>
             </div>
             <div className="mt-5 grid gap-2 md:grid-cols-2">
-                {solution.blocks.map((block, index) => <div key={`${block.section_offering_id}-${index}`} className="rounded-xl border p-3 text-sm">
+                {safeArray(solution.blocks).map((block, index) => <div key={`${block.section_offering_id}-${index}`} className="rounded-xl border p-3 text-sm">
                     <p className="font-semibold">{block.course_name} - {block.section_code}</p>
                     <p className="text-slate-500"><CalendarDays size={14} className="inline" /> Dia {block.day_of_week}, {String(block.start_time).slice(0, 5)} - {String(block.end_time).slice(0, 5)} | {block.classroom_code || 'Virtual'}</p>
                 </div>)}
@@ -125,5 +136,5 @@ function Select({ label, value, onChange, items }) {
 function Field({ label, value, onChange, type = 'text' }) {
     return <label className="text-sm font-semibold text-slate-700">{label}<input className="mt-2 w-full rounded-xl border p-3" type={type} value={value} onChange={(event) => onChange(event.target.value)} /></label>
 }
-function unwrap(value) { return Array.isArray(value) ? value : value.items || value.periods || value.programs || value.plans || [] }
+function unwrap(value) { return Array.isArray(value) ? value : value?.items || value?.periods || value?.programs || value?.plans || [] }
 function readError(error) { const detail = error.response?.data?.detail; return typeof detail === 'string' ? detail : detail?.message || 'No se pudo completar la operacion.' }

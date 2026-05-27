@@ -3,6 +3,10 @@ import { Download, RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 import { reportService } from '../../services/reportService'
+import LoadingState from '../../components/common/LoadingState'
+import ErrorState from '../../components/common/ErrorState'
+import EmptyState from '../../components/common/EmptyState'
+import { safeArray, safeObject } from '../../utils/safeData'
 
 const definitions = {
     'teacher-load': {
@@ -10,8 +14,8 @@ const definitions = {
         description: 'Horas asignadas en horarios publicados y nivel de utilizacion docente.',
         load: reportService.getTeacherLoadReport,
         export: reportService.exportTeacherLoadCsv,
-        rows: (data) => data.teachers,
-        cards: (data) => [['Docentes', data.teachers.length], ['Con carga', data.teachers.filter((x) => x.assigned_weekly_hours > 0).length], ['Sobrecargados', data.teachers.filter((x) => x.status === 'OVERLOADED').length]],
+        rows: (data) => safeArray(data.teachers),
+        cards: (data) => [['Docentes', safeArray(data.teachers).length], ['Con carga', safeArray(data.teachers).filter((x) => x.assigned_weekly_hours > 0).length], ['Sobrecargados', safeArray(data.teachers).filter((x) => x.status === 'OVERLOADED').length]],
         columns: [['teacher_name', 'Docente'], ['assigned_weekly_hours', 'Horas'], ['max_weekly_hours', 'Maximo'], ['load_percentage', '% carga'], ['courses_count', 'Cursos'], ['sections_count', 'Secciones'], ['status', 'Estado']],
     },
     'classroom-usage': {
@@ -19,8 +23,8 @@ const definitions = {
         description: 'Ocupacion semanal calculada desde bloques institucionales publicados.',
         load: reportService.getClassroomUsageReport,
         export: reportService.exportClassroomUsageCsv,
-        rows: (data) => data.classrooms,
-        cards: (data) => [['Aulas', data.classrooms.length], ['En uso', data.classrooms.filter((x) => x.blocks_count > 0).length], ['Alta ocupacion', data.classrooms.filter((x) => ['HIGH_USAGE', 'SATURATED'].includes(x.status)).length]],
+        rows: (data) => safeArray(data.classrooms),
+        cards: (data) => [['Aulas', safeArray(data.classrooms).length], ['En uso', safeArray(data.classrooms).filter((x) => x.blocks_count > 0).length], ['Alta ocupacion', safeArray(data.classrooms).filter((x) => ['HIGH_USAGE', 'SATURATED'].includes(x.status)).length]],
         columns: [['classroom_code', 'Codigo'], ['classroom_name', 'Aula'], ['type', 'Tipo'], ['capacity', 'Capacidad'], ['used_hours', 'Horas'], ['usage_percentage', '% uso'], ['status', 'Estado']],
     },
     offerings: {
@@ -37,7 +41,7 @@ const definitions = {
         description: 'Alertas detectadas durante la preparacion y validacion de oferta.',
         load: reportService.getConflictsReport,
         export: reportService.exportConflictsCsv,
-        rows: (data) => data.details,
+        rows: (data) => safeArray(data.details),
         cards: (data) => [['Conflictos', data.total_conflicts], ['Pendientes', data.unresolved_count], ['Resueltos', data.resolved_count], ['Criticos', data.by_severity?.CRITICAL || 0]],
         columns: [['conflict_type', 'Tipo'], ['severity', 'Severidad'], ['related_course', 'Curso'], ['related_section', 'Seccion'], ['message', 'Mensaje'], ['is_resolved', 'Resuelto']],
     },
@@ -45,8 +49,8 @@ const definitions = {
         title: 'Horarios institucionales',
         description: 'Horarios generados, calidad y distribucion de bloques.',
         load: reportService.getSchedulesReport,
-        rows: (data) => data.schedules,
-        cards: (data) => [['Horarios', data.schedules.length], ['Publicados', data.schedules.filter((x) => x.status === 'PUBLISHED').length], ['Borradores', data.schedules.filter((x) => x.status === 'DRAFT').length]],
+        rows: (data) => safeArray(data.schedules),
+        cards: (data) => [['Horarios', safeArray(data.schedules).length], ['Publicados', safeArray(data.schedules).filter((x) => x.status === 'PUBLISHED').length], ['Borradores', safeArray(data.schedules).filter((x) => x.status === 'DRAFT').length]],
         columns: [['name', 'Horario'], ['source_type', 'Fuente'], ['status', 'Estado'], ['quality_score', 'Calidad'], ['total_blocks', 'Bloques'], ['period', 'Periodo'], ['program', 'Programa']],
     },
     students: {
@@ -54,7 +58,7 @@ const definitions = {
         description: 'Cursos asignados y horarios personales guardados por estudiantes.',
         load: reportService.getStudentsReport,
         export: reportService.exportStudentsCsv,
-        rows: (data) => data.most_common_courses,
+        rows: (data) => safeArray(data.most_common_courses),
         cards: (data) => [['Estudiantes', data.total_students], ['Con asignaciones', data.students_with_enrollments], ['Con horario guardado', data.students_with_saved_schedules], ['Creditos promedio', data.average_credits]],
         columns: [['course_code', 'Codigo'], ['course_name', 'Curso asignado'], ['students', 'Estudiantes']],
     },
@@ -62,7 +66,7 @@ const definitions = {
         title: 'Solicitudes docentes',
         description: 'Seguimiento de peticiones de cambio registradas por docentes.',
         load: reportService.getChangeRequestsReport,
-        rows: (data) => data.requests_by_teacher,
+        rows: (data) => safeArray(data.requests_by_teacher),
         cards: (data) => [['Solicitudes', data.total], ['Pendientes', data.pending_count], ['Aprobadas', data.approved_count], ['Rechazadas', data.rejected_count]],
         columns: [['teacher_name', 'Docente'], ['total', 'Total'], ['pending', 'Pendientes']],
     },
@@ -70,8 +74,8 @@ const definitions = {
         title: 'Sostenibilidad',
         description: 'Metricas HTTP ambientales y disponibilidad del ultimo analisis GreenFrame.',
         load: reportService.getSustainabilityReport,
-        rows: (data) => Object.entries(data.environmental_metrics).map(([indicator, value]) => ({ indicator, value })),
-        cards: (data) => [['Requests medidos', data.environmental_metrics.total_requests], ['Bytes', data.environmental_metrics.total_bytes], ['CO2 estimado (g)', Number(data.environmental_metrics.total_co2 || 0).toFixed(8)], ['GreenFrame', data.latest_greenframe_result.available ? 'Disponible' : 'Pendiente']],
+        rows: (data) => Object.entries(safeObject(data.environmental_metrics)).map(([indicator, value]) => ({ indicator, value })),
+        cards: (data) => [['Requests medidos', safeObject(data.environmental_metrics).total_requests || 0], ['Bytes', safeObject(data.environmental_metrics).total_bytes || 0], ['CO2 estimado (g)', Number(safeObject(data.environmental_metrics).total_co2 || 0).toFixed(8)], ['GreenFrame', safeObject(data.latest_greenframe_result).available ? 'Disponible' : 'Pendiente']],
         columns: [['indicator', 'Indicador'], ['value', 'Valor']],
     },
 }
@@ -80,13 +84,17 @@ export default function ReportDetailPage({ reportType }) {
     const config = useMemo(() => definitions[reportType], [reportType])
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
     const [periodId, setPeriodId] = useState('')
 
     const load = async () => {
+        if (!config) return
         try {
             setLoading(true)
+            setError(false)
             setData(await config.load(periodId ? { academic_period_id: Number(periodId) } : {}))
         } catch {
+            setError(true)
             toast.error('No se pudo cargar el reporte')
         } finally {
             setLoading(false)
@@ -95,14 +103,22 @@ export default function ReportDetailPage({ reportType }) {
 
     useEffect(() => {
         let active = true
+        if (!config) {
+            setLoading(false)
+            return () => { active = false }
+        }
         config.load()
             .then((result) => { if (active) setData(result) })
-            .catch(() => toast.error('No se pudo cargar el reporte'))
+            .catch(() => { setError(true); toast.error('No se pudo cargar el reporte') })
             .finally(() => { if (active) setLoading(false) })
         return () => { active = false }
     }, [config])
 
-    const rows = data ? config.rows(data) : []
+    if (!config) {
+        return <ErrorState title="Reporte no disponible" message="La ruta solicitada no corresponde a un reporte activo." />
+    }
+
+    const rows = data ? safeArray(config.rows(data)) : []
 
     return <div className="space-y-6">
         <header className="flex flex-col justify-between gap-4 rounded-2xl border bg-white p-6 lg:flex-row lg:items-center">
@@ -134,7 +150,8 @@ export default function ReportDetailPage({ reportType }) {
             </div>
         </header>
 
-        {loading && !data && <div className="rounded-2xl border bg-white p-10 text-slate-500">Cargando reporte...</div>}
+        {loading && !data && <LoadingState title="Cargando reporte..." />}
+        {error && !data && <ErrorState onRetry={load} message="No se pudo recuperar este reporte." />}
         {data && (
             <>
                 <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -160,7 +177,7 @@ export default function ReportDetailPage({ reportType }) {
                             </tbody>
                         </table>
                     </div>
-                    {!rows.length && <p className="p-8 text-center text-slate-500">No hay registros para mostrar.</p>}
+                    {!rows.length && <div className="p-6"><EmptyState title="No hay registros para mostrar." /></div>}
                 </section>
                 {reportType === 'sustainability' && <p className="rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-800">{data.message}</p>}
             </>

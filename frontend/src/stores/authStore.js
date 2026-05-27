@@ -4,6 +4,16 @@ import { authService } from '../services/authService'
 const savedToken = localStorage.getItem('optiacademic_token')
 const savedUser = localStorage.getItem('optiacademic_user')
 
+const readSavedUser = () => {
+    if (!savedUser) return null
+    try {
+        return JSON.parse(savedUser)
+    } catch {
+        localStorage.removeItem('optiacademic_user')
+        return null
+    }
+}
+
 const normalizeUser = (data) => {
     if (!data) return null
 
@@ -16,9 +26,10 @@ const normalizeUser = (data) => {
 
 export const useAuthStore = create((set, get) => ({
     token: savedToken || null,
-    user: savedUser ? JSON.parse(savedUser) : null,
+    user: readSavedUser(),
     isAuthenticated: Boolean(savedToken),
-    loading: false,
+    loading: Boolean(savedToken && !readSavedUser()),
+    initialized: !savedToken || Boolean(readSavedUser()),
 
     login: async (email, password) => {
         set({ loading: true })
@@ -44,11 +55,12 @@ export const useAuthStore = create((set, get) => ({
                 user: me,
                 loading: false,
                 isAuthenticated: true,
+                initialized: true,
             })
 
             return me
         } catch (error) {
-            set({ loading: false })
+            set({ loading: false, initialized: true })
             throw error
         }
     },
@@ -57,10 +69,12 @@ export const useAuthStore = create((set, get) => ({
         const { token } = get()
 
         if (!token) {
+            set({ initialized: true, loading: false })
             return null
         }
 
         try {
+            set({ loading: true })
             const meResponse = await authService.getMe()
             const me = normalizeUser(meResponse)
 
@@ -69,6 +83,8 @@ export const useAuthStore = create((set, get) => ({
             set({
                 user: me,
                 isAuthenticated: true,
+                loading: false,
+                initialized: true,
             })
 
             return me
@@ -87,6 +103,7 @@ export const useAuthStore = create((set, get) => ({
             user: null,
             isAuthenticated: false,
             loading: false,
+            initialized: true,
         })
     },
 }))

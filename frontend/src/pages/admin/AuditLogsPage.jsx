@@ -3,17 +3,33 @@ import { Download, ShieldCheck } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 import { auditLogService } from '../../services/auditLogService'
+import EmptyState from '../../components/common/EmptyState'
+import ErrorState from '../../components/common/ErrorState'
+import LoadingState from '../../components/common/LoadingState'
+import StatusBadge from '../../components/common/StatusBadge'
+import { safeArray } from '../../utils/safeData'
 
 export default function AuditLogsPage() {
     const [logs, setLogs] = useState([])
     const [total, setTotal] = useState(0)
     const [filters, setFilters] = useState({ action: '', entity_type: '', user_id: '' })
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
 
     const params = () => Object.fromEntries(Object.entries(filters).filter(([, value]) => value))
     const load = async () => {
-        const data = await auditLogService.list(params())
-        setLogs(data.logs)
-        setTotal(data.total)
+        setLoading(true)
+        setError(false)
+        try {
+            const data = await auditLogService.list(params())
+            setLogs(safeArray(data.logs))
+            setTotal(data.total || 0)
+        } catch (requestError) {
+            setError(true)
+            throw requestError
+        } finally {
+            setLoading(false)
+        }
     }
     useEffect(() => { load().catch(() => toast.error('No se pudo cargar la auditoria.')) }, [])
 
@@ -41,9 +57,11 @@ export default function AuditLogsPage() {
         <section className="overflow-hidden rounded-2xl border bg-white">
             <div className="overflow-x-auto"><table className="min-w-full text-sm">
                 <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500"><tr><th className="p-4">Fecha</th><th>Usuario</th><th>Rol</th><th>Accion</th><th>Entidad</th><th>Descripcion</th></tr></thead>
-                <tbody className="divide-y">{logs.map((item) => <tr key={item.id}><td className="p-4">{new Date(item.created_at).toLocaleString('es-PE')}</td><td>{item.user_id || '-'}</td><td>{item.user_role || '-'}</td><td className="font-semibold">{item.action}</td><td>{item.entity_type}{item.entity_id ? ` #${item.entity_id}` : ''}</td><td className="max-w-sm py-3 pr-4">{item.description}</td></tr>)}</tbody>
+                <tbody className="divide-y">{logs.map((item) => <tr key={item.id}><td className="p-4">{new Date(item.created_at).toLocaleString('es-PE')}</td><td>{item.user_id || '-'}</td><td>{item.user_role || '-'}</td><td className="font-semibold"><StatusBadge value={item.action} /></td><td>{item.entity_type}{item.entity_id ? ` #${item.entity_id}` : ''}</td><td className="max-w-sm py-3 pr-4">{item.description}</td></tr>)}</tbody>
             </table></div>
-            {!logs.length && <p className="p-8 text-center text-slate-500">No hay registros de auditoria.</p>}
+            {loading && <div className="p-6"><LoadingState title="Cargando auditoria..." /></div>}
+            {error && !loading && <div className="p-6"><ErrorState onRetry={() => load().catch(() => toast.error('No se pudo cargar la auditoria.'))} /></div>}
+            {!loading && !error && !logs.length && <div className="p-6"><EmptyState title="No hay registros de auditoria." /></div>}
         </section>
     </div>
 }

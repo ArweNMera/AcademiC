@@ -1,19 +1,20 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
+import LoadingState from '../common/LoadingState'
 
 export default function RoleRoute({ allowedRoles = [] }) {
-    const { user, isAuthenticated } = useAuthStore()
+    const { user, isAuthenticated, initialized, loading } = useAuthStore()
+
+    if (!initialized || loading) {
+        return <LoadingState title="Validando permisos..." text="Estamos cargando tu rol y sesion." />
+    }
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />
     }
 
     if (!user) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <p className="text-slate-600">Cargando usuario...</p>
-            </div>
-        )
+        return <LoadingState title="Cargando usuario..." text="Un momento mientras se recupera tu perfil." />
     }
 
     if (!allowedRoles.includes(user.role)) {

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '../../stores/authStore'
 import NotificationBell from '../notifications/NotificationBell'
+import ErrorBoundary from '../common/ErrorBoundary'
 
 const roleLabels = {
     ADMIN: 'Administrador',
@@ -442,7 +443,9 @@ export default function AppLayout() {
                 </header>
 
                 <section className="flex-1 overflow-y-auto p-8">
-                    <Outlet />
+                    <ErrorBoundary>
+                        <Outlet />
+                    </ErrorBoundary>
                 </section>
             </main>
         </div>

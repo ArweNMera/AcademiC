@@ -3,18 +3,34 @@ import { Bell, CheckCheck, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 import { notificationService } from '../../services/notificationService'
+import EmptyState from '../../components/common/EmptyState'
+import ErrorState from '../../components/common/ErrorState'
+import LoadingState from '../../components/common/LoadingState'
+import StatusBadge from '../../components/common/StatusBadge'
+import { safeArray } from '../../utils/safeData'
 
 export default function NotificationPage() {
     const [items, setItems] = useState([])
     const [filter, setFilter] = useState('')
     const [type, setType] = useState('')
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
 
     const load = async (readValue = filter, typeValue = type) => {
         const params = {}
         if (readValue !== '') params.is_read = readValue === 'read'
         if (typeValue) params.notification_type = typeValue
-        const data = await notificationService.listMine(params)
-        setItems(data.notifications)
+        setError(false)
+        setLoading(true)
+        try {
+            const data = await notificationService.listMine(params)
+            setItems(safeArray(data.notifications))
+        } catch (requestError) {
+            setError(true)
+            throw requestError
+        } finally {
+            setLoading(false)
+        }
     }
     useEffect(() => { load().catch(() => toast.error('No se pudieron cargar las notificaciones.')) }, [])
 
@@ -50,9 +66,11 @@ export default function NotificationPage() {
             </select>
         </section>
         <section className="space-y-3">
-            {items.map((item) => <article key={item.id} className={`flex justify-between gap-4 rounded-2xl border bg-white p-5 ${item.is_read ? '' : 'border-orange-200'}`}>
+            {loading && <LoadingState title="Cargando notificaciones..." />}
+            {error && !loading && <ErrorState onRetry={() => load().catch(() => toast.error('No se pudieron cargar las notificaciones.'))} />}
+            {!loading && !error && items.map((item) => <article key={item.id} className={`flex justify-between gap-4 rounded-2xl border bg-white p-5 ${item.is_read ? '' : 'border-orange-200'}`}>
                 <div>
-                    <div className="flex items-center gap-2"><span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold">{item.notification_type}</span>{!item.is_read && <span className="h-2 w-2 rounded-full bg-orange-600" />}</div>
+                    <div className="flex items-center gap-2"><StatusBadge value={item.notification_type} />{!item.is_read && <span className="h-2 w-2 rounded-full bg-orange-600" />}</div>
                     <h2 className="mt-3 font-bold text-slate-900">{item.title}</h2>
                     <p className="mt-1 text-sm text-slate-600">{item.message}</p>
                     <p className="mt-2 text-xs text-slate-400">{new Date(item.created_at).toLocaleString('es-PE')}</p>
@@ -62,7 +80,7 @@ export default function NotificationPage() {
                     <button onClick={() => remove(item.id)} className="rounded-lg border p-2 text-red-600"><Trash2 size={17} /></button>
                 </div>
             </article>)}
-            {!items.length && <div className="rounded-2xl border border-dashed bg-white p-12 text-center text-slate-500">No hay notificaciones para mostrar.</div>}
+            {!loading && !error && !items.length && <EmptyState title="No hay notificaciones para mostrar." />}
         </section>
     </div>
 }

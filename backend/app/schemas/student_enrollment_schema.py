@@ -5,6 +5,7 @@ class StudentCourseEnrollmentCreate(BaseModel):
     student_id: int = Field(..., gt=0)
     course_id: int = Field(..., gt=0)
     academic_period: str = Field(default="2026-1")
+    academic_period_id: int | None = Field(default=None, gt=0)
     status: str = Field(default="ENROLLED")
     is_active: bool = True
 
@@ -20,6 +21,7 @@ class StudentCourseEnrollmentResponse(BaseModel):
     student_id: int
     course_id: int
     academic_period: str
+    academic_period_id: int | None = None
     status: str
     is_active: bool
 

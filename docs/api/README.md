@@ -108,3 +108,20 @@ generador de `course_sections`.
 
 Para contratos de request/response y autorizacion vigente, Swagger es la
 referencia ejecutable.
+## Fase 3: CSP de ofertas y horarios personales
+
+### Coordinador y administrador
+
+- `POST /api/v1/institutional-csp/generate-from-offerings`: genera soluciones usando solo ofertas `READY`/`APPROVED`; retorna score explicable, resumen docente, uso de aulas y distribucion por ciclo.
+- `POST /api/v1/institutional-csp/save-offering-solution`: guarda la alternativa seleccionada como horario institucional `DRAFT` con bloques vinculados a `section_offering_id`.
+
+La publicacion se realiza posteriormente con el flujo seguro existente; no se publica desde el generador.
+
+### Estudiante
+
+- `GET /api/v1/students/me/enrolled-courses`: cursos asignados del periodo activo.
+- `GET /api/v1/students/me/published-sections`: secciones publicadas correspondientes a sus cursos asignados.
+- `POST /api/v1/student-csp/generate-from-enrollments`: alternativas sin cruces solo con esos cursos.
+- `POST /api/v1/student-csp/save-from-enrollments`: guarda la alternativa elegida con `generation_mode=ENROLLMENTS`.
+
+El flujo `/student-csp/preview` previo queda disponible como modo exploracion.

@@ -134,3 +134,15 @@ Swagger: <http://127.0.0.1:8000/docs>
 | `GET` | `/api/v1/environmental-impact` | Publico |
 | `GET` | `/api/v1/environmental-impact/summary` | Admin/coordinador |
 | `GET` | `/api/v1/sustainability` | Publico |
+## Fase 3: CSP desde ofertas
+
+El motor institucional puede generar horarios desde `section_offerings` en estado `READY` o `APPROVED` mediante `POST /api/v1/institutional-csp/generate-from-offerings`, y guardar una alternativa `DRAFT` con `POST /api/v1/institutional-csp/save-offering-solution`. La publicacion continua pasando por el endpoint seguro.
+
+El flujo estudiante asume cursos ya asignados: `GET /api/v1/students/me/enrolled-courses`, `GET /api/v1/students/me/published-sections`, `POST /api/v1/student-csp/generate-from-enrollments` y `POST /api/v1/student-csp/save-from-enrollments`.
+
+Seeds adicionales:
+
+```bash
+python seed_uc_isi_offerings_ready_demo.py
+python seed_uc_isi_student_enrollments_2026.py
+```

@@ -17,6 +17,8 @@ from app.schemas.academic_schema import (
 )
 from app.services.academic_service import CurriculumService
 from app.services.student_service import StudentService
+from app.schemas.enrollment_schedule_schema import EnrolledCourseResponse, PublishedEnrollmentSectionResponse
+from app.services.enrollment_schedule_service import EnrollmentScheduleService
 
 
 router = APIRouter()
@@ -104,6 +106,30 @@ def get_my_eligible_courses(
     current_user: User = Depends(require_roles(UserRole.STUDENT)),
 ):
     return CurriculumService(db).get_student_eligible_courses(current_user.id)
+
+
+@router.get(
+    "/me/enrolled-courses",
+    response_model=list[EnrolledCourseResponse],
+    summary="Listar cursos asignados del estudiante en el periodo activo",
+)
+def get_my_enrolled_courses(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.STUDENT)),
+):
+    return EnrollmentScheduleService(db).enrolled_courses(current_user.id)
+
+
+@router.get(
+    "/me/published-sections",
+    response_model=list[PublishedEnrollmentSectionResponse],
+    summary="Listar secciones publicadas disponibles para cursos asignados",
+)
+def get_my_published_sections(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.STUDENT)),
+):
+    return EnrollmentScheduleService(db).published_sections(current_user.id)
 
 
 @router.get(

@@ -20,7 +20,6 @@ import toast from 'react-hot-toast'
 
 import { studentCspService } from '../../services/studentCspService'
 import { scheduleService } from '../../services/scheduleService'
-import { sectionOfferingService } from '../../services/sectionOfferingService'
 
 const DAYS = {
     1: 'Lunes',
@@ -199,7 +198,7 @@ export default function StudentOfferPage() {
 
             const profile = await studentCspService.getMyStudentProfile()
             setStudentProfile(profile)
-            setPublishedSectionOfferings(await sectionOfferingService.getMyPublishedOfferings())
+            setPublishedSectionOfferings(await studentCspService.getMyPublishedSections())
 
             const selectedSchedule =
                 publishedSchedules.find((schedule) => {
@@ -480,8 +479,8 @@ export default function StudentOfferPage() {
                 <section className="rounded-3xl border border-emerald-200 bg-white p-5 shadow-sm">
                     <div className="mb-4">
                         <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">Oferta oficial publicada</p>
-                        <h2 className="text-xl font-black text-slate-900">Secciones disponibles para tu ciclo</h2>
-                        <p className="text-sm text-slate-500">Solo se muestran ofertas publicadas del periodo activo. El generador de horarios mantiene el horario institucional publicado como fuente de bloques.</p>
+                        <h2 className="text-xl font-black text-slate-900">Secciones de tus cursos asignados</h2>
+                        <p className="text-sm text-slate-500">Solo se muestran cursos matriculados o asignados con secciones publicadas del periodo activo.</p>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full text-sm">
@@ -490,7 +489,7 @@ export default function StudentOfferPage() {
                             </thead>
                             <tbody>
                                 {publishedSectionOfferings.map((offering) => (
-                                    <tr key={offering.id} className="border-t">
+                                    <tr key={offering.section_offering_id} className="border-t">
                                         <td className="p-3 font-semibold">{offering.course_name}</td>
                                         <td>{offering.section_code}</td>
                                         <td>{offering.teacher_name || 'Por asignar'}</td>

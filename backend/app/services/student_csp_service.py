@@ -8,6 +8,7 @@ from app.models.teacher import Teacher, TeacherAvailability   # ✅ Corregido
 from app.csp.student_scoring import StudentScoringEngine
 from app.csp.utils import overlaps_with_tolerance
 from app.models.course import Course, CourseSection
+from app.models.offering import SectionOffering
 from app.models.schedule import (
     AcademicSchedule,
     ScheduleBlock,
@@ -516,6 +517,15 @@ class StudentCSPService:
                 joinedload(StudentSchedule.selected_blocks)
                 .joinedload(StudentScheduleBlock.schedule_block)
                 .joinedload(ScheduleBlock.classroom),
+                joinedload(StudentSchedule.selected_blocks)
+                .joinedload(StudentScheduleBlock.schedule_block)
+                .joinedload(ScheduleBlock.section_offering)
+                .joinedload(SectionOffering.course),
+                joinedload(StudentSchedule.selected_blocks)
+                .joinedload(StudentScheduleBlock.schedule_block)
+                .joinedload(ScheduleBlock.section_offering)
+                .joinedload(SectionOffering.teacher)
+                .joinedload(Teacher.user),
             )
             .order_by(StudentSchedule.is_favorite.desc(), StudentSchedule.id.desc())
         )
@@ -1427,6 +1437,15 @@ class StudentCSPService:
                 joinedload(StudentSchedule.selected_blocks)
                 .joinedload(StudentScheduleBlock.schedule_block)
                 .joinedload(ScheduleBlock.classroom),
+                joinedload(StudentSchedule.selected_blocks)
+                .joinedload(StudentScheduleBlock.schedule_block)
+                .joinedload(ScheduleBlock.section_offering)
+                .joinedload(SectionOffering.course),
+                joinedload(StudentSchedule.selected_blocks)
+                .joinedload(StudentScheduleBlock.schedule_block)
+                .joinedload(ScheduleBlock.section_offering)
+                .joinedload(SectionOffering.teacher)
+                .joinedload(Teacher.user),
             )
             .filter(StudentSchedule.id == student_schedule_id)
             .first()
@@ -1521,6 +1540,7 @@ class StudentCSPService:
             "name": student_schedule.name,
             "score": student_schedule.score,
             "is_favorite": student_schedule.is_favorite,
+            "generation_mode": student_schedule.generation_mode,
             "total_credits": total_credits,
             "total_courses": len(course_ids),
             "total_blocks": len(blocks),
@@ -1551,8 +1571,9 @@ class StudentCSPService:
                 continue
 
             section = block.section
-            course = section.course if section else None
-            teacher = section.teacher if section else None
+            offering = block.section_offering
+            course = section.course if section else offering.course if offering else None
+            teacher = section.teacher if section else offering.teacher if offering else None
             teacher_user = teacher.user if teacher else None
             classroom = block.classroom
 
@@ -1560,7 +1581,8 @@ class StudentCSPService:
                 {
                     "schedule_block_id": block.id,
                     "section_id": block.section_id,
-                    "section_code": section.section_code if section else None,
+                    "section_offering_id": block.section_offering_id,
+                    "section_code": section.section_code if section else offering.section_code if offering else None,
                     "course_id": course.id if course else 0,
                     "course_code": course.code if course else None,
                     "course_name": course.name if course else None,

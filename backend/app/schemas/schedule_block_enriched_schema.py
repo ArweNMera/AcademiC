@@ -7,7 +7,8 @@ class ScheduleBlockEnrichedResponse(BaseModel):
     id: int
     schedule_id: int
 
-    section_id: int
+    section_id: int | None
+    section_offering_id: int | None = None
     section_code: str | None
 
     course_id: int | None

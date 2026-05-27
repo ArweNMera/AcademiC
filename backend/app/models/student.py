@@ -105,6 +105,12 @@ class StudentCourseEnrollment(Base, TimestampMixin):
         index=True,
     )
 
+    academic_period_id: Mapped[int | None] = mapped_column(
+        ForeignKey("academic_periods.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     status: Mapped[str] = mapped_column(
         String(30),
         nullable=False,
@@ -126,3 +132,5 @@ class StudentCourseEnrollment(Base, TimestampMixin):
         "Course",
         back_populates="student_enrollments",
     )
+
+    academic_period_entity = relationship("AcademicPeriod")

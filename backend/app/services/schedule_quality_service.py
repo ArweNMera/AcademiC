@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.models.classroom import Classroom
 from app.models.course import Course, CourseSection
-from app.models.schedule import AcademicSchedule, ScheduleBlock
+from app.models.offering import OfferingModality, SectionOffering
+from app.models.schedule import AcademicSchedule, ScheduleBlock, ScheduleSourceType
 from app.models.teacher import Teacher, TeacherAvailability
 
 
@@ -28,6 +29,14 @@ class ScheduleQualityService:
         allowed_days = allowed_days or [1, 2, 3, 4, 5, 6, 7]
 
         schedule = self._get_schedule(schedule_id)
+
+        if schedule.source_type == ScheduleSourceType.SECTION_OFFERINGS:
+            return self._get_offering_quality_report(
+                schedule=schedule,
+                allowed_days=allowed_days,
+                start_hour=start_hour,
+                end_hour=end_hour,
+            )
 
         sections_scope = self._get_sections_scope(
             career_filter=career_filter,
@@ -166,6 +175,88 @@ class ScheduleQualityService:
             .filter(ScheduleBlock.schedule_id == schedule_id)
             .all()
         )
+
+    def _get_offering_quality_report(self, schedule, allowed_days, start_hour, end_hour):
+        blocks = (
+            self.db.query(ScheduleBlock)
+            .options(
+                joinedload(ScheduleBlock.section_offering).joinedload(SectionOffering.course),
+                joinedload(ScheduleBlock.section_offering).joinedload(SectionOffering.teacher).joinedload(Teacher.user),
+                joinedload(ScheduleBlock.section_offering).joinedload(SectionOffering.requirements),
+                joinedload(ScheduleBlock.classroom),
+            )
+            .filter(ScheduleBlock.schedule_id == schedule.id)
+            .all()
+        )
+        issues = []
+        availability_rows = self.db.query(TeacherAvailability).filter(TeacherAvailability.is_available == True).all()
+        availability = {}
+        for row in availability_rows:
+            availability.setdefault(row.teacher_id, []).append(row)
+        for block in blocks:
+            offering = block.section_offering
+            context = self._block_context(block)
+            if not offering:
+                issues.append(self._issue("BLOCK_WITHOUT_OFFERING", "CRITICAL", "Bloque sin oferta", block, context))
+                continue
+            if not offering.teacher or not offering.teacher.user or not offering.teacher.user.is_active:
+                issues.append(self._issue("BLOCK_WITHOUT_TEACHER", "CRITICAL", "Bloque sin docente activo", block, context))
+            requires_room = offering.modality == OfferingModality.PRESENTIAL or (
+                offering.modality == OfferingModality.HYBRID
+                and any(item.requires_lab or item.required_classroom_type for item in offering.requirements)
+            )
+            if requires_room and not block.classroom:
+                issues.append(self._issue("BLOCK_WITHOUT_CLASSROOM", "CRITICAL", "Bloque sin aula requerida", block, context))
+            if block.classroom and (not block.classroom.is_active or block.classroom.capacity < offering.estimated_students):
+                issues.append(self._issue("INVALID_CLASSROOM", "CRITICAL", "Aula inactiva o sin capacidad", block, context))
+            if block.day_of_week not in allowed_days or block.start_time < start_hour or block.end_time > end_hour:
+                issues.append(self._issue("BLOCK_OUTSIDE_ALLOWED_TIME", "WARNING", "Bloque fuera del rango permitido", block, context))
+            teacher_slots = availability.get(offering.teacher_id, [])
+            if offering.teacher_id and not any(
+                row.day_of_week == block.day_of_week
+                and row.start_time <= block.start_time
+                and row.end_time >= block.end_time
+                for row in teacher_slots
+            ):
+                issues.append(self._issue("TEACHER_UNAVAILABLE_FOR_BLOCK", "CRITICAL", "Docente fuera de disponibilidad", block, context))
+        for index, first in enumerate(blocks):
+            for second in blocks[index + 1:]:
+                if first.day_of_week != second.day_of_week or not self._overlaps(
+                    first.start_time, first.end_time, second.start_time, second.end_time
+                ):
+                    continue
+                first_offering = first.section_offering
+                second_offering = second.section_offering
+                if first.classroom_id and first.classroom_id == second.classroom_id:
+                    issues.append(self._issue("CLASSROOM_TIME_CONFLICT", "CRITICAL", "Cruce de aula", first, self._block_context(first)))
+                if first_offering and second_offering and first_offering.teacher_id == second_offering.teacher_id:
+                    issues.append(self._issue("TEACHER_TIME_CONFLICT", "CRITICAL", "Cruce de docente", first, self._block_context(first)))
+                if first_offering and second_offering and first_offering.cycle_number == second_offering.cycle_number:
+                    issues.append(self._issue("CYCLE_TIME_CONFLICT", "CRITICAL", "Cruce de cursos del mismo ciclo", first, self._block_context(first)))
+        summary = self._build_summary(issues)
+        return {
+            "schedule_id": schedule.id,
+            "schedule_name": schedule.name,
+            "schedule_status": self._enum_to_str(schedule.status),
+            "career_filter": None,
+            "cycle_filter": [],
+            "course_ids": [],
+            "summary": summary,
+            "stats": {"total_blocks": len(blocks), "total_sections_scope": len({block.section_offering_id for block in blocks})},
+            "issues": issues,
+        }
+
+    @staticmethod
+    def _issue(code, severity, title, block, context):
+        return {
+            "code": code,
+            "severity": severity,
+            "title": title,
+            "detail": title,
+            "entity_type": "schedule_block",
+            "entity_id": block.id,
+            "context": context,
+        }
 
     def _validate_basic_block_integrity(
         self,
@@ -611,8 +702,9 @@ class ScheduleQualityService:
 
     def _block_context(self, block: ScheduleBlock):
         section = block.section
-        course = section.course if section else None
-        teacher = section.teacher if section else None
+        offering = block.section_offering
+        course = section.course if section else offering.course if offering else None
+        teacher = section.teacher if section else offering.teacher if offering else None
         teacher_user = teacher.user if teacher else None
         classroom = block.classroom
 
@@ -621,7 +713,8 @@ class ScheduleQualityService:
             "schedule_id": block.schedule_id,
 
             "section_id": block.section_id,
-            "section_code": section.section_code if section else None,
+            "section_offering_id": block.section_offering_id,
+            "section_code": section.section_code if section else offering.section_code if offering else None,
 
             "course_id": course.id if course else None,
             "course_code": course.code if course else None,

@@ -15,6 +15,7 @@ from app.models.schedule import (
 )
 from app.models.teacher import Teacher
 from app.models.classroom import Classroom
+from app.models.offering import SectionOffering
 
 # Schemas
 from app.schemas.schedule_block_schema import (
@@ -132,6 +133,11 @@ def get_enriched_schedule_blocks(
             .joinedload(CourseSection.teacher)
             .joinedload(Teacher.user),
             joinedload(ScheduleBlock.classroom),
+            joinedload(ScheduleBlock.section_offering)
+            .joinedload(SectionOffering.course),
+            joinedload(ScheduleBlock.section_offering)
+            .joinedload(SectionOffering.teacher)
+            .joinedload(Teacher.user),
         )
         .filter(ScheduleBlock.schedule_id == schedule_id)
         .order_by(ScheduleBlock.day_of_week, ScheduleBlock.start_time)
@@ -144,8 +150,9 @@ def get_enriched_schedule_blocks(
 
     for block in blocks:
         section = block.section
-        course = section.course if section else None
-        teacher = section.teacher if section else None
+        offering = block.section_offering
+        course = section.course if section else offering.course if offering else None
+        teacher = section.teacher if section else offering.teacher if offering else None
         teacher_user = teacher.user if teacher else None
         classroom = block.classroom
 
@@ -155,7 +162,8 @@ def get_enriched_schedule_blocks(
                 "schedule_id": block.schedule_id,
 
                 "section_id": block.section_id,
-                "section_code": section.section_code if section else None,
+                "section_offering_id": block.section_offering_id,
+                "section_code": section.section_code if section else offering.section_code if offering else None,
 
                 "course_id": course.id if course else None,
                 "course_code": course.code if course else None,

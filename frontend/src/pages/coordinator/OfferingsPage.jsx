@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Filter, Plus, Trash2 } from 'lucide-react'
+import { Filter, Plus, Sparkles, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { academicPeriodService } from '../../services/academicPeriodService'
@@ -55,6 +55,7 @@ export default function OfferingsPage() {
         <header className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <div><h1 className="text-2xl font-bold">Ofertas por periodo</h1><p className="text-slate-500">Secciones abiertas desde la malla curricular.</p></div>
             <div className="flex gap-2">
+                <button onClick={() => navigate('/coordinator/csp')} className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 font-semibold text-white"><Sparkles size={17} /> Generar horario desde ofertas</button>
                 <button onClick={bulk} className="rounded-xl border bg-white px-4 py-2 font-semibold">Crear ciclos 1-3</button>
                 <button onClick={() => navigate('/coordinator/offerings/create')} className="flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 font-semibold text-white"><Plus size={17} /> Nueva oferta</button>
             </div>

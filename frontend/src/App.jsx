@@ -37,6 +37,7 @@ import CoordinatorDashboard from './pages/coordinator/CoordinatorDashboard'
 import OfferingsPage from './pages/coordinator/OfferingsPage'
 import OfferingFormPage from './pages/coordinator/OfferingFormPage'
 import OfferingConflictsPage from './pages/coordinator/OfferingConflictsPage'
+import CoordinatorCspPage from './pages/coordinator/CoordinatorCspPage'
 
 // Páginas: Estudiantes
 import MySavedSchedulesPage from './pages/student/MySavedSchedulesPage'
@@ -152,6 +153,7 @@ export default function App() {
                             <Route path="/coordinator/offerings/create" element={<OfferingFormPage />} />
                             <Route path="/coordinator/offerings/:id" element={<OfferingFormPage />} />
                             <Route path="/coordinator/conflicts" element={<OfferingConflictsPage />} />
+                            <Route path="/coordinator/csp" element={<CoordinatorCspPage />} />
                             <Route path="/admin/schedules" element={<InstitutionalCSPPage />} />
                             <Route path="/admin/schedule-view" element={<InstitutionalScheduleViewPage />} />
                             <Route path="/admin/schedule-quality" element={<ScheduleQualityPage />} />

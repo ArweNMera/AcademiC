@@ -16,6 +16,13 @@ from app.schemas.student_csp_schema import (
     StudentSavedScheduleSummary,
 )
 from app.services.student_csp_service import StudentCSPService
+from app.schemas.enrollment_schedule_schema import (
+    EnrollmentScheduleGenerateRequest,
+    EnrollmentScheduleGenerateResponse,
+    EnrollmentScheduleSaveRequest,
+    EnrollmentScheduleSaveResponse,
+)
+from app.services.enrollment_schedule_service import EnrollmentScheduleService
 
 router = APIRouter()
 
@@ -210,3 +217,29 @@ def mark_student_schedule_as_favorite(
         student_schedule_id=student_schedule_id,
         current_user=current_user,
     )
+
+
+@router.post(
+    "/generate-from-enrollments",
+    response_model=EnrollmentScheduleGenerateResponse,
+    summary="Generar horario personal desde cursos asignados y ofertas publicadas",
+)
+def generate_from_enrollments(
+    request: EnrollmentScheduleGenerateRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.STUDENT)),
+):
+    return EnrollmentScheduleService(db).generate(request, current_user.id)
+
+
+@router.post(
+    "/save-from-enrollments",
+    response_model=EnrollmentScheduleSaveResponse,
+    summary="Guardar horario personal generado desde cursos asignados",
+)
+def save_from_enrollments(
+    request: EnrollmentScheduleSaveRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.STUDENT)),
+):
+    return EnrollmentScheduleService(db).save(request, current_user.id)

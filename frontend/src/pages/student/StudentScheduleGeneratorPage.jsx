@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
+    BookOpen,
     CalendarDays,
     CheckCircle,
     Loader2,
@@ -68,6 +69,9 @@ export default function StudentScheduleGeneratorPage() {
     const [search, setSearch] = useState('')
     const [preview, setPreview] = useState(null)
     const [savedSchedule, setSavedSchedule] = useState(null)
+    const [enrolledCourses, setEnrolledCourses] = useState([])
+    const [enrollmentPreview, setEnrollmentPreview] = useState(null)
+    const [enrollmentSaving, setEnrollmentSaving] = useState(false)
     const [selectedSolutionIndex, setSelectedSolutionIndex] = useState(0)
 
     const [form, setForm] = useState({
@@ -223,6 +227,7 @@ export default function StudentScheduleGeneratorPage() {
                 detectedStudent = await studentCspService.getMyStudentProfile()
                 setStudentProfile(detectedStudent)
                 setStudents([detectedStudent])
+                setEnrolledCourses(await studentCspService.getMyEnrolledCourses())
             }
 
             if (isAdminOrCoordinator) {
@@ -496,6 +501,36 @@ export default function StudentScheduleGeneratorPage() {
         }
     }
 
+    const handleEnrollmentGenerate = async () => {
+        setLoadingAction('enrollment-preview')
+        try {
+            const data = await studentCspService.generateFromEnrollments({ max_solutions: 5 })
+            setEnrollmentPreview(data)
+            toast.success('Horario generado con tus cursos matriculados')
+        } catch (error) {
+            toast.error(getErrorMessage(error, 'No se pudo generar desde matriculas'))
+        } finally {
+            setLoadingAction(null)
+        }
+    }
+
+    const handleEnrollmentSave = async (solutionIndex) => {
+        setEnrollmentSaving(true)
+        try {
+            await studentCspService.saveFromEnrollments({
+                solution_index: solutionIndex,
+                max_solutions: 5,
+                name: 'Mi horario con cursos matriculados',
+                is_favorite: true,
+            })
+            toast.success('Horario de matriculas guardado como favorito')
+        } catch (error) {
+            toast.error(getErrorMessage(error, 'No se pudo guardar el horario'))
+        } finally {
+            setEnrollmentSaving(false)
+        }
+    }
+
     useEffect(() => {
         loadInitialData()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -555,6 +590,17 @@ export default function StudentScheduleGeneratorPage() {
             </section>
 
             <StudentFlowGuide currentStep={preview ? 'compare' : 'generator'} />
+
+            {isStudentUser && (
+                <EnrollmentModePanel
+                    courses={enrolledCourses}
+                    preview={enrollmentPreview}
+                    loading={loadingAction === 'enrollment-preview'}
+                    saving={enrollmentSaving}
+                    onGenerate={handleEnrollmentGenerate}
+                    onSave={handleEnrollmentSave}
+                />
+            )}
             
             <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
                 <div className="space-y-6 xl:col-span-1">
@@ -688,6 +734,35 @@ export default function StudentScheduleGeneratorPage() {
                 </div>
             </section>
         </div>
+    )
+}
+
+function EnrollmentModePanel({ courses, preview, loading, saving, onGenerate, onSave }) {
+    return (
+        <section className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div>
+                    <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">Modo real</p>
+                    <h2 className="text-xl font-black text-slate-900">Generar horario con mis cursos matriculados</h2>
+                    <p className="mt-1 text-sm text-slate-600">{courses.length} cursos asignados en el periodo activo. Solo se usan secciones publicadas.</p>
+                </div>
+                <button onClick={onGenerate} disabled={loading} className="flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 font-bold text-white disabled:opacity-60">
+                    {loading ? <Loader2 size={18} className="animate-spin" /> : <BookOpen size={18} />} Generar modo real
+                </button>
+            </div>
+            {preview?.solutions?.length > 0 && (
+                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                    {preview.solutions.map((solution) => (
+                        <div key={solution.solution_index} className="rounded-2xl bg-white p-4 shadow-sm">
+                            <p className="font-black">Alternativa {solution.solution_index + 1} - Score {solution.score}</p>
+                            <p className="text-sm text-slate-500">{solution.total_courses} cursos, {solution.total_credits} creditos, {solution.blocks.length} bloques</p>
+                            <button onClick={() => onSave(solution.solution_index)} disabled={saving} className="mt-3 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Guardar favorito</button>
+                        </div>
+                    ))}
+                </div>
+            )}
+            <p className="mt-5 border-t border-emerald-200 pt-4 text-sm text-slate-600">Modo exploracion: el configurador inferior conserva la simulacion anterior sobre oferta publicada.</p>
+        </section>
     )
 }
 

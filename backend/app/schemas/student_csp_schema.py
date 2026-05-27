@@ -134,7 +134,8 @@ class StudentCSPSaveSelectedRequest(StudentCSPPreviewRequest):
 class StudentScheduleBlockPreview(BaseModel):
     schedule_block_id: int | None = None
 
-    section_id: int
+    section_id: int | None = None
+    section_offering_id: int | None = None
     section_code: str | None
 
     course_id: int
@@ -233,6 +234,7 @@ class StudentSavedScheduleSummary(BaseModel):
     name: str
     score: float
     is_favorite: bool
+    generation_mode: str = "EXPLORATION"
     total_credits: int
     total_courses: int
     total_blocks: int
@@ -245,6 +247,7 @@ class StudentSavedScheduleDetail(BaseModel):
     name: str
     score: float
     is_favorite: bool
+    generation_mode: str = "EXPLORATION"
     total_credits: int
     total_courses: int
     total_blocks: int

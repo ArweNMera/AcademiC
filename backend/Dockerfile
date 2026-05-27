@@ -16,6 +16,8 @@ COPY public ./public
 COPY seed_realistic_demo.py .
 COPY seed_uc_ingenieria_sistemas_curriculum.py .
 COPY seed_uc_isi_offerings_2026.py .
+COPY seed_uc_isi_offerings_ready_demo.py .
+COPY seed_uc_isi_student_enrollments_2026.py .
 
 EXPOSE 8000
 

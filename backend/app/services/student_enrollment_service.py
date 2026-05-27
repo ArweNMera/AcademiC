@@ -284,6 +284,7 @@ class StudentEnrollmentService:
             "student_id": enrollment.student_id,
             "course_id": enrollment.course_id,
             "academic_period": enrollment.academic_period,
+            "academic_period_id": enrollment.academic_period_id,
             "status": enrollment.status,
             "is_active": enrollment.is_active,
             "course_code": course.code if course else None,

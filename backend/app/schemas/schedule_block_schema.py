@@ -41,7 +41,8 @@ class ScheduleBlockUpdate(BaseModel):
 class ScheduleBlockResponse(BaseModel):
     id: int
     schedule_id: int
-    section_id: int
+    section_id: int | None
+    section_offering_id: int | None = None
     classroom_id: int | None
     day_of_week: int
     start_time: time

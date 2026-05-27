@@ -87,3 +87,6 @@ La pantalla administrativa permite filtrar cursos por ciclo/tipo, marcar
 electivos sugeridos y mantener prerrequisitos. La pantalla estudiantil muestra
 la malla activa y trata los prerrequisitos `RECOMMENDED` como orientación, no
 como bloqueo. El cliente HTTP continúa usando el Axios unificado con JWT.
+## Fase 3
+
+El coordinador dispone de `/coordinator/csp` para generar y guardar horarios institucionales desde ofertas academicas. El estudiante ve en `/student/offer` solo secciones publicadas de cursos asignados y en `/student/schedule-generator` puede usar el modo real **Generar horario con mis cursos matriculados**, manteniendo el modo exploracion previo.

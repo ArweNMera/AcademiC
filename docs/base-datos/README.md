@@ -57,3 +57,8 @@ capacidad y estudiantes estimados son no negativos y el ciclo se limita a
 La migracion es
 `f8530a1b2c7d_add_academic_offerings_domain.py` y depende del dominio
 curricular de Fase 1.
+## Extension Fase 3
+
+`academic_schedules.source_type` identifica horarios basados en `COURSE_SECTIONS` o `SECTION_OFFERINGS`. Los horarios originados en ofertas guardan periodo, programa, plan, estrategia y score; sus bloques usan `schedule_blocks.section_offering_id`.
+
+`student_course_enrollments.academic_period_id` enlaza de forma aditiva los cursos asignados con el periodo academico, preservando `academic_period` para compatibilidad. `student_schedules.generation_mode=ENROLLMENTS` identifica horarios personales creados desde asignaciones institucionales.

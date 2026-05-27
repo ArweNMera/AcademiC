@@ -440,6 +440,11 @@ function SavedScheduleCard({
                                 Elegido
                             </span>
                         )}
+                        {schedule.generation_mode === 'ENROLLMENTS' && (
+                            <span className="rounded-lg bg-emerald-100 px-2 py-1 text-xs font-bold text-emerald-700">
+                                Cursos matriculados
+                            </span>
+                        )}
                     </div>
 
                     <p className="mt-1 text-xs text-slate-500">

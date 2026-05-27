@@ -10,9 +10,14 @@ from app.schemas.csp_schema import (
     InstitutionalCSPPreviewResponse,
     InstitutionalCSPSaveSelectedRequest,
 )
-from app.schemas.offering_schema import OfferingsCSPPrepareRequest, OfferingsCSPPrepareResponse
+from app.schemas.offering_csp_schema import (
+    OfferingCSPGenerateRequest,
+    OfferingCSPGenerateResponse,
+    OfferingCSPSaveSolutionRequest,
+    OfferingCSPSaveSolutionResponse,
+)
 from app.services.institutional_csp_service import InstitutionalCSPService
-from app.services.offering_service import OfferingsCSPPreparationService
+from app.services.offering_csp_service import OfferingCSPService
 
 
 router = APIRouter()
@@ -20,15 +25,28 @@ router = APIRouter()
 
 @router.post(
     "/generate-from-offerings",
-    response_model=OfferingsCSPPrepareResponse,
-    summary="Validar ofertas academicas como fuente de entrada CSP",
+    response_model=OfferingCSPGenerateResponse,
+    summary="Generar soluciones CSP institucionales desde ofertas academicas",
 )
 def generate_from_offerings(
-    request: OfferingsCSPPrepareRequest,
+    request: OfferingCSPGenerateRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.COORDINATOR)),
 ):
-    return OfferingsCSPPreparationService(db).prepare(request)
+    return OfferingCSPService(db).generate(request)
+
+
+@router.post(
+    "/save-offering-solution",
+    response_model=OfferingCSPSaveSolutionResponse,
+    summary="Guardar como DRAFT una solucion CSP basada en ofertas",
+)
+def save_offering_solution(
+    request: OfferingCSPSaveSolutionRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.COORDINATOR)),
+):
+    return OfferingCSPService(db).save_solution(request, current_user)
 
 
 @router.post(

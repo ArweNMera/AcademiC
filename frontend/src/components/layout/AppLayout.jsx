@@ -44,6 +44,7 @@ const pageTitles = {
     '/coordinator/offerings': 'Oferta academica',
     '/coordinator/offerings/create': 'Crear oferta',
     '/coordinator/conflicts': 'Conflictos de oferta',
+    '/coordinator/csp': 'CSP desde ofertas',
     '/admin/schedules': 'Generador CSP institucional',
     '/admin/student-generator': 'Simulador estudiantil',
     '/admin/student-schedules': 'Horarios de estudiantes',
@@ -179,6 +180,9 @@ export default function AppLayout() {
                             <NavItem to="/coordinator/conflicts" icon={<ClipboardCheck size={19} />}>
                                 Conflictos de oferta
                             </NavItem>
+                            <NavItem to="/coordinator/csp" icon={<Sparkles size={19} />}>
+                                CSP desde ofertas
+                            </NavItem>
 
                             <SidebarGroupTitle>Horarios</SidebarGroupTitle>
 
@@ -231,6 +235,9 @@ export default function AppLayout() {
                                 Conflictos
                             </NavItem>
                             <SidebarGroupTitle>Planificacion</SidebarGroupTitle>
+                            <NavItem to="/coordinator/csp" icon={<Sparkles size={19} />}>
+                                CSP desde ofertas
+                            </NavItem>
                             <NavItem to="/admin/schedules" icon={<CalendarDays size={19} />}>
                                 Generar horario
                             </NavItem>

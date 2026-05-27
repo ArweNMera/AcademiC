@@ -1,7 +1,7 @@
 import enum
 from datetime import time
 
-from sqlalchemy import Boolean, Enum, Float, ForeignKey, Integer, String, Time
+from sqlalchemy import Boolean, Enum, Float, ForeignKey, Integer, String, Text, Time
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -19,6 +19,11 @@ class ScheduleStatus(str, enum.Enum):
 class ScheduleType(str, enum.Enum):
     INSTITUTIONAL = "INSTITUTIONAL"
     STUDENT = "STUDENT"
+
+
+class ScheduleSourceType(str, enum.Enum):
+    COURSE_SECTIONS = "COURSE_SECTIONS"
+    SECTION_OFFERINGS = "SECTION_OFFERINGS"
 
 
 class AcademicSchedule(Base, TimestampMixin):
@@ -40,6 +45,30 @@ class AcademicSchedule(Base, TimestampMixin):
         String(30),
         nullable=False,
     )  # Ejemplo: 2026-1
+
+    source_type: Mapped[ScheduleSourceType] = mapped_column(
+        Enum(ScheduleSourceType),
+        nullable=False,
+        default=ScheduleSourceType.COURSE_SECTIONS,
+    )
+
+    academic_period_id: Mapped[int | None] = mapped_column(
+        ForeignKey("academic_periods.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    academic_program_id: Mapped[int | None] = mapped_column(
+        ForeignKey("academic_programs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    curriculum_plan_id: Mapped[int | None] = mapped_column(
+        ForeignKey("curriculum_plans.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
     schedule_type: Mapped[ScheduleType] = mapped_column(
         Enum(ScheduleType),
@@ -63,6 +92,16 @@ class AcademicSchedule(Base, TimestampMixin):
         default=0.0,
     )
 
+    generation_strategy: Mapped[str | None] = mapped_column(
+        String(30),
+        nullable=True,
+    )
+
+    quality_score: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,
@@ -82,6 +121,10 @@ class AcademicSchedule(Base, TimestampMixin):
         cascade="all, delete-orphan",
     )
 
+    academic_period_entity = relationship("AcademicPeriod")
+    academic_program = relationship("AcademicProgram")
+    curriculum_plan = relationship("CurriculumPlan")
+
 
 class ScheduleBlock(Base, TimestampMixin):
     __tablename__ = "schedule_blocks"
@@ -98,9 +141,21 @@ class ScheduleBlock(Base, TimestampMixin):
         nullable=False,
     )
 
-    section_id: Mapped[int] = mapped_column(
+    section_id: Mapped[int | None] = mapped_column(
         ForeignKey("course_sections.id"),
-        nullable=False,
+        nullable=True,
+    )
+
+    section_offering_id: Mapped[int | None] = mapped_column(
+        ForeignKey("section_offerings.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    section_requirement_id: Mapped[int | None] = mapped_column(
+        ForeignKey("section_requirements.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
     )
 
     classroom_id: Mapped[int | None] = mapped_column(
@@ -123,6 +178,10 @@ class ScheduleBlock(Base, TimestampMixin):
         nullable=False,
     )
 
+    conflict_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    quality_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+
     # Relaciones
     schedule = relationship(
         "AcademicSchedule",
@@ -138,6 +197,9 @@ class ScheduleBlock(Base, TimestampMixin):
         "Classroom",
         back_populates="schedule_blocks",
     )
+
+    section_offering = relationship("SectionOffering", back_populates="schedule_blocks")
+    section_requirement = relationship("SectionRequirement", back_populates="schedule_blocks")
 
 
 class StudentSchedule(Base, TimestampMixin):
@@ -176,6 +238,12 @@ class StudentSchedule(Base, TimestampMixin):
         Boolean,
         nullable=False,
         default=False,
+    )
+
+    generation_mode: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+        default="EXPLORATION",
     )
 
     # Relaciones

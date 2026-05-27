@@ -149,6 +149,8 @@ class SectionOfferingService:
             self.db.flush()
             if requested_status is not None:
                 self._transition(item, requested_status)
+            else:
+                self._validate_target_status(item, item.status)
             self.db.commit()
         except IntegrityError as error:
             self.db.rollback()

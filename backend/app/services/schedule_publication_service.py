@@ -3,7 +3,8 @@ from datetime import time
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.models.schedule import AcademicSchedule, ScheduleStatus
+from app.models.offering import OfferingStatus, SectionOffering
+from app.models.schedule import AcademicSchedule, ScheduleBlock, ScheduleSourceType, ScheduleStatus
 from app.services.data_readiness_service import DataReadinessService
 from app.services.schedule_quality_service import ScheduleQualityService
 
@@ -28,10 +29,16 @@ class SchedulePublicationService:
 
         previous_status = self._enum_to_str(schedule.status)
 
-        readiness = self.readiness_service.get_readiness_report(
-            career_filter=career_filter,
-            academic_period=schedule.academic_period,
-        )
+        if schedule.source_type == ScheduleSourceType.SECTION_OFFERINGS:
+            readiness = {
+                "summary": {"status": "READY", "critical_checks": 0},
+                "checks": [],
+            }
+        else:
+            readiness = self.readiness_service.get_readiness_report(
+                career_filter=career_filter,
+                academic_period=schedule.academic_period,
+            )
         readiness_summary = readiness["summary"]
         readiness_critical_checks = int(
             readiness_summary.get("critical_checks", 0)
@@ -110,6 +117,16 @@ class SchedulePublicationService:
             )
 
         schedule.status = ScheduleStatus.PUBLISHED
+        if schedule.source_type == ScheduleSourceType.SECTION_OFFERINGS:
+            offering_ids = [
+                row[0] for row in self.db.query(ScheduleBlock.section_offering_id)
+                .filter(ScheduleBlock.schedule_id == schedule.id, ScheduleBlock.section_offering_id.isnot(None))
+                .distinct()
+                .all()
+            ]
+            self.db.query(SectionOffering).filter(SectionOffering.id.in_(offering_ids)).update(
+                {"status": OfferingStatus.PUBLISHED}, synchronize_session=False
+            )
 
         self.db.add(schedule)
         self.db.commit()

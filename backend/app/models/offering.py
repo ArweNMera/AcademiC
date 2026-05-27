@@ -112,6 +112,7 @@ class SectionOffering(Base, TimestampMixin):
     conflicts = relationship(
         "OfferingConflict", back_populates="section_offering", passive_deletes=True
     )
+    schedule_blocks = relationship("ScheduleBlock", back_populates="section_offering")
 
 
 class SectionRequirement(Base, TimestampMixin):
@@ -134,6 +135,7 @@ class SectionRequirement(Base, TimestampMixin):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     section_offering = relationship("SectionOffering", back_populates="requirements")
+    schedule_blocks = relationship("ScheduleBlock", back_populates="section_requirement")
 
 
 class OfferingConflict(Base, TimestampMixin):

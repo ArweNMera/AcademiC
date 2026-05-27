@@ -52,4 +52,24 @@ export const studentCspService = {
 
         return response.data
     },
+
+    async getMyEnrolledCourses() {
+        const response = await api.get('/students/me/enrolled-courses')
+        return response.data
+    },
+
+    async getMyPublishedSections() {
+        const response = await api.get('/students/me/published-sections')
+        return response.data
+    },
+
+    async generateFromEnrollments(payload = {}) {
+        const response = await api.post('/student-csp/generate-from-enrollments', payload)
+        return response.data
+    },
+
+    async saveFromEnrollments(payload) {
+        const response = await api.post('/student-csp/save-from-enrollments', payload)
+        return response.data
+    },
 }

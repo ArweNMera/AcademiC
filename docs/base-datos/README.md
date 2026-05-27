@@ -66,3 +66,10 @@ curricular de Fase 1.
 ## Solicitudes de cambio docente
 
 `schedule_change_requests` enlaza opcionalmente docente, bloque publicado, oferta y periodo. Registra tipo, franja actual/solicitada, razon, estado y respuesta de coordinacion. La tabla es trazabilidad de decisiones: no dispara modificaciones automaticas del horario.
+
+## Reportes De Fase 5
+
+La Fase 5 no incorpora tablas ni migraciones: agrega consultas agregadas
+sobre periodos, ofertas, horarios, bloques, docentes, aulas, estudiantes,
+solicitudes de cambio y metricas ambientales. Los reportes conservan los
+datos operativos como fuente unica y no duplican indicadores persistidos.

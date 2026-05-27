@@ -154,3 +154,21 @@ El docente consume solamente informacion propia bajo `/api/v1/teachers/me`: dash
 ```bash
 python seed_teacher_portal_demo.py
 ```
+
+## Fase 5: Reportes Y Panel Ejecutivo
+
+`ADMIN` y `COORDINATOR` pueden consultar indicadores bajo
+`/api/v1/reports`: resumen ejecutivo, carga docente, uso de aulas, estado de
+oferta, conflictos, horarios, estudiantes, solicitudes y sostenibilidad.
+Los reportes usan por defecto el periodo activo y aceptan
+`academic_period_id` cuando aplica.
+
+Exportaciones CSV disponibles:
+
+```text
+/api/v1/reports/teacher-load/export.csv
+/api/v1/reports/classroom-usage/export.csv
+/api/v1/reports/offering-status/export.csv
+/api/v1/reports/conflicts/export.csv
+/api/v1/reports/students/export.csv
+```

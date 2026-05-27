@@ -45,6 +45,8 @@ import OfferingFormPage from './pages/coordinator/OfferingFormPage'
 import OfferingConflictsPage from './pages/coordinator/OfferingConflictsPage'
 import CoordinatorCspPage from './pages/coordinator/CoordinatorCspPage'
 import CoordinatorChangeRequestsPage from './pages/coordinator/CoordinatorChangeRequestsPage'
+import ExecutiveDashboardPage from './pages/reports/ExecutiveDashboardPage'
+import ReportDetailPage from './pages/reports/ReportDetailPage'
 
 // Páginas: Estudiantes
 import MySavedSchedulesPage from './pages/student/MySavedSchedulesPage'
@@ -138,6 +140,15 @@ export default function App() {
                         {/* ADMIN */}
                         <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
                             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+                            <Route path="/admin/executive-dashboard" element={<ExecutiveDashboardPage />} />
+                            <Route path="/admin/reports/teacher-load" element={<ReportDetailPage reportType="teacher-load" />} />
+                            <Route path="/admin/reports/classroom-usage" element={<ReportDetailPage reportType="classroom-usage" />} />
+                            <Route path="/admin/reports/offerings" element={<ReportDetailPage reportType="offerings" />} />
+                            <Route path="/admin/reports/conflicts" element={<ReportDetailPage reportType="conflicts" />} />
+                            <Route path="/admin/reports/schedules" element={<ReportDetailPage reportType="schedules" />} />
+                            <Route path="/admin/reports/students" element={<ReportDetailPage reportType="students" />} />
+                            <Route path="/admin/reports/change-requests" element={<ReportDetailPage reportType="change-requests" />} />
+                            <Route path="/admin/reports/sustainability" element={<ReportDetailPage reportType="sustainability" />} />
                             <Route path="/admin/environmental-impact" element={<EnvironmentalImpactPage />} />
 
                             <Route path="/admin/users" element={<UsersPage />} />
@@ -166,6 +177,13 @@ export default function App() {
                             <Route path="/coordinator/conflicts" element={<OfferingConflictsPage />} />
                             <Route path="/coordinator/csp" element={<CoordinatorCspPage />} />
                             <Route path="/coordinator/change-requests" element={<CoordinatorChangeRequestsPage />} />
+                            <Route path="/coordinator/reports" element={<ExecutiveDashboardPage />} />
+                            <Route path="/coordinator/reports/teacher-load" element={<ReportDetailPage reportType="teacher-load" />} />
+                            <Route path="/coordinator/reports/classroom-usage" element={<ReportDetailPage reportType="classroom-usage" />} />
+                            <Route path="/coordinator/reports/offerings" element={<ReportDetailPage reportType="offerings" />} />
+                            <Route path="/coordinator/reports/conflicts" element={<ReportDetailPage reportType="conflicts" />} />
+                            <Route path="/coordinator/reports/schedules" element={<ReportDetailPage reportType="schedules" />} />
+                            <Route path="/coordinator/reports/change-requests" element={<ReportDetailPage reportType="change-requests" />} />
                             <Route path="/admin/schedules" element={<InstitutionalCSPPage />} />
                             <Route path="/admin/schedule-view" element={<InstitutionalScheduleViewPage />} />
                             <Route path="/admin/schedule-quality" element={<ScheduleQualityPage />} />

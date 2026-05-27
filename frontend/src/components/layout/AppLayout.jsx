@@ -28,6 +28,15 @@ const roleLabels = {
 
 const pageTitles = {
     '/admin/dashboard': 'Dashboard institucional',
+    '/admin/executive-dashboard': 'Panel ejecutivo',
+    '/admin/reports/teacher-load': 'Reporte de carga docente',
+    '/admin/reports/classroom-usage': 'Reporte de uso de aulas',
+    '/admin/reports/offerings': 'Reporte de ofertas',
+    '/admin/reports/conflicts': 'Reporte de conflictos',
+    '/admin/reports/schedules': 'Reporte de horarios',
+    '/admin/reports/students': 'Reporte de estudiantes',
+    '/admin/reports/change-requests': 'Reporte de solicitudes docentes',
+    '/admin/reports/sustainability': 'Reporte de sostenibilidad',
     '/admin/environmental-impact': 'Impacto ambiental',
     '/admin/data-readiness': 'Preparación de datos',
     '/admin/users': 'Usuarios',
@@ -46,6 +55,13 @@ const pageTitles = {
     '/coordinator/conflicts': 'Conflictos de oferta',
     '/coordinator/csp': 'CSP desde ofertas',
     '/coordinator/change-requests': 'Solicitudes docentes',
+    '/coordinator/reports': 'Reportes academicos',
+    '/coordinator/reports/teacher-load': 'Reporte de carga docente',
+    '/coordinator/reports/classroom-usage': 'Reporte de uso de aulas',
+    '/coordinator/reports/offerings': 'Reporte de ofertas',
+    '/coordinator/reports/conflicts': 'Reporte de conflictos',
+    '/coordinator/reports/schedules': 'Reporte de horarios',
+    '/coordinator/reports/change-requests': 'Reporte de solicitudes docentes',
     '/admin/schedules': 'Generador CSP institucional',
     '/admin/student-generator': 'Simulador estudiantil',
     '/admin/student-schedules': 'Horarios de estudiantes',
@@ -122,6 +138,35 @@ export default function AppLayout() {
 
                     {user?.role === 'ADMIN' && (
                         <>
+                            <SidebarGroupTitle>Analitica</SidebarGroupTitle>
+
+                            <NavItem to="/admin/executive-dashboard" icon={<LayoutDashboard size={19} />}>
+                                Panel ejecutivo
+                            </NavItem>
+                            <NavItem to="/admin/reports/teacher-load" icon={<ClipboardList size={19} />}>
+                                Carga docente
+                            </NavItem>
+                            <NavItem to="/admin/reports/classroom-usage" icon={<Building2 size={19} />}>
+                                Uso de aulas
+                            </NavItem>
+                            <NavItem to="/admin/reports/offerings" icon={<Layers size={19} />}>
+                                Ofertas
+                            </NavItem>
+                            <NavItem to="/admin/reports/conflicts" icon={<ClipboardCheck size={19} />}>
+                                Conflictos
+                            </NavItem>
+                            <NavItem to="/admin/reports/schedules" icon={<CalendarDays size={19} />}>
+                                Horarios
+                            </NavItem>
+                            <NavItem to="/admin/reports/students" icon={<Users size={19} />}>
+                                Estudiantes
+                            </NavItem>
+                            <NavItem to="/admin/reports/change-requests" icon={<ClipboardList size={19} />}>
+                                Solicitudes docentes
+                            </NavItem>
+                            <NavItem to="/admin/reports/sustainability" icon={<Leaf size={19} />}>
+                                Sostenibilidad
+                            </NavItem>
                             <SidebarGroupTitle>Gestión institucional</SidebarGroupTitle>
 
                             <NavItem
@@ -237,6 +282,28 @@ export default function AppLayout() {
 
                     {user?.role === 'COORDINATOR' && (
                         <>
+                            <SidebarGroupTitle>Reportes academicos</SidebarGroupTitle>
+                            <NavItem to="/coordinator/reports" icon={<LayoutDashboard size={19} />}>
+                                Panel de reportes
+                            </NavItem>
+                            <NavItem to="/coordinator/reports/teacher-load" icon={<ClipboardList size={19} />}>
+                                Carga docente
+                            </NavItem>
+                            <NavItem to="/coordinator/reports/classroom-usage" icon={<Building2 size={19} />}>
+                                Uso de aulas
+                            </NavItem>
+                            <NavItem to="/coordinator/reports/offerings" icon={<Layers size={19} />}>
+                                Ofertas
+                            </NavItem>
+                            <NavItem to="/coordinator/reports/conflicts" icon={<ClipboardCheck size={19} />}>
+                                Conflictos
+                            </NavItem>
+                            <NavItem to="/coordinator/reports/schedules" icon={<CalendarDays size={19} />}>
+                                Horarios
+                            </NavItem>
+                            <NavItem to="/coordinator/reports/change-requests" icon={<ClipboardList size={19} />}>
+                                Solicitudes docentes
+                            </NavItem>
                             <SidebarGroupTitle>Oferta academica</SidebarGroupTitle>
                             <NavItem to="/coordinator/offerings" icon={<Layers size={19} />}>
                                 Gestionar oferta

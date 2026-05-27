@@ -141,3 +141,25 @@ El flujo `/student-csp/preview` previo queda disponible como modo exploracion.
 - `PATCH /api/v1/coordinator/change-requests/{id}/resolve`
 
 El horario docente solo contiene bloques institucionales `PUBLISHED`. Resolver una solicitud registra la decision, pero no altera bloques publicados.
+
+## Fase 5: Reportes
+
+Todos los endpoints siguientes requieren `ADMIN` o `COORDINATOR`:
+
+| Metodo | Ruta | Contenido |
+| --- | --- | --- |
+| `GET` | `/api/v1/reports/executive-summary` | KPIs del periodo activo. |
+| `GET` | `/api/v1/reports/teacher-load` | Carga docente desde horarios publicados. |
+| `GET` | `/api/v1/reports/classroom-usage` | Horas y utilizacion de aulas. |
+| `GET` | `/api/v1/reports/offering-status` | Estados de la oferta academica. |
+| `GET` | `/api/v1/reports/conflicts` | Resumen y detalle de conflictos. |
+| `GET` | `/api/v1/reports/schedules` | Horarios institucionales y distribuciones. |
+| `GET` | `/api/v1/reports/students` | Asignaciones y horarios personales. |
+| `GET` | `/api/v1/reports/change-requests` | Solicitudes docentes agregadas. |
+| `GET` | `/api/v1/reports/sustainability` | Metricas ambientales y GreenFrame. |
+
+Los reportes academicos aceptan opcionalmente `academic_period_id`. Se
+exportan como CSV mediante `/teacher-load/export.csv`,
+`/classroom-usage/export.csv`, `/offering-status/export.csv`,
+`/conflicts/export.csv` y `/students/export.csv`, todos bajo
+`/api/v1/reports`.

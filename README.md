@@ -154,6 +154,15 @@ GET /api/v1/sustainability
 
 Detalles: [docs/sostenibilidad/02-greenframe-report.md](docs/sostenibilidad/02-greenframe-report.md).
 
+## Reportes Academicos
+
+La Fase 5 incorpora un panel ejecutivo para administradores y reportes
+operativos para coordinacion. El administrador accede en
+`/admin/executive-dashboard` y el coordinador en `/coordinator/reports`.
+Los reportes combinan oferta, horarios publicados, carga docente, aulas,
+estudiantes, solicitudes e indicadores ambientales, con exportacion CSV para
+las tablas principales.
+
 ## Capturas Sugeridas Para La Presentacion
 
 1. Pantalla de login y seleccion de rol.

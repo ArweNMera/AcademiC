@@ -94,3 +94,11 @@ El coordinador dispone de `/coordinator/csp` para generar y guardar horarios ins
 ## Portal docente
 
 El rol `TEACHER` tiene rutas propias: `/teacher/dashboard`, `/teacher/schedule`, `/teacher/sections`, `/teacher/availability`, `/teacher/load`, `/teacher/conflicts` y `/teacher/change-requests`. Coordinacion revisa solicitudes en `/coordinator/change-requests`.
+
+## Reportes Y Panel Ejecutivo
+
+El administrador dispone de `/admin/executive-dashboard` y de reportes
+detallados bajo `/admin/reports/*`. El coordinador consulta el panel operativo
+en `/coordinator/reports` y sus reportes de carga, aulas, ofertas, conflictos,
+horarios y solicitudes. Las vistas usan `reportService.js`, el cliente Axios
+unificado y permiten filtrar por ID de periodo y descargar CSV donde aplica.

@@ -55,8 +55,13 @@ npm run preview
 | `/admin/environmental-impact` | Dashboard ambiental. |
 | `/admin/schedules` | Gestion/generacion institucional. |
 | `/admin/schedule-quality` | Validacion de calidad. |
+| `/admin/academic-periods` | Gestión de períodos. |
+| `/admin/academic-programs` | Gestión de carreras. |
+| `/admin/curriculum-plans` | Planes curriculares. |
+| `/admin/curriculum` | Malla, electivos y prerrequisitos editables. |
 | `/student` | Inicio estudiante. |
 | `/student/schedule-generator` | Generacion personal. |
+| `/student/curriculum` | Malla activa y elegibilidad. |
 
 ## Roles Y Vistas
 
@@ -66,3 +71,10 @@ npm run preview
 | `COORDINATOR` | Planificacion y publicacion academica. |
 | `TEACHER` | Informacion docente. |
 | `STUDENT` | Oferta, preferencias y horarios personales. |
+
+## Malla Curricular
+
+La pantalla administrativa permite filtrar cursos por ciclo/tipo, marcar
+electivos sugeridos y mantener prerrequisitos. La pantalla estudiantil muestra
+la malla activa y trata los prerrequisitos `RECOMMENDED` como orientación, no
+como bloqueo. El cliente HTTP continúa usando el Axios unificado con JWT.

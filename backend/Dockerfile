@@ -14,6 +14,7 @@ COPY alembic ./alembic
 COPY app ./app
 COPY public ./public
 COPY seed_realistic_demo.py .
+COPY seed_uc_ingenieria_sistemas_curriculum.py .
 
 EXPOSE 8000
 

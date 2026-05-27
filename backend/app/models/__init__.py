@@ -14,6 +14,20 @@ from app.models.schedule import (
     StudentScheduleBlock,
 )
 from app.models.environmental_metric import EnvironmentalMetric
+from app.models.academic import (
+    AcademicPeriod,
+    AcademicPeriodStatus,
+    AcademicProgram,
+    AcademicProgramStatus,
+    CoursePrerequisite,
+    CurriculumCourse,
+    CurriculumCourseType,
+    CurriculumPlan,
+    CurriculumPlanStatus,
+    ElectiveArea,
+    ElectiveBankCourse,
+    PrerequisiteType,
+)
 
 __all__ = [
     "Base",
@@ -34,4 +48,16 @@ __all__ = [
     "EnvironmentalMetric",
     "ScheduleStatus",
     "ScheduleType",
+    "AcademicPeriod",
+    "AcademicPeriodStatus",
+    "AcademicProgram",
+    "AcademicProgramStatus",
+    "CurriculumPlan",
+    "CurriculumPlanStatus",
+    "CurriculumCourse",
+    "CurriculumCourseType",
+    "CoursePrerequisite",
+    "PrerequisiteType",
+    "ElectiveBankCourse",
+    "ElectiveArea",
 ]

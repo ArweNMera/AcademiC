@@ -29,10 +29,15 @@ import StudentsPage from './pages/admin/StudentsPage'
 import TeachersPage from './pages/admin/TeachersPage'
 import UsersPage from './pages/admin/UsersPage'
 import InstitutionalCspGeneratorPage from './pages/admin/InstitutionalCspGeneratorPage'
+import AcademicPeriodsPage from './pages/admin/AcademicPeriodsPage'
+import AcademicProgramsPage from './pages/admin/AcademicProgramsPage'
+import CurriculumPlansPage from './pages/admin/CurriculumPlansPage'
+import CurriculumPage from './pages/admin/CurriculumPage'
 
 // Páginas: Estudiantes
 import MySavedSchedulesPage from './pages/student/MySavedSchedulesPage'
 import StudentScheduleGeneratorPage from './pages/student/StudentScheduleGeneratorPage'
+import StudentCurriculumPage from './pages/student/StudentCurriculumPage'
 import StudentOfferPage from './pages/student/StudentOfferPage'   // ✅ Nuevo import
 
 // Stores
@@ -121,6 +126,10 @@ export default function App() {
                             <Route path="/admin/sections" element={<SectionsPage />} />
                             <Route path="/admin/courses" element={<CoursesPage />} />
                             <Route path="/admin/classrooms" element={<ClassroomsPage />} />
+                            <Route path="/admin/academic-periods" element={<AcademicPeriodsPage />} />
+                            <Route path="/admin/academic-programs" element={<AcademicProgramsPage />} />
+                            <Route path="/admin/curriculum-plans" element={<CurriculumPlansPage />} />
+                            <Route path="/admin/curriculum" element={<CurriculumPage />} />
 
                             <Route path="/admin/schedules" element={<InstitutionalCSPPage />} />
                             <Route path="/admin/schedule-view" element={<InstitutionalScheduleViewPage />} />
@@ -158,6 +167,10 @@ export default function App() {
                             <Route
                                 path="/student/offer"
                                 element={<StudentOfferPage />}
+                            />
+                            <Route
+                                path="/student/curriculum"
+                                element={<StudentCurriculumPage />}
                             />
                         </Route>
                     </Route>

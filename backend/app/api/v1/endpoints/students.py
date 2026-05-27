@@ -11,6 +11,11 @@ from app.schemas.student_schema import (
     StudentResponse,
     StudentUpdate,
 )
+from app.schemas.academic_schema import (
+    CurriculumPlanDetailResponse,
+    StudentEligibleCoursesResponse,
+)
+from app.services.academic_service import CurriculumService
 from app.services.student_service import StudentService
 
 
@@ -75,6 +80,30 @@ def get_my_student_profile(
         )
 
     return student
+
+
+@router.get(
+    "/me/curriculum",
+    response_model=CurriculumPlanDetailResponse,
+    summary="Obtener la malla curricular activa del estudiante",
+)
+def get_my_curriculum(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.STUDENT)),
+):
+    return CurriculumService(db).get_student_curriculum(current_user.id)
+
+
+@router.get(
+    "/me/eligible-courses",
+    response_model=StudentEligibleCoursesResponse,
+    summary="Obtener cursos elegibles de la malla activa",
+)
+def get_my_eligible_courses(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.STUDENT)),
+):
+    return CurriculumService(db).get_student_eligible_courses(current_user.id)
 
 
 @router.get(

@@ -2,11 +2,15 @@ from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
     auth,
+    academic_periods,
+    academic_programs,
     classrooms,
     courses,
+    course_prerequisites,
     csp_diagnostics,
     dashboard,
     data_readiness,
+    elective_bank_courses,
     environmental_impact,
     institutional_csp,
     schedule_blocks,
@@ -14,6 +18,8 @@ from app.api.v1.endpoints import (
     schedule_quality,
     schedules,
     sections,
+    curriculum_courses,
+    curriculum_plans,
     student_csp,
     student_enrollments,
     students,
@@ -39,6 +45,42 @@ api_router.include_router(
     auth.router,
     prefix="/auth",
     tags=["Auth"],
+)
+
+api_router.include_router(
+    academic_periods.router,
+    prefix="/academic-periods",
+    tags=["Academic Periods"],
+)
+
+api_router.include_router(
+    academic_programs.router,
+    prefix="/academic-programs",
+    tags=["Academic Programs"],
+)
+
+api_router.include_router(
+    curriculum_plans.router,
+    prefix="/curriculum-plans",
+    tags=["Curriculum Plans"],
+)
+
+api_router.include_router(
+    curriculum_courses.router,
+    prefix="/curriculum-courses",
+    tags=["Curriculum Courses"],
+)
+
+api_router.include_router(
+    course_prerequisites.router,
+    prefix="/course-prerequisites",
+    tags=["Course Prerequisites"],
+)
+
+api_router.include_router(
+    elective_bank_courses.router,
+    prefix="/elective-bank-courses",
+    tags=["Elective Bank Courses"],
 )
 
 api_router.include_router(

@@ -35,6 +35,12 @@ from app.models import (
     ScheduleBlock,
     StudentSchedule,
     StudentScheduleBlock,
+    AcademicPeriod,
+    AcademicProgram,
+    CurriculumPlan,
+    CurriculumCourse,
+    CoursePrerequisite,
+    ElectiveBankCourse,
 )
 
 # ============================================================

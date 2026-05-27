@@ -36,6 +36,10 @@ const pageTitles = {
     '/admin/sections': 'Secciones',
     '/admin/courses': 'Cursos',
     '/admin/classrooms': 'Aulas',
+    '/admin/academic-periods': 'Periodos académicos',
+    '/admin/academic-programs': 'Programas académicos',
+    '/admin/curriculum-plans': 'Planes curriculares',
+    '/admin/curriculum': 'Malla curricular',
     '/admin/schedules': 'Generador CSP institucional',
     '/admin/student-generator': 'Simulador estudiantil',
     '/admin/student-schedules': 'Horarios de estudiantes',
@@ -45,6 +49,7 @@ const pageTitles = {
     '/student': 'Panel del estudiante',
     '/student/schedule-generator': 'Generador de horario',
     '/student/my-schedules': 'Mi horario elegido',
+    '/student/curriculum': 'Mi malla curricular',
     '/student/offer': 'Oferta académica',                    // ✅ Nuevo título
 }
 
@@ -141,6 +146,24 @@ export default function AppLayout() {
                                 Aulas
                             </NavItem>
 
+                            <SidebarGroupTitle>Dominio académico</SidebarGroupTitle>
+
+                            <NavItem to="/admin/academic-periods" icon={<CalendarDays size={19} />}>
+                                Periodos
+                            </NavItem>
+
+                            <NavItem to="/admin/academic-programs" icon={<GraduationCap size={19} />}>
+                                Programas
+                            </NavItem>
+
+                            <NavItem to="/admin/curriculum-plans" icon={<ClipboardList size={19} />}>
+                                Planes curriculares
+                            </NavItem>
+
+                            <NavItem to="/admin/curriculum" icon={<BookOpen size={19} />}>
+                                Malla curricular
+                            </NavItem>
+
                             <SidebarGroupTitle>Horarios</SidebarGroupTitle>
 
                             <NavItem
@@ -185,6 +208,13 @@ export default function AppLayout() {
                     {user?.role === 'STUDENT' && (
                         <>
                             <SidebarGroupTitle>Mi horario</SidebarGroupTitle>
+
+                            <NavItem
+                                to="/student/curriculum"
+                                icon={<GraduationCap size={19} />}
+                            >
+                                Mi malla curricular
+                            </NavItem>
 
                             {/* ✅ Nueva opción: Oferta académica */}
                             <NavItem

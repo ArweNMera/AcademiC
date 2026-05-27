@@ -6,6 +6,8 @@ from app.models.user import UserRole
 from app.repositories.user_repository import UserRepository
 from app.schemas.user_schema import PublicUserRegister, UserCreate
 from app.schemas.auth_schema import LoginRequest
+from app.models.traceability import AuditAction
+from app.services.audit_log_service import AuditLogService
 
 
 class AuthService:
@@ -32,7 +34,6 @@ class AuthService:
         )
 
         access_token = create_access_token(subject=user.id)
-
         return {
             "access_token": access_token,
             "token_type": "bearer",
@@ -67,6 +68,14 @@ class AuthService:
             )
 
         access_token = create_access_token(subject=user.id)
+        AuditLogService(self.db).record(
+            actor=user,
+            action=AuditAction.LOGIN,
+            entity_type="USER",
+            entity_id=user.id,
+            description="Inicio de sesion exitoso.",
+            commit=True,
+        )
 
         return {
             "access_token": access_token,

@@ -30,4 +30,4 @@ def resolve_change_request(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.COORDINATOR)),
 ):
-    return ScheduleChangeRequestService(db).resolve(request_id, payload)
+    return ScheduleChangeRequestService(db).resolve(request_id, payload, current_user)

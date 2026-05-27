@@ -124,7 +124,7 @@ export default function ReportDetailPage({ reportType }) {
                     />
                 )}
                 {config.export && (
-                    <button onClick={() => config.export(periodId ? { academic_period_id: Number(periodId) } : {}).catch(() => toast.error('No se pudo exportar CSV'))} className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 font-semibold text-white">
+                    <button onClick={() => config.export(periodId ? { academic_period_id: Number(periodId) } : {}).then(() => toast.success('Exportacion registrada.')).catch(() => toast.error('No se pudo exportar CSV'))} className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 font-semibold text-white">
                         <Download size={17} /> Exportar CSV
                     </button>
                 )}

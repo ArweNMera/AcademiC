@@ -45,8 +45,11 @@ import OfferingFormPage from './pages/coordinator/OfferingFormPage'
 import OfferingConflictsPage from './pages/coordinator/OfferingConflictsPage'
 import CoordinatorCspPage from './pages/coordinator/CoordinatorCspPage'
 import CoordinatorChangeRequestsPage from './pages/coordinator/CoordinatorChangeRequestsPage'
+import TraceabilityPage from './pages/coordinator/TraceabilityPage'
 import ExecutiveDashboardPage from './pages/reports/ExecutiveDashboardPage'
 import ReportDetailPage from './pages/reports/ReportDetailPage'
+import NotificationPage from './pages/notifications/NotificationPage'
+import AuditLogsPage from './pages/admin/AuditLogsPage'
 
 // Páginas: Estudiantes
 import MySavedSchedulesPage from './pages/student/MySavedSchedulesPage'
@@ -121,6 +124,7 @@ export default function App() {
                 <Route element={<ProtectedRoute />}>
                     <Route element={<AppLayout />}>
                         <Route path="/" element={<HomeRedirect />} />
+                        <Route path="/notifications" element={<NotificationPage />} />
 
                         {/* Redirecciones principales */}
                         <Route
@@ -141,6 +145,7 @@ export default function App() {
                         <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
                             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
                             <Route path="/admin/executive-dashboard" element={<ExecutiveDashboardPage />} />
+                            <Route path="/admin/audit-logs" element={<AuditLogsPage />} />
                             <Route path="/admin/reports/teacher-load" element={<ReportDetailPage reportType="teacher-load" />} />
                             <Route path="/admin/reports/classroom-usage" element={<ReportDetailPage reportType="classroom-usage" />} />
                             <Route path="/admin/reports/offerings" element={<ReportDetailPage reportType="offerings" />} />
@@ -177,6 +182,8 @@ export default function App() {
                             <Route path="/coordinator/conflicts" element={<OfferingConflictsPage />} />
                             <Route path="/coordinator/csp" element={<CoordinatorCspPage />} />
                             <Route path="/coordinator/change-requests" element={<CoordinatorChangeRequestsPage />} />
+                            <Route path="/coordinator/traceability" element={<TraceabilityPage />} />
+                            <Route path="/admin/traceability" element={<TraceabilityPage />} />
                             <Route path="/coordinator/reports" element={<ExecutiveDashboardPage />} />
                             <Route path="/coordinator/reports/teacher-load" element={<ReportDetailPage reportType="teacher-load" />} />
                             <Route path="/coordinator/reports/classroom-usage" element={<ReportDetailPage reportType="classroom-usage" />} />

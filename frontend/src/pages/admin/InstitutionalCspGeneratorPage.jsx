@@ -155,7 +155,7 @@ export default function InstitutionalCspGeneratorPage() {
         try {
             await scheduleService.publishSchedule(scheduleId)
 
-            toast.success('Horario institucional publicado correctamente')
+            toast.success('Horario publicado. Se notifico a docentes y estudiantes afectados.')
         } catch (error) {
             console.error('ERROR PUBLISH:', error.response?.data || error)
             toast.error(getErrorMessage(error, 'No se pudo publicar el horario'))

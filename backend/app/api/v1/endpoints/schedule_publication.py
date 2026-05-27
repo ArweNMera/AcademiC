@@ -41,4 +41,5 @@ def publish_schedule_safely(
         allowed_days=allowed_days,
         start_hour=start_hour,
         end_hour=end_hour,
+        actor=current_user,
     )

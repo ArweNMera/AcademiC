@@ -18,6 +18,7 @@ import {
     Users,
 } from 'lucide-react'
 import { useAuthStore } from '../../stores/authStore'
+import NotificationBell from '../notifications/NotificationBell'
 
 const roleLabels = {
     ADMIN: 'Administrador',
@@ -29,6 +30,8 @@ const roleLabels = {
 const pageTitles = {
     '/admin/dashboard': 'Dashboard institucional',
     '/admin/executive-dashboard': 'Panel ejecutivo',
+    '/admin/audit-logs': 'Auditoria',
+    '/admin/traceability': 'Trazabilidad',
     '/admin/reports/teacher-load': 'Reporte de carga docente',
     '/admin/reports/classroom-usage': 'Reporte de uso de aulas',
     '/admin/reports/offerings': 'Reporte de ofertas',
@@ -55,6 +58,7 @@ const pageTitles = {
     '/coordinator/conflicts': 'Conflictos de oferta',
     '/coordinator/csp': 'CSP desde ofertas',
     '/coordinator/change-requests': 'Solicitudes docentes',
+    '/coordinator/traceability': 'Trazabilidad',
     '/coordinator/reports': 'Reportes academicos',
     '/coordinator/reports/teacher-load': 'Reporte de carga docente',
     '/coordinator/reports/classroom-usage': 'Reporte de uso de aulas',
@@ -79,6 +83,7 @@ const pageTitles = {
     '/student/my-schedules': 'Mi horario elegido',
     '/student/curriculum': 'Mi malla curricular',
     '/student/offer': 'Oferta académica',                    // ✅ Nuevo título
+    '/notifications': 'Notificaciones',
 }
 
 export default function AppLayout() {
@@ -135,6 +140,9 @@ export default function AppLayout() {
                     <NavItem to={getDashboardPath()} icon={<LayoutDashboard size={19} />}>
                         Dashboard
                     </NavItem>
+                    <NavItem to="/notifications" icon={<ClipboardList size={19} />}>
+                        Notificaciones
+                    </NavItem>
 
                     {user?.role === 'ADMIN' && (
                         <>
@@ -142,6 +150,12 @@ export default function AppLayout() {
 
                             <NavItem to="/admin/executive-dashboard" icon={<LayoutDashboard size={19} />}>
                                 Panel ejecutivo
+                            </NavItem>
+                            <NavItem to="/admin/audit-logs" icon={<ClipboardCheck size={19} />}>
+                                Auditoria
+                            </NavItem>
+                            <NavItem to="/admin/traceability" icon={<ClipboardList size={19} />}>
+                                Trazabilidad
                             </NavItem>
                             <NavItem to="/admin/reports/teacher-load" icon={<ClipboardList size={19} />}>
                                 Carga docente
@@ -286,6 +300,9 @@ export default function AppLayout() {
                             <NavItem to="/coordinator/reports" icon={<LayoutDashboard size={19} />}>
                                 Panel de reportes
                             </NavItem>
+                            <NavItem to="/coordinator/traceability" icon={<ClipboardCheck size={19} />}>
+                                Trazabilidad
+                            </NavItem>
                             <NavItem to="/coordinator/reports/teacher-load" icon={<ClipboardList size={19} />}>
                                 Carga docente
                             </NavItem>
@@ -421,6 +438,7 @@ export default function AppLayout() {
                             {currentTitle}
                         </h2>
                     </div>
+                    <NotificationBell />
                 </header>
 
                 <section className="flex-1 overflow-y-auto p-8">

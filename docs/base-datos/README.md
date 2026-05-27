@@ -73,3 +73,18 @@ La Fase 5 no incorpora tablas ni migraciones: agrega consultas agregadas
 sobre periodos, ofertas, horarios, bloques, docentes, aulas, estudiantes,
 solicitudes de cambio y metricas ambientales. Los reportes conservan los
 datos operativos como fuente unica y no duplican indicadores persistidos.
+
+## Notificaciones Y Trazabilidad De Fase 6
+
+La migracion `i0863d4e5f0a_add_notifications_audit_traceability.py` es
+aditiva e incorpora:
+
+| Tabla | Relacion principal |
+| --- | --- |
+| `notifications` | `user_id -> users.id`; avisos privados y lectura. |
+| `audit_logs` | `user_id -> users.id`; eventos criticos con JSON sanitizado. |
+| `schedule_publication_history` | Horario, periodo y usuario publicador. |
+| `schedule_change_history` | Solicitud, horario, bloque y usuario ejecutor. |
+
+Se indexan destinatario/estado de lectura, usuario/entidad/fecha de auditoria
+y las referencias de historiales para consultas operativas.

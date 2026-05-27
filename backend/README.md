@@ -172,3 +172,25 @@ Exportaciones CSV disponibles:
 /api/v1/reports/conflicts/export.csv
 /api/v1/reports/students/export.csv
 ```
+
+## Fase 6: Notificaciones, Auditoria Y Trazabilidad
+
+La migracion `i0863d4e5f0a` agrega `notifications`, `audit_logs`,
+`schedule_publication_history` y `schedule_change_history`. Las publicaciones
+seguras notifican a los usuarios afectados; la generacion CSP, sus soluciones,
+las solicitudes docentes, los cambios de estado, el login y las exportaciones
+CSV quedan auditados.
+
+Rutas nuevas:
+
+```text
+/api/v1/notifications/me
+/api/v1/notifications/me/unread-count
+/api/v1/audit-logs
+/api/v1/audit-logs/export.csv
+/api/v1/traceability/schedule/{schedule_id}
+/api/v1/traceability/change-request/{request_id}
+```
+
+`/audit-logs` es exclusivo de `ADMIN`. Las notificaciones son privadas por
+usuario y los datos auditados excluyen secretos y tokens.

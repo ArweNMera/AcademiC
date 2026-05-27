@@ -86,7 +86,7 @@ def publish_academic_schedule(
         require_roles(UserRole.ADMIN, UserRole.COORDINATOR)
     ),
 ):
-    return SchedulePublicationService(db).publish_safely(schedule_id=schedule_id)
+    return SchedulePublicationService(db).publish_safely(schedule_id=schedule_id, actor=current_user)
 
 
 @router.get(

@@ -163,6 +163,13 @@ Los reportes combinan oferta, horarios publicados, carga docente, aulas,
 estudiantes, solicitudes e indicadores ambientales, con exportacion CSV para
 las tablas principales.
 
+## Notificaciones, Auditoria Y Trazabilidad
+
+La Fase 6 agrega notificaciones internas para todos los roles y evidencia de
+operaciones criticas. `ADMIN` consulta auditoria global; `COORDINATOR` sigue
+publicaciones y solicitudes; docentes y estudiantes reciben los avisos que les
+corresponden. La auditoria no guarda contrasenas, tokens ni secretos.
+
 ## Capturas Sugeridas Para La Presentacion
 
 1. Pantalla de login y seleccion de rol.

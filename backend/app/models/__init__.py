@@ -43,6 +43,16 @@ from app.models.schedule_change_request import (
     ScheduleChangeRequestStatus,
     ScheduleChangeRequestType,
 )
+from app.models.traceability import (
+    AuditAction,
+    AuditLog,
+    Notification,
+    NotificationType,
+    RelatedEntityType,
+    ScheduleChangeHistory,
+    ScheduleChangeType,
+    SchedulePublicationHistory,
+)
 
 __all__ = [
     "Base",
@@ -86,4 +96,12 @@ __all__ = [
     "ScheduleChangeRequest",
     "ScheduleChangeRequestStatus",
     "ScheduleChangeRequestType",
+    "Notification",
+    "NotificationType",
+    "RelatedEntityType",
+    "AuditLog",
+    "AuditAction",
+    "SchedulePublicationHistory",
+    "ScheduleChangeHistory",
+    "ScheduleChangeType",
 ]

@@ -7,6 +7,7 @@ from app.models.offering import OfferingStatus, SectionOffering
 from app.models.schedule import AcademicSchedule, ScheduleBlock, ScheduleSourceType, ScheduleStatus
 from app.services.data_readiness_service import DataReadinessService
 from app.services.schedule_quality_service import ScheduleQualityService
+from app.services.traceability_service import TraceabilityService
 
 
 class SchedulePublicationService:
@@ -24,6 +25,7 @@ class SchedulePublicationService:
         allowed_days: list[int] | None = None,
         start_hour: time = time(7, 0),
         end_hour: time = time(22, 0),
+        actor=None,
     ):
         schedule = self._get_schedule(schedule_id)
 
@@ -131,6 +133,13 @@ class SchedulePublicationService:
         self.db.add(schedule)
         self.db.commit()
         self.db.refresh(schedule)
+        if actor is not None:
+            TraceabilityService(self.db).record_publication(
+                schedule.id,
+                actor,
+                previous_status,
+                "Publicacion mediante validacion segura de readiness y calidad.",
+            )
 
         warnings = [
             issue
@@ -140,7 +149,7 @@ class SchedulePublicationService:
 
         return {
             "success": True,
-            "message": "Horario publicado correctamente. No se encontraron errores críticos.",
+            "message": "Horario publicado correctamente. Se notifico a docentes y estudiantes afectados.",
             "schedule_id": schedule.id,
             "schedule_name": schedule.name,
             "previous_status": previous_status,

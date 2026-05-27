@@ -163,3 +163,22 @@ exportan como CSV mediante `/teacher-load/export.csv`,
 `/classroom-usage/export.csv`, `/offering-status/export.csv`,
 `/conflicts/export.csv` y `/students/export.csv`, todos bajo
 `/api/v1/reports`.
+
+## Fase 6: Notificaciones, Auditoria Y Trazabilidad
+
+| Metodo | Ruta | Rol |
+| --- | --- | --- |
+| `GET` | `/api/v1/notifications/me` | Autenticado, solo bandeja propia. |
+| `GET` | `/api/v1/notifications/me/unread-count` | Autenticado. |
+| `PATCH` | `/api/v1/notifications/{id}/read` | Autenticado, propietario. |
+| `PATCH` | `/api/v1/notifications/read-all` | Autenticado. |
+| `DELETE` | `/api/v1/notifications/{id}` | Autenticado, propietario. |
+| `GET` | `/api/v1/audit-logs` | `ADMIN`. |
+| `GET` | `/api/v1/audit-logs/{id}` | `ADMIN`. |
+| `GET` | `/api/v1/audit-logs/export.csv` | `ADMIN`. |
+| `GET` | `/api/v1/traceability/schedule/{schedule_id}` | `ADMIN`, `COORDINATOR`. |
+| `GET` | `/api/v1/traceability/change-request/{request_id}` | `ADMIN`, `COORDINATOR`, docente propietario. |
+
+Las exportaciones de reportes CSV, publicaciones seguras, acciones CSP,
+solicitudes docentes y logins exitosos generan auditoria. Los campos
+sensibles se ocultan antes de persistir `old_values` o `new_values`.

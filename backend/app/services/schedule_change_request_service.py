@@ -7,13 +7,14 @@ from app.models.offering import SectionOffering
 from app.models.schedule import AcademicSchedule, ScheduleBlock, ScheduleStatus
 from app.models.schedule_change_request import ScheduleChangeRequest, ScheduleChangeRequestStatus
 from app.models.teacher import Teacher
+from app.services.traceability_service import TraceabilityService
 
 
 class ScheduleChangeRequestService:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_for_teacher(self, user_id, payload):
+    def create_for_teacher(self, user_id, payload, actor=None):
         teacher = self._teacher(user_id)
         block = None
         offering = None
@@ -53,23 +54,30 @@ class ScheduleChangeRequestService:
         )
         self.db.add(item)
         self.db.commit()
-        return self._response(self._get(item.id))
+        item = self._get(item.id)
+        if actor is not None:
+            TraceabilityService(self.db).record_request_created(actor, item)
+        return self._response(item)
 
     def list_for_teacher(self, user_id):
         teacher = self._teacher(user_id)
         return [self._response(item) for item in self._query().filter(ScheduleChangeRequest.teacher_id == teacher.id).all()]
 
-    def cancel_for_teacher(self, user_id, request_id):
+    def cancel_for_teacher(self, user_id, request_id, actor=None):
         teacher = self._teacher(user_id)
         item = self._get(request_id)
         if item.teacher_id != teacher.id:
             raise HTTPException(status_code=403, detail="La solicitud no pertenece al docente autenticado.")
         if item.status != ScheduleChangeRequestStatus.PENDING:
             raise HTTPException(status_code=400, detail="Solo se pueden cancelar solicitudes pendientes.")
+        previous_status = item.status.value
         item.status = ScheduleChangeRequestStatus.CANCELLED
         item.resolved_at = datetime.now(timezone.utc)
         self.db.commit()
-        return self._response(self._get(item.id))
+        item = self._get(item.id)
+        if actor is not None:
+            TraceabilityService(self.db).record_request_cancelled(actor, item, previous_status)
+        return self._response(item)
 
     def list_for_coordinator(self, status_filter=None, teacher_id=None, academic_period_id=None):
         query = self._query()
@@ -81,15 +89,19 @@ class ScheduleChangeRequestService:
             query = query.filter(ScheduleChangeRequest.academic_period_id == academic_period_id)
         return [self._response(item) for item in query.all()]
 
-    def resolve(self, request_id, payload):
+    def resolve(self, request_id, payload, actor=None):
         item = self._get(request_id)
         if item.status != ScheduleChangeRequestStatus.PENDING:
             raise HTTPException(status_code=400, detail="La solicitud ya no esta pendiente.")
+        previous_status = item.status.value
         item.status = payload.status
         item.coordinator_response = payload.coordinator_response
         item.resolved_at = datetime.now(timezone.utc)
         self.db.commit()
-        return self._response(self._get(item.id))
+        item = self._get(item.id)
+        if actor is not None:
+            TraceabilityService(self.db).record_request_resolved(actor, item, previous_status)
+        return self._response(item)
 
     def _query(self):
         return (

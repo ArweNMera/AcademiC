@@ -63,7 +63,7 @@ export default function CoordinatorCspPage() {
         try {
             const data = await offeringCspService.generate(payload())
             setResult(data)
-            toast.success('Soluciones generadas desde la oferta academica.')
+            toast.success('Soluciones generadas. Generacion registrada en auditoria.')
         } catch (error) {
             toast.error(readError(error))
         } finally {
@@ -79,7 +79,7 @@ export default function CoordinatorCspPage() {
                 solution_index: solutionIndex,
                 schedule_name: `Horario ISI desde ofertas - opcion ${solutionIndex + 1}`,
             })
-            toast.success(`Horario DRAFT #${data.schedule_id} guardado para publicacion segura.`)
+            toast.success(`Horario DRAFT #${data.schedule_id} guardado y registrado en auditoria.`)
         } catch (error) {
             toast.error(readError(error))
         } finally {

@@ -20,6 +20,7 @@ from app.schemas.report_schema import (
     TeacherLoadReport,
 )
 from app.services.report_service import ReportService
+from app.services.traceability_service import TraceabilityService
 
 
 router = APIRouter()
@@ -122,9 +123,10 @@ def _csv_response(filename: str, headers: list[str], rows: list[list]) -> Stream
 def teacher_load_csv(
     academic_period_id: int | None = Query(default=None, gt=0),
     db: Session = Depends(get_db),
-    _: User = Depends(require_roles(*REPORT_ROLES)),
+    current_user: User = Depends(require_roles(*REPORT_ROLES)),
 ):
     items = ReportService(db).teacher_load(academic_period_id)["teachers"]
+    TraceabilityService(db).record_report_export(current_user, "teacher-load")
     return _csv_response(
         "teacher-load.csv",
         ["teacher_id", "teacher_name", "assigned_weekly_hours", "max_weekly_hours", "load_percentage", "status", "courses_count", "sections_count"],
@@ -136,9 +138,10 @@ def teacher_load_csv(
 def classroom_usage_csv(
     academic_period_id: int | None = Query(default=None, gt=0),
     db: Session = Depends(get_db),
-    _: User = Depends(require_roles(*REPORT_ROLES)),
+    current_user: User = Depends(require_roles(*REPORT_ROLES)),
 ):
     items = ReportService(db).classroom_usage(academic_period_id)["classrooms"]
+    TraceabilityService(db).record_report_export(current_user, "classroom-usage")
     return _csv_response(
         "classroom-usage.csv",
         ["classroom_id", "classroom_code", "classroom_name", "type", "capacity", "used_hours", "usage_percentage", "blocks_count", "status"],
@@ -150,9 +153,10 @@ def classroom_usage_csv(
 def offering_status_csv(
     academic_period_id: int | None = Query(default=None, gt=0),
     db: Session = Depends(get_db),
-    _: User = Depends(require_roles(*REPORT_ROLES)),
+    current_user: User = Depends(require_roles(*REPORT_ROLES)),
 ):
     data = ReportService(db).offering_status(academic_period_id)
+    TraceabilityService(db).record_report_export(current_user, "offering-status")
     rows = [["TOTAL", data["total_offerings"]]]
     rows.extend([[f"STATUS_{key}", value] for key, value in data["by_status"].items()])
     rows.extend([[f"CYCLE_{key}", value] for key, value in data["by_cycle"].items()])
@@ -164,9 +168,10 @@ def offering_status_csv(
 def conflicts_csv(
     academic_period_id: int | None = Query(default=None, gt=0),
     db: Session = Depends(get_db),
-    _: User = Depends(require_roles(*REPORT_ROLES)),
+    current_user: User = Depends(require_roles(*REPORT_ROLES)),
 ):
     items = ReportService(db).conflicts(academic_period_id)["details"]
+    TraceabilityService(db).record_report_export(current_user, "conflicts")
     return _csv_response(
         "conflicts.csv",
         ["id", "conflict_type", "severity", "related_course", "related_section", "message", "suggested_action", "is_resolved"],
@@ -178,9 +183,10 @@ def conflicts_csv(
 def students_csv(
     academic_period_id: int | None = Query(default=None, gt=0),
     db: Session = Depends(get_db),
-    _: User = Depends(require_roles(*REPORT_ROLES)),
+    current_user: User = Depends(require_roles(*REPORT_ROLES)),
 ):
     data = ReportService(db).students(academic_period_id)
+    TraceabilityService(db).record_report_export(current_user, "students")
     rows = [
         ["total_students", data["total_students"]],
         ["students_with_enrollments", data["students_with_enrollments"]],

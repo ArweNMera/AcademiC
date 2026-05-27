@@ -45,6 +45,10 @@ from app.models import (
     SectionRequirement,
     OfferingConflict,
     ScheduleChangeRequest,
+    Notification,
+    AuditLog,
+    SchedulePublicationHistory,
+    ScheduleChangeHistory,
 )
 
 # ============================================================

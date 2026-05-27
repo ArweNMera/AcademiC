@@ -17,6 +17,9 @@ from app.api.v1.endpoints import (
     coordinator_dashboard,
     coordinator_change_requests,
     reports,
+    notifications,
+    audit_logs,
+    traceability,
     environmental_impact,
     institutional_csp,
     schedule_blocks,
@@ -123,6 +126,24 @@ api_router.include_router(
     reports.router,
     prefix="/reports",
     tags=["Reports"],
+)
+
+api_router.include_router(
+    notifications.router,
+    prefix="/notifications",
+    tags=["Notifications"],
+)
+
+api_router.include_router(
+    audit_logs.router,
+    prefix="/audit-logs",
+    tags=["Audit Logs"],
+)
+
+api_router.include_router(
+    traceability.router,
+    prefix="/traceability",
+    tags=["Traceability"],
 )
 
 api_router.include_router(

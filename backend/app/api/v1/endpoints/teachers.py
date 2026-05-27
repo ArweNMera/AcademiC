@@ -25,6 +25,8 @@ from app.schemas.teacher_portal_schema import (
 )
 from app.services.schedule_change_request_service import ScheduleChangeRequestService
 from app.services.teacher_portal_service import TeacherPortalService
+from app.models.traceability import AuditAction
+from app.services.audit_log_service import AuditLogService
 
 
 router = APIRouter()
@@ -120,9 +122,14 @@ def create_my_teacher_availability(
     current_user: User = Depends(require_roles(UserRole.TEACHER)),
 ):
     teacher = TeacherPortalService(db).teacher_for_user(current_user.id)
-    return TeacherAvailabilityService(db).create_availability(
+    result = TeacherAvailabilityService(db).create_availability(
         TeacherAvailabilityCreate(teacher_id=teacher.id, **payload.model_dump()), current_user
     )
+    AuditLogService(db).record(
+        actor=current_user, action=AuditAction.CREATE, entity_type="TEACHER_AVAILABILITY",
+        entity_id=result.id, description="Disponibilidad docente creada.", new_values=payload, commit=True,
+    )
+    return result
 
 
 @router.patch("/me/availability/{availability_id}", response_model=TeacherAvailabilityResponse, summary="Editar mi disponibilidad")
@@ -133,7 +140,12 @@ def update_my_teacher_availability(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.TEACHER)),
 ):
-    return TeacherAvailabilityService(db).update_availability(availability_id, payload, current_user)
+    result = TeacherAvailabilityService(db).update_availability(availability_id, payload, current_user)
+    AuditLogService(db).record(
+        actor=current_user, action=AuditAction.UPDATE, entity_type="TEACHER_AVAILABILITY",
+        entity_id=availability_id, description="Disponibilidad docente actualizada.", new_values=payload, commit=True,
+    )
+    return result
 
 
 @router.delete("/me/availability/{availability_id}", summary="Eliminar mi disponibilidad")
@@ -142,7 +154,12 @@ def delete_my_teacher_availability(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.TEACHER)),
 ):
-    return TeacherAvailabilityService(db).delete_availability(availability_id, current_user)
+    result = TeacherAvailabilityService(db).delete_availability(availability_id, current_user)
+    AuditLogService(db).record(
+        actor=current_user, action=AuditAction.DELETE, entity_type="TEACHER_AVAILABILITY",
+        entity_id=availability_id, description="Disponibilidad docente eliminada.", commit=True,
+    )
+    return result
 
 
 @router.post("/me/change-requests", response_model=ScheduleChangeRequestResponse, status_code=status.HTTP_201_CREATED, summary="Crear solicitud de cambio propia")
@@ -151,7 +168,7 @@ def create_my_change_request(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.TEACHER)),
 ):
-    return ScheduleChangeRequestService(db).create_for_teacher(current_user.id, payload)
+    return ScheduleChangeRequestService(db).create_for_teacher(current_user.id, payload, current_user)
 
 
 @router.get("/me/change-requests", response_model=list[ScheduleChangeRequestResponse], summary="Listar mis solicitudes de cambio")
@@ -168,7 +185,7 @@ def cancel_my_change_request(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.TEACHER)),
 ):
-    return ScheduleChangeRequestService(db).cancel_for_teacher(current_user.id, request_id)
+    return ScheduleChangeRequestService(db).cancel_for_teacher(current_user.id, request_id, current_user)
 
 
 @router.get(
@@ -251,10 +268,15 @@ def create_teacher_availability(
     ),
 ):
     availability_service = TeacherAvailabilityService(db)
-    return availability_service.create_availability(
+    result = availability_service.create_availability(
         availability_data,
         current_user,
     )
+    AuditLogService(db).record(
+        actor=current_user, action=AuditAction.CREATE, entity_type="TEACHER_AVAILABILITY",
+        entity_id=result.id, description="Disponibilidad docente creada.", new_values=availability_data, commit=True,
+    )
+    return result
 
 
 @router.put(
@@ -271,11 +293,16 @@ def update_teacher_availability(
     ),
 ):
     availability_service = TeacherAvailabilityService(db)
-    return availability_service.update_availability(
+    result = availability_service.update_availability(
         availability_id,
         availability_data,
         current_user,
     )
+    AuditLogService(db).record(
+        actor=current_user, action=AuditAction.UPDATE, entity_type="TEACHER_AVAILABILITY",
+        entity_id=availability_id, description="Disponibilidad docente actualizada.", new_values=availability_data, commit=True,
+    )
+    return result
 
 
 @router.delete(
@@ -291,7 +318,12 @@ def delete_teacher_availability(
     ),
 ):
     availability_service = TeacherAvailabilityService(db)
-    return availability_service.delete_availability(
+    result = availability_service.delete_availability(
         availability_id,
         current_user,
     )
+    AuditLogService(db).record(
+        actor=current_user, action=AuditAction.DELETE, entity_type="TEACHER_AVAILABILITY",
+        entity_id=availability_id, description="Disponibilidad docente eliminada.", commit=True,
+    )
+    return result

@@ -102,3 +102,13 @@ detallados bajo `/admin/reports/*`. El coordinador consulta el panel operativo
 en `/coordinator/reports` y sus reportes de carga, aulas, ofertas, conflictos,
 horarios y solicitudes. Las vistas usan `reportService.js`, el cliente Axios
 unificado y permiten filtrar por ID de periodo y descargar CSV donde aplica.
+
+## Notificaciones Y Trazabilidad
+
+Todos los usuarios autenticados disponen de la campana de notificaciones y de
+`/notifications`. `ADMIN` consulta auditoria en `/admin/audit-logs` y puede
+exportarla en CSV. `ADMIN` y `COORDINATOR` consultan publicaciones y cambios
+en `/admin/traceability` y `/coordinator/traceability`, respectivamente.
+
+Las vistas reutilizan el Axios unificado mediante `notificationService.js`,
+`auditLogService.js` y `traceabilityService.js`.

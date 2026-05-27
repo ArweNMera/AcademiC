@@ -14,6 +14,7 @@ from app.schemas.offering_schema import (
     SectionOfferingUpdate,
 )
 from app.services.offering_service import SectionOfferingService
+from app.services.traceability_service import TraceabilityService
 
 
 router = APIRouter()
@@ -91,7 +92,15 @@ def update_section_offering_status(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(*WRITE_ROLES)),
 ):
-    return SectionOfferingService(db).change_status(offering_id, payload.status)
+    service = SectionOfferingService(db)
+    before = service.get_offering(offering_id, current_user)
+    result = service.change_status(offering_id, payload.status)
+    item = service._require_offering(offering_id)
+    teacher_user_id = item.teacher.user_id if item.teacher else None
+    TraceabilityService(db).record_offering_status(
+        current_user, offering_id, before["status"].value, result["status"].value, teacher_user_id
+    )
+    return result
 
 
 @router.delete("/{offering_id}")

@@ -18,6 +18,7 @@ from app.schemas.offering_csp_schema import (
 )
 from app.services.institutional_csp_service import InstitutionalCSPService
 from app.services.offering_csp_service import OfferingCSPService
+from app.services.traceability_service import TraceabilityService
 
 
 router = APIRouter()
@@ -33,7 +34,9 @@ def generate_from_offerings(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.COORDINATOR)),
 ):
-    return OfferingCSPService(db).generate(request)
+    result = OfferingCSPService(db).generate(request)
+    TraceabilityService(db).record_csp_generation(current_user, request, result)
+    return result
 
 
 @router.post(
@@ -46,7 +49,9 @@ def save_offering_solution(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.COORDINATOR)),
 ):
-    return OfferingCSPService(db).save_solution(request, current_user)
+    result = OfferingCSPService(db).save_solution(request, current_user)
+    TraceabilityService(db).record_saved_solution(current_user, result["schedule_id"])
+    return result
 
 
 @router.post(

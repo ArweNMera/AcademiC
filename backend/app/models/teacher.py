@@ -67,6 +67,12 @@ class Teacher(Base, TimestampMixin):
         back_populates="teacher",
     )
 
+    schedule_change_requests = relationship(
+        "ScheduleChangeRequest",
+        back_populates="teacher",
+        cascade="all, delete-orphan",
+    )
+
 
 class TeacherAvailability(Base, TimestampMixin):
     __tablename__ = "teacher_availabilities"

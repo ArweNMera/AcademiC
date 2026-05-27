@@ -15,6 +15,7 @@ from app.api.v1.endpoints import (
     section_requirements,
     offering_conflicts,
     coordinator_dashboard,
+    coordinator_change_requests,
     environmental_impact,
     institutional_csp,
     schedule_blocks,
@@ -109,6 +110,12 @@ api_router.include_router(
     coordinator_dashboard.router,
     prefix="/coordinator/dashboard",
     tags=["Coordinator Dashboard"],
+)
+
+api_router.include_router(
+    coordinator_change_requests.router,
+    prefix="/coordinator/change-requests",
+    tags=["Coordinator Change Requests"],
 )
 
 api_router.include_router(

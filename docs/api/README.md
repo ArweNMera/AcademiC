@@ -125,3 +125,19 @@ La publicacion se realiza posteriormente con el flujo seguro existente; no se pu
 - `POST /api/v1/student-csp/save-from-enrollments`: guarda la alternativa elegida con `generation_mode=ENROLLMENTS`.
 
 El flujo `/student-csp/preview` previo queda disponible como modo exploracion.
+
+## Fase 4: Portal docente
+
+- `GET /api/v1/teachers/me/dashboard`
+- `GET /api/v1/teachers/me/schedule`
+- `GET /api/v1/teachers/me/sections`
+- `GET /api/v1/teachers/me/load`
+- `GET /api/v1/teachers/me/conflicts`
+- `GET|POST /api/v1/teachers/me/availability`
+- `PATCH|DELETE /api/v1/teachers/me/availability/{id}`
+- `GET|POST /api/v1/teachers/me/change-requests`
+- `PATCH /api/v1/teachers/me/change-requests/{id}/cancel`
+- `GET /api/v1/coordinator/change-requests`
+- `PATCH /api/v1/coordinator/change-requests/{id}/resolve`
+
+El horario docente solo contiene bloques institucionales `PUBLISHED`. Resolver una solicitud registra la decision, pero no altera bloques publicados.

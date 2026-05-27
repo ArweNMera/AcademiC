@@ -146,3 +146,11 @@ Seeds adicionales:
 python seed_uc_isi_offerings_ready_demo.py
 python seed_uc_isi_student_enrollments_2026.py
 ```
+
+## Fase 4: Portal docente
+
+El docente consume solamente informacion propia bajo `/api/v1/teachers/me`: dashboard, horario publicado, secciones, carga, conflictos, disponibilidad y solicitudes de cambio. Las solicitudes no actualizan automaticamente el horario; `ADMIN` o `COORDINATOR` las resuelven mediante `/api/v1/coordinator/change-requests`.
+
+```bash
+python seed_teacher_portal_demo.py
+```

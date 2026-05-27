@@ -14,7 +14,13 @@ import NotFoundPage from './pages/NotFoundPage'
 // Páginas: Dashboards Principales
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import EnvironmentalImpactPage from './pages/admin/EnvironmentalImpactPage'
-import TeacherDashboard from './pages/teacher/TeacherDashboard'
+import TeacherDashboardPage from './pages/teacher/TeacherDashboardPage'
+import TeacherSchedulePage from './pages/teacher/TeacherSchedulePage'
+import TeacherSectionsPage from './pages/teacher/TeacherSectionsPage'
+import TeacherAvailabilityPage from './pages/teacher/TeacherAvailabilityPage'
+import TeacherLoadPage from './pages/teacher/TeacherLoadPage'
+import TeacherConflictsPage from './pages/teacher/TeacherConflictsPage'
+import TeacherChangeRequestsPage from './pages/teacher/TeacherChangeRequestsPage'
 import StudentDashboard from './pages/student/StudentDashboard'
 
 // Páginas: Administración y Coordinación
@@ -38,6 +44,7 @@ import OfferingsPage from './pages/coordinator/OfferingsPage'
 import OfferingFormPage from './pages/coordinator/OfferingFormPage'
 import OfferingConflictsPage from './pages/coordinator/OfferingConflictsPage'
 import CoordinatorCspPage from './pages/coordinator/CoordinatorCspPage'
+import CoordinatorChangeRequestsPage from './pages/coordinator/CoordinatorChangeRequestsPage'
 
 // Páginas: Estudiantes
 import MySavedSchedulesPage from './pages/student/MySavedSchedulesPage'
@@ -64,7 +71,7 @@ function HomeRedirect() {
     }
 
     if (user?.role === 'TEACHER') {
-        return <Navigate to="/teacher" replace />
+        return <Navigate to="/teacher/dashboard" replace />
     }
 
     if (user?.role === 'STUDENT') {
@@ -123,6 +130,10 @@ export default function App() {
                             path="/coordinator"
                             element={<Navigate to="/coordinator/dashboard" replace />}
                         />
+                        <Route
+                            path="/teacher"
+                            element={<Navigate to="/teacher/dashboard" replace />}
+                        />
 
                         {/* ADMIN */}
                         <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
@@ -154,6 +165,7 @@ export default function App() {
                             <Route path="/coordinator/offerings/:id" element={<OfferingFormPage />} />
                             <Route path="/coordinator/conflicts" element={<OfferingConflictsPage />} />
                             <Route path="/coordinator/csp" element={<CoordinatorCspPage />} />
+                            <Route path="/coordinator/change-requests" element={<CoordinatorChangeRequestsPage />} />
                             <Route path="/admin/schedules" element={<InstitutionalCSPPage />} />
                             <Route path="/admin/schedule-view" element={<InstitutionalScheduleViewPage />} />
                             <Route path="/admin/schedule-quality" element={<ScheduleQualityPage />} />
@@ -163,7 +175,13 @@ export default function App() {
 
                         {/* TEACHER */}
                         <Route element={<RoleRoute allowedRoles={['TEACHER']} />}>
-                            <Route path="/teacher" element={<TeacherDashboard />} />
+                            <Route path="/teacher/dashboard" element={<TeacherDashboardPage />} />
+                            <Route path="/teacher/schedule" element={<TeacherSchedulePage />} />
+                            <Route path="/teacher/sections" element={<TeacherSectionsPage />} />
+                            <Route path="/teacher/availability" element={<TeacherAvailabilityPage />} />
+                            <Route path="/teacher/load" element={<TeacherLoadPage />} />
+                            <Route path="/teacher/conflicts" element={<TeacherConflictsPage />} />
+                            <Route path="/teacher/change-requests" element={<TeacherChangeRequestsPage />} />
                         </Route>
 
                         {/* STUDENT */}

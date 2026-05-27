@@ -38,6 +38,11 @@ from app.models.offering import (
     SectionOffering,
     SectionRequirement,
 )
+from app.models.schedule_change_request import (
+    ScheduleChangeRequest,
+    ScheduleChangeRequestStatus,
+    ScheduleChangeRequestType,
+)
 
 __all__ = [
     "Base",
@@ -78,4 +83,7 @@ __all__ = [
     "OfferingStatus",
     "OfferingConflictType",
     "OfferingConflictSeverity",
+    "ScheduleChangeRequest",
+    "ScheduleChangeRequestStatus",
+    "ScheduleChangeRequestType",
 ]

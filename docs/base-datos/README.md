@@ -62,3 +62,7 @@ curricular de Fase 1.
 `academic_schedules.source_type` identifica horarios basados en `COURSE_SECTIONS` o `SECTION_OFFERINGS`. Los horarios originados en ofertas guardan periodo, programa, plan, estrategia y score; sus bloques usan `schedule_blocks.section_offering_id`.
 
 `student_course_enrollments.academic_period_id` enlaza de forma aditiva los cursos asignados con el periodo academico, preservando `academic_period` para compatibilidad. `student_schedules.generation_mode=ENROLLMENTS` identifica horarios personales creados desde asignaciones institucionales.
+
+## Solicitudes de cambio docente
+
+`schedule_change_requests` enlaza opcionalmente docente, bloque publicado, oferta y periodo. Registra tipo, franja actual/solicitada, razon, estado y respuesta de coordinacion. La tabla es trazabilidad de decisiones: no dispara modificaciones automaticas del horario.

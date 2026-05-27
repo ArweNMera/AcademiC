@@ -18,7 +18,7 @@ export default function LoginPage() {
 
         if (role === 'ADMIN') navigate('/admin', { replace: true })
         else if (role === 'COORDINATOR') navigate('/coordinator', { replace: true })
-        else if (role === 'TEACHER') navigate('/teacher', { replace: true })
+        else if (role === 'TEACHER') navigate('/teacher/dashboard', { replace: true })
         else if (role === 'STUDENT') navigate('/student', { replace: true })
         else navigate('/', { replace: true })
     }

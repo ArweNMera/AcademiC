@@ -63,7 +63,7 @@ def list_schedule_blocks(
         section_id=section_id,
         classroom_id=classroom_id,
         day_of_week=day_of_week,
-        published_institutional_only=current_user.role == UserRole.STUDENT,
+        published_institutional_only=current_user.role in {UserRole.STUDENT, UserRole.TEACHER},
     )
 
 
@@ -106,7 +106,7 @@ def get_enriched_schedule_blocks(
         )
     ),
 ):
-    if current_user.role == UserRole.STUDENT:
+    if current_user.role in {UserRole.STUDENT, UserRole.TEACHER}:
         visible_schedule = (
             db.query(AcademicSchedule)
             .filter(
@@ -208,7 +208,7 @@ def get_schedule_block(
     block_service = ScheduleBlockService(db)
     block = block_service.get_block_by_id(block_id)
 
-    if current_user.role == UserRole.STUDENT:
+    if current_user.role in {UserRole.STUDENT, UserRole.TEACHER}:
         visible_schedule = (
             db.query(AcademicSchedule)
             .filter(

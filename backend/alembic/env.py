@@ -44,6 +44,7 @@ from app.models import (
     SectionOffering,
     SectionRequirement,
     OfferingConflict,
+    ScheduleChangeRequest,
 )
 
 # ============================================================

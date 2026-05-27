@@ -41,7 +41,7 @@ def list_schedules(
         )
     ),
 ):
-    if current_user.role == UserRole.STUDENT:
+    if current_user.role in {UserRole.STUDENT, UserRole.TEACHER}:
         schedule_type = ScheduleType.INSTITUTIONAL
         status_filter = ScheduleStatus.PUBLISHED
         is_active = True
@@ -110,7 +110,7 @@ def get_schedule(
     schedule = schedule_service.get_schedule_by_id(schedule_id)
 
     if (
-        current_user.role == UserRole.STUDENT
+        current_user.role in {UserRole.STUDENT, UserRole.TEACHER}
         and (
             schedule.schedule_type != ScheduleType.INSTITUTIONAL
             or schedule.status != ScheduleStatus.PUBLISHED

@@ -45,12 +45,19 @@ const pageTitles = {
     '/coordinator/offerings/create': 'Crear oferta',
     '/coordinator/conflicts': 'Conflictos de oferta',
     '/coordinator/csp': 'CSP desde ofertas',
+    '/coordinator/change-requests': 'Solicitudes docentes',
     '/admin/schedules': 'Generador CSP institucional',
     '/admin/student-generator': 'Simulador estudiantil',
     '/admin/student-schedules': 'Horarios de estudiantes',
     '/admin/schedule-view': 'Vista institucional',
     '/admin/schedule-quality': 'Calidad de horario',
-    '/teacher': 'Panel del docente',
+    '/teacher/dashboard': 'Panel del docente',
+    '/teacher/schedule': 'Mi horario',
+    '/teacher/sections': 'Mis cursos y secciones',
+    '/teacher/availability': 'Mi disponibilidad',
+    '/teacher/load': 'Mi carga academica',
+    '/teacher/conflicts': 'Conflictos docentes',
+    '/teacher/change-requests': 'Solicitudes de cambio',
     '/student': 'Panel del estudiante',
     '/student/schedule-generator': 'Generador de horario',
     '/student/my-schedules': 'Mi horario elegido',
@@ -78,7 +85,7 @@ export default function AppLayout() {
         }
 
         if (user?.role === 'TEACHER') {
-            return '/teacher'
+            return '/teacher/dashboard'
         }
 
         if (user?.role === 'STUDENT') {
@@ -183,6 +190,9 @@ export default function AppLayout() {
                             <NavItem to="/coordinator/csp" icon={<Sparkles size={19} />}>
                                 CSP desde ofertas
                             </NavItem>
+                            <NavItem to="/coordinator/change-requests" icon={<ClipboardCheck size={19} />}>
+                                Solicitudes docentes
+                            </NavItem>
 
                             <SidebarGroupTitle>Horarios</SidebarGroupTitle>
 
@@ -238,6 +248,9 @@ export default function AppLayout() {
                             <NavItem to="/coordinator/csp" icon={<Sparkles size={19} />}>
                                 CSP desde ofertas
                             </NavItem>
+                            <NavItem to="/coordinator/change-requests" icon={<ClipboardCheck size={19} />}>
+                                Solicitudes docentes
+                            </NavItem>
                             <NavItem to="/admin/schedules" icon={<CalendarDays size={19} />}>
                                 Generar horario
                             </NavItem>
@@ -283,8 +296,23 @@ export default function AppLayout() {
                         <>
                             <SidebarGroupTitle>Docente</SidebarGroupTitle>
 
-                            <NavItem to="/teacher" icon={<CalendarDays size={19} />}>
-                                Mi panel
+                            <NavItem to="/teacher/schedule" icon={<CalendarDays size={19} />}>
+                                Mi horario
+                            </NavItem>
+                            <NavItem to="/teacher/sections" icon={<BookOpen size={19} />}>
+                                Mis cursos/secciones
+                            </NavItem>
+                            <NavItem to="/teacher/availability" icon={<ClipboardList size={19} />}>
+                                Mi disponibilidad
+                            </NavItem>
+                            <NavItem to="/teacher/load" icon={<Layers size={19} />}>
+                                Mi carga academica
+                            </NavItem>
+                            <NavItem to="/teacher/conflicts" icon={<ClipboardCheck size={19} />}>
+                                Conflictos
+                            </NavItem>
+                            <NavItem to="/teacher/change-requests" icon={<Sparkles size={19} />}>
+                                Solicitudes de cambio
                             </NavItem>
                         </>
                     )}

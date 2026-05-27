@@ -34,7 +34,7 @@ class TeacherService:
             "teachers": teachers,
         }
 
-    def get_teacher_by_id(self, teacher_id: int):
+    def get_teacher_by_id(self, teacher_id: int, current_user=None):
         teacher = self.teacher_repository.get_by_id(teacher_id)
 
         if not teacher:
@@ -43,6 +43,10 @@ class TeacherService:
                 detail="Docente no encontrado",
             )
 
+        if current_user and current_user.role == UserRole.TEACHER:
+            own_profile = self.teacher_repository.get_by_user_id(current_user.id)
+            if not own_profile or own_profile.id != teacher.id:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Solo puedes consultar tu propio perfil docente")
         return teacher
 
     def create_teacher(self, teacher_data: TeacherCreate):

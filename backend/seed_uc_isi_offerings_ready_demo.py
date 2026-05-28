@@ -1,50 +1,39 @@
 from app.core.database import SessionLocal
-from app.models.academic import AcademicPeriod, CurriculumPlan
-from app.models.classroom import Classroom
-from app.models.offering import OfferingModality, OfferingShift, OfferingStatus, SectionOffering
-from app.models.teacher import Teacher
+from app.services.demo_preparation_service import DemoPreparationService
 
 
 def main():
     db = SessionLocal()
     try:
-        period = db.query(AcademicPeriod).filter(AcademicPeriod.code == "2026-I").first()
-        plan = db.query(CurriculumPlan).filter(CurriculumPlan.code == "ISI-UC-2026").first()
-        teachers = db.query(Teacher).order_by(Teacher.id).limit(10).all()
-        classrooms = (
-            db.query(Classroom)
-            .filter(Classroom.is_active == True, Classroom.capacity >= 40)
-            .order_by(Classroom.id)
-            .all()
+        result = DemoPreparationService(db).prepare_institutional_csp(
+            {
+                "cycles": "all",
+                "status_target": "APPROVED",
+                "create_missing_offerings": True,
+                "create_missing_teachers": True,
+                "create_missing_classrooms": True,
+                "fix_existing_offerings": True,
+            }
         )
-        if not period or not plan or not teachers or not classrooms:
-            raise RuntimeError("Ejecute los seeds realista, curricular y de ofertas antes de este seed.")
-        offerings = (
-            db.query(SectionOffering)
-            .filter(
-                SectionOffering.academic_period_id == period.id,
-                SectionOffering.curriculum_plan_id == plan.id,
-                SectionOffering.cycle_number == 1,
-            )
-            .order_by(SectionOffering.id)
-            .all()
-        )
-        if not offerings:
-            raise RuntimeError("No existen ofertas de ciclo 1 para preparar.")
-        for index, offering in enumerate(offerings):
-            offering.teacher_id = teachers[index % len(teachers)].id
-            offering.classroom_id = classrooms[index % len(classrooms)].id
-            offering.modality = OfferingModality.PRESENTIAL
-            offering.shift = OfferingShift.MORNING
-            offering.capacity = max(offering.capacity, offering.estimated_students, 40)
-            offering.status = OfferingStatus.APPROVED
-            offering.notes = "Oferta demo aprobada para validar CSP desde ofertas."
-        db.commit()
-        print(f"Ofertas APPROVED preparadas para CSP: {len(offerings)}.")
-        print("No se publica automaticamente; la publicacion requiere el flujo seguro.")
-    except Exception:
-        db.rollback()
-        raise
+        print("Preparacion demo CSP institucional")
+        print(f"Success: {result.get('success')}")
+        print(f"Periodo: {result.get('period')}")
+        print(f"Programa: {result.get('program')}")
+        print(f"Plan: {result.get('plan')}")
+        print(f"Ciclos preparados: {result.get('cycles_prepared')}")
+        print(f"Ofertas revisadas: {result.get('offerings_reviewed')}")
+        print(f"Ofertas creadas: {result.get('offerings_created')}")
+        print(f"Ofertas actualizadas: {result.get('offerings_updated')}")
+        print(f"Ofertas APPROVED: {result.get('offerings_approved')}")
+        print(f"Docentes asignados: {result.get('teachers_assigned')}")
+        print(f"Aulas asignadas: {result.get('classrooms_assigned')}")
+        print(f"Docentes creados: {result.get('created_teachers')}")
+        print(f"Aulas creadas: {result.get('created_classrooms')}")
+        print(f"Disponibilidades creadas: {result.get('teacher_availability_created')}")
+        print(f"Warnings: {result.get('warnings')}")
+        print(f"Errors: {result.get('errors')}")
+        if not result.get("success"):
+            raise RuntimeError(result.get("message") or "Preparacion demo incompleta.")
     finally:
         db.close()
 

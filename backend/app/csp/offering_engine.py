@@ -29,10 +29,26 @@ class OfferingCSPEngine:
         domains = [self._domain(offering) for offering in self.variables]
         if any(not domain for domain in domains):
             return []
+        if len(domains) > 20:
+            solution = self._greedy_solution(domains)
+            return [self._score(solution)] if solution else []
         results = []
         self._backtrack(domains, 0, [], results)
         scored = [self._score(solution) for solution in results]
         return sorted(scored, key=lambda value: value["score_total"], reverse=True)
+
+    def _greedy_solution(self, domains):
+        current = []
+        for domain in domains:
+            selected = None
+            for assignment in domain:
+                if self._consistent(assignment, current):
+                    selected = assignment
+                    break
+            if selected is None:
+                return []
+            current.append(selected)
+        return current
 
     def _build_variables(self):
         variables = []

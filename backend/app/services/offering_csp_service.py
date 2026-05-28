@@ -27,6 +27,7 @@ class OfferingCSPService:
         self.db = db
 
     def generate(self, request):
+        request.cycles = self._normalize_cycles(request)
         offerings = self._eligible_offerings(request)
         if not offerings:
             existing = (
@@ -97,6 +98,7 @@ class OfferingCSPService:
         }
 
     def save_solution(self, request, current_user):
+        request.cycles = self._normalize_cycles(request)
         result = self.generate(request)
         if result.get("source_type") != "SECTION_OFFERINGS":
             raise HTTPException(status_code=400, detail="No hay soluciones de ofertas para guardar.")
@@ -171,6 +173,23 @@ class OfferingCSPService:
         if request.cycles:
             query = query.filter(SectionOffering.cycle_number.in_(request.cycles))
         return query.order_by(SectionOffering.cycle_number, SectionOffering.id).all()
+
+    def _normalize_cycles(self, request):
+        if request.cycles in (None, "", [], "all", "ALL"):
+            query = self.db.query(SectionOffering.cycle_number).filter(
+                SectionOffering.academic_period_id == request.academic_period_id
+            )
+            if request.academic_program_id:
+                query = query.filter(SectionOffering.academic_program_id == request.academic_program_id)
+            if request.curriculum_plan_id:
+                query = query.filter(SectionOffering.curriculum_plan_id == request.curriculum_plan_id)
+            return [
+                row[0]
+                for row in query.distinct().order_by(SectionOffering.cycle_number).all()
+            ]
+        if isinstance(request.cycles, str):
+            return [int(item.strip()) for item in request.cycles.split(",") if item.strip().isdigit()]
+        return sorted({int(cycle) for cycle in request.cycles if int(cycle) > 0})
 
     def _validate_for_generation(self, offerings, request):
         conflicts = []

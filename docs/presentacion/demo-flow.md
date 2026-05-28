@@ -42,6 +42,23 @@ API: `http://127.0.0.1:8000/docs`
    - Generar desde ofertas `READY` o `APPROVED`, revisar score y guardar una
      solucion `DRAFT`.
 
+3.1. **Admin/Coordinador: generacion institucional guiada**
+   - Ruta: `/admin/institutional-csp`
+   - Mostrar que ya no se escribe un ID manual.
+   - Seleccionar **Crear nuevo horario** o un horario detectado.
+   - Ver periodo activo, programa, plan y ciclos con controles guiados.
+   - Confirmar que la fuente por defecto sea **Oferta academica moderna**:
+     usa `section_offerings`, no el generador clasico de `course_sections`.
+   - Presionar **Preparar datos demo completo**. El sistema completa todos los
+     ciclos del plan activo, docentes, aulas y disponibilidad sin entrar a
+     MySQL.
+   - Ejecutar diagnostico, vista previa y generacion; los resultados aparecen
+     como tarjetas, tablas y listas de problemas, no como JSON crudo.
+   - Guardar una solucion para crear un horario `DRAFT` con bloques y luego
+     publicar mediante validacion segura.
+   - Abrir solo si hace falta el acordeon **Ver detalles tecnicos** para
+     mostrar que el JSON queda disponible para depuracion.
+
 4. **Coordinador/Admin: publicar horario**
    - Ruta: `/admin/institutional-csp` o flujo seguro disponible.
    - Publicar solo con validacion; explicar que estudiantes no ven borradores.
@@ -90,4 +107,5 @@ API: `http://127.0.0.1:8000/docs`
   vista.
 - La exportacion PDF del estudiante se carga bajo demanda para no inflar el
   bundle principal.
-
+- El menu lateral es colapsable por grupos; para la demo conviene abrir solo
+  el grupo del flujo que se esta explicando.

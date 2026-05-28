@@ -4,6 +4,24 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 
+class AvailableScheduleResponse(BaseModel):
+    id: int
+    name: str
+    status: str
+    source_type: str
+    academic_period_id: int | None = None
+    academic_period_code: str | None = None
+    academic_program_id: int | None = None
+    academic_program_name: str | None = None
+    curriculum_plan_id: int | None = None
+    curriculum_plan_code: str | None = None
+    quality_score: float | None = None
+    blocks_count: int = 0
+    created_at: str | None = None
+    updated_at: str | None = None
+    label: str
+
+
 class AcademicTimeSlot(BaseModel):
     start_time: time
     end_time: time

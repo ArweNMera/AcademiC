@@ -1,6 +1,11 @@
 import api from '../api/axios'
 
 export const institutionalCspService = {
+    availableSchedules: async () => {
+        const response = await api.get('/institutional-csp/available-schedules')
+        return response.data
+    },
+
     diagnoseDomains: async (payload) => {
         const response = await api.post(
             '/csp-diagnostics/institutional/domains',

@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
     auth,
+    admin_demo,
     academic_periods,
     academic_programs,
     classrooms,
@@ -54,6 +55,12 @@ api_router.include_router(
     auth.router,
     prefix="/auth",
     tags=["Auth"],
+)
+
+api_router.include_router(
+    admin_demo.router,
+    prefix="/admin/demo",
+    tags=["Admin Demo"],
 )
 
 api_router.include_router(

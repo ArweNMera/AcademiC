@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
     AlertTriangle,
     CalendarSearch,
@@ -16,6 +16,8 @@ import {
 import toast from 'react-hot-toast'
 
 import { cspService } from '../../services/cspService'
+import { institutionalCspService } from '../../services/institutionalCspService'
+import { scheduleService } from '../../services/scheduleService'
 import { schedulePublicationService } from '../../services/schedulePublicationService'
 
 const DAYS = [
@@ -38,13 +40,15 @@ const dayNames = {
     7: 'Domingo',
 }
 
+const CREATE_NEW = 'new'
+
 export default function InstitutionalCSPPage() {
     const [loadingAction, setLoadingAction] = useState(null)
     const solutionsRef = useRef(null)
 
     const [form, setForm] = useState({
-        schedule_id: 4,
-        academic_period: '2026-1',
+        schedule_id: null,
+        academic_period: '2026-I',
         max_solutions: 3,
 
         use_academic_slots: true,
@@ -79,6 +83,10 @@ export default function InstitutionalCSPPage() {
     const [preview, setPreview] = useState(null)
     const [generated, setGenerated] = useState(null)
     const [selectedSolutionIndex, setSelectedSolutionIndex] = useState(0)
+    const [availableSchedules, setAvailableSchedules] = useState([])
+    const [selectedScheduleId, setSelectedScheduleId] = useState(CREATE_NEW)
+    const [schedulesLoading, setSchedulesLoading] = useState(false)
+    const [schedulesError, setSchedulesError] = useState('')
 
     // Nuevos estados para el diagnóstico compacto
     const [diagnosticFilter, setDiagnosticFilter] = useState('problems')
@@ -90,6 +98,49 @@ export default function InstitutionalCSPPage() {
             (solution) => solution.solution_index === Number(selectedSolutionIndex)
         )
     }, [preview, selectedSolutionIndex])
+
+    const selectedSchedule = useMemo(() => {
+        if (selectedScheduleId === CREATE_NEW) return null
+        return availableSchedules.find((schedule) => String(schedule.id) === String(selectedScheduleId)) || null
+    }, [availableSchedules, selectedScheduleId])
+
+    const loadAvailableSchedules = async () => {
+        setSchedulesLoading(true)
+        setSchedulesError('')
+        try {
+            const data = await institutionalCspService.availableSchedules()
+            const schedules = Array.isArray(data) ? data : []
+            setAvailableSchedules(schedules)
+            setSelectedScheduleId((current) => {
+                if (current !== CREATE_NEW && schedules.some((item) => String(item.id) === String(current))) {
+                    return current
+                }
+                const preferred = schedules.find((item) => item.status === 'DRAFT') || schedules[0]
+                return preferred ? String(preferred.id) : CREATE_NEW
+            })
+        } catch (error) {
+            setSchedulesError('No se pudieron cargar los horarios institucionales disponibles.')
+        } finally {
+            setSchedulesLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        loadAvailableSchedules()
+    }, [])
+
+    useEffect(() => {
+        if (selectedSchedule) {
+            setForm((current) => ({
+                ...current,
+                schedule_id: selectedSchedule.id,
+                academic_period: selectedSchedule.academic_period_code || current.academic_period,
+                career_filter: selectedSchedule.academic_program_name || current.career_filter,
+            }))
+            return
+        }
+        setForm((current) => ({ ...current, schedule_id: null }))
+    }, [selectedSchedule])
 
     const scrollToSolutions = () => {
         solutionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -112,9 +163,39 @@ export default function InstitutionalCSPPage() {
         })
     }
 
-    const buildPayload = () => ({
+    const ensureSchedule = async () => {
+        if (selectedScheduleId !== CREATE_NEW) {
+            const scheduleId = Number(selectedScheduleId)
+            if (!Number.isFinite(scheduleId) || scheduleId <= 0) {
+                throw new Error('Seleccione un horario institucional valido.')
+            }
+            return scheduleId
+        }
+
+        const created = await scheduleService.createSchedule({
+            name: `Horario institucional ${form.academic_period || 'periodo'} - CSP`,
+            academic_period: form.academic_period || '2026-I',
+            source_type: 'COURSE_SECTIONS',
+            schedule_type: 'INSTITUTIONAL',
+            status: 'DRAFT',
+            is_active: true,
+        })
+        toast.success(`Horario creado: ${created.name}`)
+        await loadAvailableSchedules()
+        setSelectedScheduleId(String(created.id))
+        setForm((current) => ({ ...current, schedule_id: created.id }))
+        return created.id
+    }
+
+    const buildPayload = async () => {
+        const scheduleId = await ensureSchedule()
+        if (!scheduleId || Number(scheduleId) <= 0) {
+            throw new Error('Seleccione un horario institucional valido.')
+        }
+
+        return {
         ...form,
-        schedule_id: Number(form.schedule_id),
+        schedule_id: Number(scheduleId),
         max_solutions: Number(form.max_solutions),
         default_block_duration_minutes: Number(form.default_block_duration_minutes),
         min_block_duration_minutes: Number(form.min_block_duration_minutes),
@@ -131,12 +212,13 @@ export default function InstitutionalCSPPage() {
             form.max_blocks_per_day === '' || form.max_blocks_per_day === null
                 ? null
                 : Number(form.max_blocks_per_day),
-    })
+        }
+    }
 
     const handleDiagnose = async () => {
         setLoadingAction('diagnose')
         try {
-            const data = await cspService.diagnoseInstitutionalDomains(buildPayload())
+            const data = await cspService.diagnoseInstitutionalDomains(await buildPayload())
             setDiagnostic(data)
             toast.success('Diagnóstico CSP completado')
         } catch (error) {
@@ -149,7 +231,7 @@ export default function InstitutionalCSPPage() {
     const handlePreview = async () => {
         setLoadingAction('preview')
         try {
-            const data = await cspService.previewInstitutionalSchedule(buildPayload())
+            const data = await cspService.previewInstitutionalSchedule(await buildPayload())
             setPreview(data)
             setSelectedSolutionIndex(data.best_solution_index)
             toast.success('Preview generado correctamente')
@@ -164,7 +246,7 @@ export default function InstitutionalCSPPage() {
     const handleGenerateBest = async () => {
         setLoadingAction('generate')
         try {
-            const data = await cspService.generateInstitutionalSchedule(buildPayload())
+            const data = await cspService.generateInstitutionalSchedule(await buildPayload())
             setGenerated(data)
             toast.success('Horario generado y guardado correctamente')
         } catch (error) {
@@ -178,7 +260,7 @@ export default function InstitutionalCSPPage() {
         setLoadingAction('generate-selected')
         try {
             const payload = {
-                ...buildPayload(),
+                ...(await buildPayload()),
                 solution_index: Number(selectedSolutionIndex),
             }
             const data = await cspService.generateSelectedInstitutionalSchedule(payload)
@@ -192,8 +274,8 @@ export default function InstitutionalCSPPage() {
     }
 
     const handlePublishSchedule = async () => {
-        if (!form.schedule_id) {
-            toast.error('Selecciona un horario institucional')
+        if (selectedScheduleId === CREATE_NEW || !selectedScheduleId) {
+            toast.error('Seleccione un horario existente o guarde primero una solucion generada.')
             return
         }
         const confirmed = window.confirm(
@@ -203,7 +285,7 @@ export default function InstitutionalCSPPage() {
         try {
             setLoadingAction('publish')
             const response = await schedulePublicationService.publishSafely({
-                scheduleId: Number(form.schedule_id),
+                scheduleId: Number(selectedScheduleId),
                 careerFilter: form.career_filter || '',
                 cycleFilter: form.cycle_filter || [],
                 courseIds: form.course_ids || [],
@@ -267,13 +349,24 @@ export default function InstitutionalCSPPage() {
                         </p>
                     </div>
                     <div className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-700">
-                        Horario ID: {form.schedule_id || 'No definido'}
+                        {selectedSchedule ? `Horario seleccionado: ${selectedSchedule.status}` : 'Crear nuevo horario'}
                     </div>
                 </div>
 
                 {/* Campos principales */}
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-                    <Input label="ID del horario" type="number" value={form.schedule_id} onChange={(value) => updateForm('schedule_id', value)} />
+                    <Select
+                        label="Horario institucional"
+                        value={selectedScheduleId}
+                        onChange={setSelectedScheduleId}
+                        options={[
+                            { value: CREATE_NEW, label: 'Crear nuevo horario' },
+                            ...availableSchedules.map((schedule) => ({
+                                value: String(schedule.id),
+                                label: schedule.label || `${schedule.name} - ${schedule.status}`,
+                            })),
+                        ]}
+                    />
                     <Input label="Periodo académico" value={form.academic_period} onChange={(value) => updateForm('academic_period', value)} />
                     <Input label="Máx. soluciones" type="number" value={form.max_solutions} onChange={(value) => updateForm('max_solutions', value)} />
                     <Input label="Semilla" type="number" value={form.random_seed ?? ''} onChange={(value) => updateForm('random_seed', value)} />
@@ -292,6 +385,35 @@ export default function InstitutionalCSPPage() {
                     <Checkbox label="Limpiar bloques antes de guardar" checked={form.clear_existing_blocks} onChange={(value) => updateForm('clear_existing_blocks', value)} />
                     <Checkbox label="Evitar secciones duplicadas" checked={form.avoid_duplicate_section_blocks} onChange={(value) => updateForm('avoid_duplicate_section_blocks', value)} />
                 </div>
+
+                {schedulesLoading && (
+                    <p className="mt-3 text-sm font-semibold text-slate-500">Cargando horarios institucionales...</p>
+                )}
+                {schedulesError && (
+                    <div className="mt-3 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+                        <span>{schedulesError}</span>
+                        <button type="button" onClick={loadAvailableSchedules} className="rounded-xl bg-amber-600 px-3 py-1 text-white">
+                            Reintentar
+                        </button>
+                    </div>
+                )}
+                {!schedulesLoading && !schedulesError && availableSchedules.length === 0 && (
+                    <p className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                        No hay horarios institucionales todavia. Puedes crear uno nuevo generando una solucion.
+                    </p>
+                )}
+                {selectedSchedule && (
+                    <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 md:grid-cols-4">
+                        <ScheduleDetail label="Nombre" value={selectedSchedule.name} />
+                        <ScheduleDetail label="Periodo" value={selectedSchedule.academic_period_code || '-'} />
+                        <ScheduleDetail label="Programa" value={selectedSchedule.academic_program_name || '-'} />
+                        <ScheduleDetail label="Bloques" value={selectedSchedule.blocks_count ?? 0} />
+                        <ScheduleDetail label="Fuente" value={selectedSchedule.source_type || '-'} />
+                        <ScheduleDetail label="Score" value={selectedSchedule.quality_score ?? '-'} />
+                        <ScheduleDetail label="Actualizado" value={formatDate(selectedSchedule.updated_at)} />
+                        <ScheduleDetail label="ID interno" value={selectedSchedule.id} subtle />
+                    </div>
+                )}
 
                 {/* Alcance académico */}
                 <div className="mt-6 border-t border-slate-200 pt-6">
@@ -427,6 +549,17 @@ function QuickStep({ icon, title }) {
         <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-slate-200">
             {icon}
             <span className="font-semibold">{title}</span>
+        </div>
+    )
+}
+
+function ScheduleDetail({ label, value, subtle = false }) {
+    return (
+        <div>
+            <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p>
+            <p className={`mt-1 font-black ${subtle ? 'text-slate-500' : 'text-slate-900'}`}>
+                {value ?? '-'}
+            </p>
         </div>
     )
 }
@@ -805,6 +938,17 @@ function SolutionMetric({ label, value }) {
 function formatTime(value) {
     if (!value) return ''
     return String(value).slice(0, 5)
+}
+
+function formatDate(value) {
+    if (!value) return '-'
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return '-'
+    return date.toLocaleDateString('es-PE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    })
 }
 
 function showError(error, fallback) {

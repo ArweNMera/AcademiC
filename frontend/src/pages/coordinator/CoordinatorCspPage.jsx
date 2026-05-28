@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CalendarDays, Loader2, Save, Sparkles } from 'lucide-react'
+import { Loader2, Sparkles } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { academicPeriodService } from '../../services/academicPeriodService'
 import { academicProgramService } from '../../services/academicProgramService'
@@ -8,7 +8,7 @@ import { offeringCspService } from '../../services/offeringCspService'
 import EmptyState from '../../components/common/EmptyState'
 import ErrorState from '../../components/common/ErrorState'
 import LoadingState from '../../components/common/LoadingState'
-import { safeArray } from '../../utils/safeData'
+import CspGenerationResult from '../../components/csp/CspGenerationResult'
 
 export default function CoordinatorCspPage() {
     const [periods, setPeriods] = useState([])
@@ -113,20 +113,13 @@ export default function CoordinatorCspPage() {
                 {loading ? <Loader2 className="animate-spin" size={18} /> : <Sparkles size={18} />} Generar desde oferta academica
             </button>
         </section>
-        {result && !safeArray(result.solutions).length && <EmptyState title="El CSP no devolvio soluciones." text="Revisa que existan ofertas READY o APPROVED con docente, aula y disponibilidad." />}
-        {safeArray(result?.solutions).map((solution) => <section key={solution.solution_index} className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <div><h2 className="font-bold">Opcion {solution.solution_index + 1}</h2><p className="text-sm text-slate-500">Score {solution.score_total} | {solution.blocks.length} bloques</p></div>
-                <button onClick={() => save(solution.solution_index)} disabled={saving === solution.solution_index} className="flex gap-2 rounded-xl bg-slate-900 px-4 py-2 text-white"><Save size={17} /> Guardar DRAFT</button>
-            </div>
-            <div className="mt-5 grid gap-2 md:grid-cols-2">
-                {safeArray(solution.blocks).map((block, index) => <div key={`${block.section_offering_id}-${index}`} className="rounded-xl border p-3 text-sm">
-                    <p className="font-semibold">{block.course_name} - {block.section_code}</p>
-                    <p className="text-slate-500"><CalendarDays size={14} className="inline" /> Dia {block.day_of_week}, {String(block.start_time).slice(0, 5)} - {String(block.end_time).slice(0, 5)} | {block.classroom_code || 'Virtual'}</p>
-                </div>)}
-            </div>
-            <p className="mt-4 text-sm text-slate-500">Docentes: {JSON.stringify(solution.teacher_load_summary)} | Aulas: {JSON.stringify(solution.classroom_usage)}</p>
-        </section>)}
+        {result && (
+            <CspGenerationResult
+                data={result}
+                onSaveSolution={save}
+                savingSolutionIndex={saving}
+            />
+        )}
     </div>
 }
 

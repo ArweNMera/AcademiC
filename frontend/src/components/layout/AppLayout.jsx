@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
     BookOpen,
     Building2,
@@ -17,9 +18,12 @@ import {
     UserRound,
     Users,
 } from 'lucide-react'
-import { useAuthStore } from '../../stores/authStore'
-import NotificationBell from '../notifications/NotificationBell'
+
 import ErrorBoundary from '../common/ErrorBoundary'
+import NotificationBell from '../notifications/NotificationBell'
+import SidebarItem from './SidebarItem'
+import SidebarSection from './SidebarSection'
+import { useAuthStore } from '../../stores/authStore'
 
 const roleLabels = {
     ADMIN: 'Administrador',
@@ -42,17 +46,23 @@ const pageTitles = {
     '/admin/reports/change-requests': 'Reporte de solicitudes docentes',
     '/admin/reports/sustainability': 'Reporte de sostenibilidad',
     '/admin/environmental-impact': 'Impacto ambiental',
-    '/admin/data-readiness': 'Preparación de datos',
+    '/admin/data-readiness': 'Preparacion de datos',
     '/admin/users': 'Usuarios',
     '/admin/teachers': 'Docentes',
     '/admin/students': 'Estudiantes',
     '/admin/sections': 'Secciones',
     '/admin/courses': 'Cursos',
     '/admin/classrooms': 'Aulas',
-    '/admin/academic-periods': 'Periodos académicos',
-    '/admin/academic-programs': 'Programas académicos',
+    '/admin/academic-periods': 'Periodos academicos',
+    '/admin/academic-programs': 'Programas academicos',
     '/admin/curriculum-plans': 'Planes curriculares',
     '/admin/curriculum': 'Malla curricular',
+    '/admin/schedules': 'Generador CSP institucional',
+    '/admin/institutional-csp': 'Generacion institucional',
+    '/admin/student-generator': 'Simulador estudiantil',
+    '/admin/student-schedules': 'Horarios de estudiantes',
+    '/admin/schedule-view': 'Vista institucional',
+    '/admin/schedule-quality': 'Calidad de horario',
     '/coordinator/dashboard': 'Dashboard del coordinador',
     '/coordinator/offerings': 'Oferta academica',
     '/coordinator/offerings/create': 'Crear oferta',
@@ -61,17 +71,6 @@ const pageTitles = {
     '/coordinator/change-requests': 'Solicitudes docentes',
     '/coordinator/traceability': 'Trazabilidad',
     '/coordinator/reports': 'Reportes academicos',
-    '/coordinator/reports/teacher-load': 'Reporte de carga docente',
-    '/coordinator/reports/classroom-usage': 'Reporte de uso de aulas',
-    '/coordinator/reports/offerings': 'Reporte de ofertas',
-    '/coordinator/reports/conflicts': 'Reporte de conflictos',
-    '/coordinator/reports/schedules': 'Reporte de horarios',
-    '/coordinator/reports/change-requests': 'Reporte de solicitudes docentes',
-    '/admin/schedules': 'Generador CSP institucional',
-    '/admin/student-generator': 'Simulador estudiantil',
-    '/admin/student-schedules': 'Horarios de estudiantes',
-    '/admin/schedule-view': 'Vista institucional',
-    '/admin/schedule-quality': 'Calidad de horario',
     '/teacher/dashboard': 'Panel del docente',
     '/teacher/schedule': 'Mi horario',
     '/teacher/sections': 'Mis cursos y secciones',
@@ -83,7 +82,7 @@ const pageTitles = {
     '/student/schedule-generator': 'Generador de horario',
     '/student/my-schedules': 'Mi horario elegido',
     '/student/curriculum': 'Mi malla curricular',
-    '/student/offer': 'Oferta académica',                    // ✅ Nuevo título
+    '/student/offer': 'Oferta academica',
     '/notifications': 'Notificaciones',
 }
 
@@ -91,357 +90,85 @@ export default function AppLayout() {
     const navigate = useNavigate()
     const location = useLocation()
     const { user, logout } = useAuthStore()
+    const dashboardPath = getDashboardPath(user?.role)
+    const menu = useMemo(() => buildMenu(user?.role, dashboardPath), [user?.role, dashboardPath])
+    const activeSection = menu.find((section) => section.items.some((item) => isActivePath(location.pathname, item.to)))?.id
+    const storageKey = `optiacademic_sidebar_${user?.role || 'guest'}`
+    const [openSections, setOpenSections] = useState(() => readOpenSections(storageKey))
+
+    useEffect(() => {
+        if (activeSection && !openSections[activeSection]) {
+            setOpenSections({ [activeSection]: true })
+        }
+    }, [activeSection])
+
+    useEffect(() => {
+        localStorage.setItem(storageKey, JSON.stringify(openSections))
+    }, [openSections, storageKey])
+
+    const toggleSection = (id) => {
+        setOpenSections((current) => ({ ...current, [id]: !current[id] }))
+    }
 
     const handleLogout = () => {
         logout()
         navigate('/login')
     }
 
-    const getDashboardPath = () => {
-        if (user?.role === 'ADMIN') {
-            return '/admin/dashboard'
-        }
-
-        if (user?.role === 'COORDINATOR') {
-            return '/coordinator/dashboard'
-        }
-
-        if (user?.role === 'TEACHER') {
-            return '/teacher/dashboard'
-        }
-
-        if (user?.role === 'STUDENT') {
-            return '/student'
-        }
-
-        return '/'
-    }
-
     const currentTitle = pageTitles[location.pathname] || 'OptiAcademic'
 
     return (
         <div className="flex min-h-screen bg-slate-100">
-            <aside className="flex w-72 flex-col bg-slate-950 text-white">
+            <aside className="flex w-72 shrink-0 flex-col bg-slate-950 text-white">
                 <div className="border-b border-slate-800 p-6">
                     <div className="flex items-center gap-3">
                         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-600">
                             <GraduationCap size={26} />
                         </div>
-
-                        <div>
+                        <div className="min-w-0">
                             <h1 className="text-lg font-bold">OptiAcademic</h1>
-                            <p className="text-xs text-slate-400">
-                                Gestión inteligente de horarios
-                            </p>
+                            <p className="truncate text-xs text-slate-400">Gestion inteligente de horarios</p>
                         </div>
                     </div>
                 </div>
 
                 <nav className="flex-1 space-y-2 overflow-y-auto p-4">
-                    <NavItem to={getDashboardPath()} icon={<LayoutDashboard size={19} />}>
-                        Dashboard
-                    </NavItem>
-                    <NavItem to="/notifications" icon={<ClipboardList size={19} />}>
-                        Notificaciones
-                    </NavItem>
-
-                    {user?.role === 'ADMIN' && (
-                        <>
-                            <SidebarGroupTitle>Analitica</SidebarGroupTitle>
-
-                            <NavItem to="/admin/executive-dashboard" icon={<LayoutDashboard size={19} />}>
-                                Panel ejecutivo
-                            </NavItem>
-                            <NavItem to="/admin/audit-logs" icon={<ClipboardCheck size={19} />}>
-                                Auditoria
-                            </NavItem>
-                            <NavItem to="/admin/traceability" icon={<ClipboardList size={19} />}>
-                                Trazabilidad
-                            </NavItem>
-                            <NavItem to="/admin/reports/teacher-load" icon={<ClipboardList size={19} />}>
-                                Carga docente
-                            </NavItem>
-                            <NavItem to="/admin/reports/classroom-usage" icon={<Building2 size={19} />}>
-                                Uso de aulas
-                            </NavItem>
-                            <NavItem to="/admin/reports/offerings" icon={<Layers size={19} />}>
-                                Ofertas
-                            </NavItem>
-                            <NavItem to="/admin/reports/conflicts" icon={<ClipboardCheck size={19} />}>
-                                Conflictos
-                            </NavItem>
-                            <NavItem to="/admin/reports/schedules" icon={<CalendarDays size={19} />}>
-                                Horarios
-                            </NavItem>
-                            <NavItem to="/admin/reports/students" icon={<Users size={19} />}>
-                                Estudiantes
-                            </NavItem>
-                            <NavItem to="/admin/reports/change-requests" icon={<ClipboardList size={19} />}>
-                                Solicitudes docentes
-                            </NavItem>
-                            <NavItem to="/admin/reports/sustainability" icon={<Leaf size={19} />}>
-                                Sostenibilidad
-                            </NavItem>
-                            <SidebarGroupTitle>Gestión institucional</SidebarGroupTitle>
-
-                            <NavItem
-                                to="/admin/data-readiness"
-                                icon={<ClipboardList size={19} />}
-                            >
-                                Preparación de datos
-                            </NavItem>
-
-                            <NavItem
-                                to="/admin/environmental-impact"
-                                icon={<Leaf size={19} />}
-                            >
-                                Impacto ambiental
-                            </NavItem>
-
-                            <NavItem to="/admin/users" icon={<Users size={19} />}>
-                                Usuarios
-                            </NavItem>
-
-                            <NavItem to="/admin/teachers" icon={<UserCog size={19} />}>
-                                Docentes
-                            </NavItem>
-
-                            <NavItem to="/admin/students" icon={<UserRound size={19} />}>
-                                Estudiantes
-                            </NavItem>
-
-                            <NavItem to="/admin/sections" icon={<Layers size={19} />}>
-                                Secciones
-                            </NavItem>
-
-                            <NavItem to="/admin/courses" icon={<School size={19} />}>
-                                Cursos
-                            </NavItem>
-
-                            <NavItem to="/admin/classrooms" icon={<Building2 size={19} />}>
-                                Aulas
-                            </NavItem>
-
-                            <SidebarGroupTitle>Dominio académico</SidebarGroupTitle>
-
-                            <NavItem to="/admin/academic-periods" icon={<CalendarDays size={19} />}>
-                                Periodos
-                            </NavItem>
-
-                            <NavItem to="/admin/academic-programs" icon={<GraduationCap size={19} />}>
-                                Programas
-                            </NavItem>
-
-                            <NavItem to="/admin/curriculum-plans" icon={<ClipboardList size={19} />}>
-                                Planes curriculares
-                            </NavItem>
-
-                            <NavItem to="/admin/curriculum" icon={<BookOpen size={19} />}>
-                                Malla curricular
-                            </NavItem>
-
-                            <NavItem to="/coordinator/offerings" icon={<Layers size={19} />}>
-                                Oferta academica
-                            </NavItem>
-
-                            <NavItem to="/coordinator/conflicts" icon={<ClipboardCheck size={19} />}>
-                                Conflictos de oferta
-                            </NavItem>
-                            <NavItem to="/coordinator/csp" icon={<Sparkles size={19} />}>
-                                CSP desde ofertas
-                            </NavItem>
-                            <NavItem to="/coordinator/change-requests" icon={<ClipboardCheck size={19} />}>
-                                Solicitudes docentes
-                            </NavItem>
-
-                            <SidebarGroupTitle>Horarios</SidebarGroupTitle>
-
-                            <NavItem
-                                to="/admin/schedules"
-                                icon={<CalendarDays size={19} />}
-                            >
-                                Generar horario
-                            </NavItem>
-
-                            <NavItem
-                                to="/admin/schedule-view"
-                                icon={<CalendarDays size={19} />}
-                            >
-                                Ver horario
-                            </NavItem>
-
-                            <NavItem
-                                to="/admin/schedule-quality"
-                                icon={<ClipboardCheck size={19} />}
-                            >
-                                Calidad horario
-                            </NavItem>
-
-                            <SidebarGroupTitle>Estudiantes</SidebarGroupTitle>
-
-                            <NavItem
-                                to="/admin/student-generator"
-                                icon={<Sparkles size={19} />}
-                            >
-                                Simulador estudiantil
-                            </NavItem>
-
-                            <NavItem
-                                to="/admin/student-schedules"
-                                icon={<Star size={19} />}
-                            >
-                                Horarios estudiantes
-                            </NavItem>
-                        </>
-                    )}
-
-                    {user?.role === 'COORDINATOR' && (
-                        <>
-                            <SidebarGroupTitle>Reportes academicos</SidebarGroupTitle>
-                            <NavItem to="/coordinator/reports" icon={<LayoutDashboard size={19} />}>
-                                Panel de reportes
-                            </NavItem>
-                            <NavItem to="/coordinator/traceability" icon={<ClipboardCheck size={19} />}>
-                                Trazabilidad
-                            </NavItem>
-                            <NavItem to="/coordinator/reports/teacher-load" icon={<ClipboardList size={19} />}>
-                                Carga docente
-                            </NavItem>
-                            <NavItem to="/coordinator/reports/classroom-usage" icon={<Building2 size={19} />}>
-                                Uso de aulas
-                            </NavItem>
-                            <NavItem to="/coordinator/reports/offerings" icon={<Layers size={19} />}>
-                                Ofertas
-                            </NavItem>
-                            <NavItem to="/coordinator/reports/conflicts" icon={<ClipboardCheck size={19} />}>
-                                Conflictos
-                            </NavItem>
-                            <NavItem to="/coordinator/reports/schedules" icon={<CalendarDays size={19} />}>
-                                Horarios
-                            </NavItem>
-                            <NavItem to="/coordinator/reports/change-requests" icon={<ClipboardList size={19} />}>
-                                Solicitudes docentes
-                            </NavItem>
-                            <SidebarGroupTitle>Oferta academica</SidebarGroupTitle>
-                            <NavItem to="/coordinator/offerings" icon={<Layers size={19} />}>
-                                Gestionar oferta
-                            </NavItem>
-                            <NavItem to="/coordinator/conflicts" icon={<ClipboardCheck size={19} />}>
-                                Conflictos
-                            </NavItem>
-                            <SidebarGroupTitle>Planificacion</SidebarGroupTitle>
-                            <NavItem to="/coordinator/csp" icon={<Sparkles size={19} />}>
-                                CSP desde ofertas
-                            </NavItem>
-                            <NavItem to="/coordinator/change-requests" icon={<ClipboardCheck size={19} />}>
-                                Solicitudes docentes
-                            </NavItem>
-                            <NavItem to="/admin/schedules" icon={<CalendarDays size={19} />}>
-                                Generar horario
-                            </NavItem>
-                        </>
-                    )}
-
-                    {user?.role === 'STUDENT' && (
-                        <>
-                            <SidebarGroupTitle>Mi horario</SidebarGroupTitle>
-
-                            <NavItem
-                                to="/student/curriculum"
-                                icon={<GraduationCap size={19} />}
-                            >
-                                Mi malla curricular
-                            </NavItem>
-
-                            {/* ✅ Nueva opción: Oferta académica */}
-                            <NavItem
-                                to="/student/offer"
-                                icon={<BookOpen size={19} />}
-                            >
-                                Oferta académica
-                            </NavItem>
-
-                            <NavItem
-                                to="/student/schedule-generator"
-                                icon={<Sparkles size={19} />}
-                            >
-                                Generar mi horario
-                            </NavItem>
-
-                            <NavItem
-                                to="/student/my-schedules"
-                                icon={<Star size={19} />}
-                            >
-                                Mi horario elegido
-                            </NavItem>
-                        </>
-                    )}
-
-                    {user?.role === 'TEACHER' && (
-                        <>
-                            <SidebarGroupTitle>Docente</SidebarGroupTitle>
-
-                            <NavItem to="/teacher/schedule" icon={<CalendarDays size={19} />}>
-                                Mi horario
-                            </NavItem>
-                            <NavItem to="/teacher/sections" icon={<BookOpen size={19} />}>
-                                Mis cursos/secciones
-                            </NavItem>
-                            <NavItem to="/teacher/availability" icon={<ClipboardList size={19} />}>
-                                Mi disponibilidad
-                            </NavItem>
-                            <NavItem to="/teacher/load" icon={<Layers size={19} />}>
-                                Mi carga academica
-                            </NavItem>
-                            <NavItem to="/teacher/conflicts" icon={<ClipboardCheck size={19} />}>
-                                Conflictos
-                            </NavItem>
-                            <NavItem to="/teacher/change-requests" icon={<Sparkles size={19} />}>
-                                Solicitudes de cambio
-                            </NavItem>
-                        </>
-                    )}
+                    {menu.map((section) => (
+                        <SidebarSection
+                            key={section.id}
+                            title={section.title}
+                            icon={section.icon}
+                            active={section.id === activeSection}
+                            open={Boolean(openSections[section.id])}
+                            onToggle={() => toggleSection(section.id)}
+                        >
+                            {section.items.map((item) => (
+                                <SidebarItem key={item.to} to={item.to} icon={item.icon} label={item.label} badge={item.badge} />
+                            ))}
+                        </SidebarSection>
+                    ))}
                 </nav>
 
                 <div className="border-t border-slate-800 p-4">
                     <div className="mb-4 rounded-2xl bg-slate-900 px-4 py-3">
-                        <p className="truncate text-sm font-semibold">
-                            {user?.full_name || 'Usuario'}
-                        </p>
-
-                        <p className="truncate text-xs text-slate-400">
-                            {user?.email}
-                        </p>
-
-                        <p className="mt-1 text-xs font-medium text-orange-300">
-                            {roleLabels[user?.role] || user?.role}
-                        </p>
+                        <p className="truncate text-sm font-semibold">{user?.full_name || 'Usuario'}</p>
+                        <p className="truncate text-xs text-slate-400">{user?.email}</p>
+                        <p className="mt-1 text-xs font-medium text-orange-300">{roleLabels[user?.role] || user?.role}</p>
                     </div>
-
-                    <button
-                        onClick={handleLogout}
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 py-2 text-sm font-semibold transition hover:bg-red-700"
-                    >
-                        <LogOut size={18} />
-                        Cerrar sesión
+                    <button onClick={handleLogout} className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 py-2 text-sm font-semibold transition hover:bg-red-700">
+                        <LogOut size={18} /> Cerrar sesion
                     </button>
                 </div>
             </aside>
 
             <main className="flex min-w-0 flex-1 flex-col">
                 <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-8">
-                    <div>
-                        <p className="text-sm text-slate-500">
-                            {roleLabels[user?.role] || 'Usuario'}
-                        </p>
-
-                        <h2 className="text-lg font-bold text-slate-800">
-                            {currentTitle}
-                        </h2>
+                    <div className="min-w-0">
+                        <p className="text-sm text-slate-500">{roleLabels[user?.role] || 'Usuario'}</p>
+                        <h2 className="truncate text-lg font-bold text-slate-800">{currentTitle}</h2>
                     </div>
                     <NotificationBell />
                 </header>
-
                 <section className="flex-1 overflow-y-auto p-8">
                     <ErrorBoundary>
                         <Outlet />
@@ -452,30 +179,138 @@ export default function AppLayout() {
     )
 }
 
-function SidebarGroupTitle({ children }) {
-    return (
-        <p className="px-4 pt-5 pb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
-            {children}
-        </p>
-    )
+function buildMenu(role, dashboardPath) {
+    const commonNotifications = {
+        id: 'notifications',
+        title: 'Notificaciones',
+        icon: <ClipboardList size={16} />,
+        items: [{ to: '/notifications', label: 'Notificaciones', icon: <ClipboardList size={18} /> }],
+    }
+
+    if (role === 'ADMIN') {
+        return [
+            { id: 'home', title: 'Inicio', icon: <LayoutDashboard size={16} />, items: [{ to: dashboardPath, label: 'Dashboard', icon: <LayoutDashboard size={18} /> }] },
+            {
+                id: 'analytics',
+                title: 'Analitica',
+                icon: <ClipboardCheck size={16} />,
+                items: [
+                    { to: '/admin/executive-dashboard', label: 'Panel ejecutivo', icon: <LayoutDashboard size={18} /> },
+                    { to: '/admin/audit-logs', label: 'Auditoria', icon: <ClipboardCheck size={18} /> },
+                    { to: '/admin/traceability', label: 'Trazabilidad', icon: <ClipboardList size={18} /> },
+                    { to: '/admin/reports/teacher-load', label: 'Carga docente', icon: <ClipboardList size={18} /> },
+                    { to: '/admin/reports/classroom-usage', label: 'Uso de aulas', icon: <Building2 size={18} /> },
+                    { to: '/admin/reports/offerings', label: 'Ofertas', icon: <Layers size={18} /> },
+                    { to: '/admin/reports/conflicts', label: 'Conflictos', icon: <ClipboardCheck size={18} /> },
+                    { to: '/admin/reports/schedules', label: 'Horarios', icon: <CalendarDays size={18} /> },
+                    { to: '/admin/reports/students', label: 'Estudiantes', icon: <Users size={18} /> },
+                    { to: '/admin/reports/change-requests', label: 'Solicitudes docentes', icon: <ClipboardList size={18} /> },
+                    { to: '/admin/reports/sustainability', label: 'Sostenibilidad', icon: <Leaf size={18} /> },
+                ],
+            },
+            {
+                id: 'institutional',
+                title: 'Gestion institucional',
+                icon: <Users size={16} />,
+                items: [
+                    { to: '/admin/data-readiness', label: 'Preparacion de datos', icon: <ClipboardList size={18} /> },
+                    { to: '/admin/environmental-impact', label: 'Impacto ambiental', icon: <Leaf size={18} /> },
+                    { to: '/admin/users', label: 'Usuarios', icon: <Users size={18} /> },
+                    { to: '/admin/teachers', label: 'Docentes', icon: <UserCog size={18} /> },
+                    { to: '/admin/students', label: 'Estudiantes', icon: <UserRound size={18} /> },
+                    { to: '/admin/sections', label: 'Secciones', icon: <Layers size={18} /> },
+                    { to: '/admin/courses', label: 'Cursos', icon: <School size={18} /> },
+                    { to: '/admin/classrooms', label: 'Aulas', icon: <Building2 size={18} /> },
+                ],
+            },
+            {
+                id: 'academic',
+                title: 'Dominio academico',
+                icon: <BookOpen size={16} />,
+                items: [
+                    { to: '/admin/academic-periods', label: 'Periodos', icon: <CalendarDays size={18} /> },
+                    { to: '/admin/academic-programs', label: 'Programas', icon: <GraduationCap size={18} /> },
+                    { to: '/admin/curriculum-plans', label: 'Planes curriculares', icon: <ClipboardList size={18} /> },
+                    { to: '/admin/curriculum', label: 'Malla curricular', icon: <BookOpen size={18} /> },
+                    { to: '/coordinator/offerings', label: 'Oferta academica', icon: <Layers size={18} /> },
+                    { to: '/coordinator/conflicts', label: 'Conflictos de oferta', icon: <ClipboardCheck size={18} /> },
+                    { to: '/coordinator/csp', label: 'CSP desde ofertas', icon: <Sparkles size={18} /> },
+                    { to: '/coordinator/change-requests', label: 'Solicitudes docentes', icon: <ClipboardCheck size={18} /> },
+                ],
+            },
+            {
+                id: 'schedules',
+                title: 'Horarios',
+                icon: <CalendarDays size={16} />,
+                items: [
+                    { to: '/admin/institutional-csp', label: 'Generacion institucional', icon: <RocketIcon /> },
+                    { to: '/admin/schedules', label: 'Generar horario', icon: <CalendarDays size={18} /> },
+                    { to: '/admin/schedule-view', label: 'Ver horario', icon: <CalendarDays size={18} /> },
+                    { to: '/admin/schedule-quality', label: 'Calidad horario', icon: <ClipboardCheck size={18} /> },
+                ],
+            },
+            {
+                id: 'students',
+                title: 'Estudiantes',
+                icon: <Star size={16} />,
+                items: [
+                    { to: '/admin/student-generator', label: 'Simulador estudiantil', icon: <Sparkles size={18} /> },
+                    { to: '/admin/student-schedules', label: 'Horarios estudiantes', icon: <Star size={18} /> },
+                ],
+            },
+            commonNotifications,
+        ]
+    }
+
+    if (role === 'COORDINATOR') {
+        return [
+            { id: 'home', title: 'Coordinacion', icon: <LayoutDashboard size={16} />, items: [{ to: dashboardPath, label: 'Dashboard', icon: <LayoutDashboard size={18} /> }] },
+            { id: 'offering', title: 'Oferta academica', icon: <Layers size={16} />, items: [{ to: '/coordinator/offerings', label: 'Gestionar oferta', icon: <Layers size={18} /> }, { to: '/coordinator/conflicts', label: 'Conflictos', icon: <ClipboardCheck size={18} /> }] },
+            { id: 'csp', title: 'CSP', icon: <Sparkles size={16} />, items: [{ to: '/coordinator/csp', label: 'CSP desde ofertas', icon: <Sparkles size={18} /> }, { to: '/admin/institutional-csp', label: 'Generacion institucional', icon: <CalendarDays size={18} /> }] },
+            { id: 'requests', title: 'Solicitudes docentes', icon: <ClipboardCheck size={16} />, items: [{ to: '/coordinator/change-requests', label: 'Solicitudes docentes', icon: <ClipboardCheck size={18} /> }] },
+            { id: 'reports', title: 'Reportes', icon: <ClipboardList size={16} />, items: [{ to: '/coordinator/reports', label: 'Panel de reportes', icon: <LayoutDashboard size={18} /> }, { to: '/coordinator/reports/teacher-load', label: 'Carga docente', icon: <ClipboardList size={18} /> }, { to: '/coordinator/reports/classroom-usage', label: 'Uso de aulas', icon: <Building2 size={18} /> }, { to: '/coordinator/reports/offerings', label: 'Ofertas', icon: <Layers size={18} /> }, { to: '/coordinator/reports/conflicts', label: 'Conflictos', icon: <ClipboardCheck size={18} /> }, { to: '/coordinator/reports/schedules', label: 'Horarios', icon: <CalendarDays size={18} /> }, { to: '/coordinator/reports/change-requests', label: 'Solicitudes', icon: <ClipboardList size={18} /> }] },
+            { id: 'traceability', title: 'Trazabilidad', icon: <ClipboardCheck size={16} />, items: [{ to: '/coordinator/traceability', label: 'Trazabilidad', icon: <ClipboardCheck size={18} /> }] },
+            commonNotifications,
+        ]
+    }
+
+    if (role === 'TEACHER') {
+        return [
+            { id: 'home', title: 'Portal docente', icon: <LayoutDashboard size={16} />, items: [{ to: dashboardPath, label: 'Dashboard', icon: <LayoutDashboard size={18} /> }, { to: '/teacher/schedule', label: 'Mi horario', icon: <CalendarDays size={18} /> }, { to: '/teacher/sections', label: 'Mis secciones', icon: <BookOpen size={18} /> }, { to: '/teacher/load', label: 'Carga academica', icon: <Layers size={18} /> }, { to: '/teacher/conflicts', label: 'Conflictos', icon: <ClipboardCheck size={18} /> }] },
+            { id: 'availability', title: 'Disponibilidad', icon: <ClipboardList size={16} />, items: [{ to: '/teacher/availability', label: 'Mi disponibilidad', icon: <ClipboardList size={18} /> }] },
+            { id: 'requests', title: 'Solicitudes', icon: <Sparkles size={16} />, items: [{ to: '/teacher/change-requests', label: 'Solicitudes de cambio', icon: <Sparkles size={18} /> }] },
+            commonNotifications,
+        ]
+    }
+
+    return [
+        { id: 'home', title: 'Inicio', icon: <LayoutDashboard size={16} />, items: [{ to: dashboardPath, label: 'Inicio', icon: <LayoutDashboard size={18} /> }] },
+        { id: 'academic', title: 'Academico', icon: <BookOpen size={16} />, items: [{ to: '/student/curriculum', label: 'Mi malla', icon: <GraduationCap size={18} /> }, { to: '/student/offer', label: 'Oferta', icon: <BookOpen size={18} /> }] },
+        { id: 'schedules', title: 'Horarios', icon: <CalendarDays size={16} />, items: [{ to: '/student/schedule-generator', label: 'Generador', icon: <Sparkles size={18} /> }, { to: '/student/my-schedules', label: 'Mis horarios', icon: <Star size={18} /> }] },
+        commonNotifications,
+    ]
 }
 
-function NavItem({ to, icon, children }) {
-    return (
-        <NavLink
-            to={to}
-            end
-            className={({ isActive }) =>
-                [
-                    'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition',
-                    isActive
-                        ? 'bg-orange-600 text-white shadow-sm'
-                        : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-                ].join(' ')
-            }
-        >
-            {icon}
-            <span>{children}</span>
-        </NavLink>
-    )
+function getDashboardPath(role) {
+    if (role === 'ADMIN') return '/admin/dashboard'
+    if (role === 'COORDINATOR') return '/coordinator/dashboard'
+    if (role === 'TEACHER') return '/teacher/dashboard'
+    if (role === 'STUDENT') return '/student'
+    return '/'
+}
+
+function isActivePath(pathname, to) {
+    return pathname === to || (to !== '/' && pathname.startsWith(`${to}/`))
+}
+
+function readOpenSections(storageKey) {
+    try {
+        return JSON.parse(localStorage.getItem(storageKey) || '{}')
+    } catch {
+        return {}
+    }
+}
+
+function RocketIcon() {
+    return <Sparkles size={18} />
 }

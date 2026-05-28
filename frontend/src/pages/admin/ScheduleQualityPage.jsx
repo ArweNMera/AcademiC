@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     AlertTriangle,
     CheckCircle2,
@@ -13,6 +13,7 @@ import {
 import toast from 'react-hot-toast'
 
 import { scheduleQualityService } from '../../services/scheduleQualityService'
+import { institutionalCspService } from '../../services/institutionalCspService'
 
 const dayOptions = [
     { value: 1, label: 'Lun' },
@@ -123,7 +124,10 @@ function SeverityBadge({ severity }) {
 }
 
 export default function ScheduleQualityPage() {
-    const [scheduleId, setScheduleId] = useState('4')
+    const [scheduleId, setScheduleId] = useState('')
+    const [availableSchedules, setAvailableSchedules] = useState([])
+    const [schedulesLoading, setSchedulesLoading] = useState(false)
+    const [schedulesError, setSchedulesError] = useState('')
     const [careerFilter, setCareerFilter] = useState('Ingeniería de Sistemas')
     const [cycleFilterText, setCycleFilterText] = useState('1')
     const [courseIdsText, setCourseIdsText] = useState('')
@@ -133,6 +137,31 @@ export default function ScheduleQualityPage() {
 
     const [loading, setLoading] = useState(false)
     const [report, setReport] = useState(null)
+
+    const loadAvailableSchedules = async () => {
+        setSchedulesLoading(true)
+        setSchedulesError('')
+        try {
+            const data = await institutionalCspService.availableSchedules()
+            const schedules = Array.isArray(data) ? data : []
+            setAvailableSchedules(schedules)
+            setScheduleId((current) => {
+                if (current && schedules.some((schedule) => String(schedule.id) === String(current))) {
+                    return current
+                }
+                const preferred = schedules.find((schedule) => schedule.status === 'DRAFT') || schedules[0]
+                return preferred ? String(preferred.id) : ''
+            })
+        } catch (error) {
+            setSchedulesError('No se pudieron cargar los horarios institucionales.')
+        } finally {
+            setSchedulesLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        loadAvailableSchedules()
+    }, [])
 
     const toggleDay = (day) => {
         setAllowedDays((current) => {
@@ -146,7 +175,7 @@ export default function ScheduleQualityPage() {
 
     const loadReport = async () => {
         if (!scheduleId) {
-            toast.error('Ingresa el ID del horario')
+            toast.error('Seleccione un horario institucional disponible.')
             return
         }
 
@@ -213,14 +242,35 @@ export default function ScheduleQualityPage() {
                 <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <div>
                         <label className="text-sm font-semibold text-gray-700">
-                            Schedule ID
+                            Horario institucional
                         </label>
-                        <input
-                            type="number"
+                        <select
                             value={scheduleId}
                             onChange={(event) => setScheduleId(event.target.value)}
                             className="mt-1 w-full rounded-xl border border-gray-300 px-4 py-2 text-sm outline-none focus:border-blue-500"
-                        />
+                        >
+                            <option value="">Seleccione un horario</option>
+                            {availableSchedules.map((schedule) => (
+                                <option key={schedule.id} value={String(schedule.id)}>
+                                    {schedule.label || `${schedule.name} - ${schedule.status}`}
+                                </option>
+                            ))}
+                        </select>
+                        {schedulesLoading && (
+                            <p className="mt-2 text-xs font-semibold text-gray-500">Cargando horarios...</p>
+                        )}
+                        {schedulesError && (
+                            <button
+                                type="button"
+                                onClick={loadAvailableSchedules}
+                                className="mt-2 text-xs font-bold text-blue-700 underline"
+                            >
+                                Reintentar carga de horarios
+                            </button>
+                        )}
+                        {!schedulesLoading && !schedulesError && availableSchedules.length === 0 && (
+                            <p className="mt-2 text-xs text-gray-500">No hay horarios institucionales disponibles.</p>
+                        )}
                     </div>
 
                     <div>

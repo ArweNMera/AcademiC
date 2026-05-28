@@ -182,3 +182,21 @@ exportan como CSV mediante `/teacher-load/export.csv`,
 Las exportaciones de reportes CSV, publicaciones seguras, acciones CSP,
 solicitudes docentes y logins exitosos generan auditoria. Los campos
 sensibles se ocultan antes de persistir `old_values` o `new_values`.
+
+## Generacion Institucional Guiada
+
+| Metodo | Ruta | Rol |
+| --- | --- | --- |
+| `GET` | `/api/v1/institutional-csp/available-schedules` | `ADMIN`, `COORDINATOR` |
+| `POST` | `/api/v1/admin/demo/prepare-institutional-csp` | `ADMIN` |
+| `POST` | `/api/v1/institutional-csp/preview-from-offerings` | `ADMIN`, `COORDINATOR` |
+
+Este endpoint lista horarios institucionales activos para la pantalla
+`/admin/institutional-csp`. Incluye etiqueta legible, estado, fuente, periodo,
+programa, plan, score y cantidad de bloques. El frontend ya no solicita que el
+usuario escriba el ID interno del horario.
+
+Para la demostracion, el administrador puede preparar ofertas, docentes, aulas
+y disponibilidad desde `/admin/demo/prepare-institutional-csp` con
+`cycles: "all"`. Luego el flujo moderno usa `preview-from-offerings`,
+`generate-from-offerings`, `save-offering-solution` y publicacion segura.

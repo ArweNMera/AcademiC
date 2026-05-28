@@ -112,3 +112,34 @@ en `/admin/traceability` y `/coordinator/traceability`, respectivamente.
 
 Las vistas reutilizan el Axios unificado mediante `notificationService.js`,
 `auditLogService.js` y `traceabilityService.js`.
+
+## Navegacion Y Generacion Guiada
+
+La pantalla `/admin/institutional-csp` reemplaza el campo manual de ID por el
+selector **Horario institucional**. Permite crear un horario nuevo o elegir
+horarios detectados automaticamente con etiquetas de periodo, estado, bloques
+y score.
+
+La vista tambien detecta periodo activo, programa ISI, plan curricular activo
+y ciclos segun `total_cycles`. El menu lateral agrupa opciones por rol en
+secciones expandibles y recuerda el estado en `localStorage`.
+
+## Resultados CSP Visuales
+
+Los resultados de diagnostico, vista previa, generacion y publicacion ya no se
+presentan como JSON crudo. Se muestran mediante tarjetas, badges, tablas de
+bloques, listas de problemas y resumenes de docentes/aulas. El JSON tecnico
+queda disponible solo en el acordeon `Ver detalles tecnicos`, cerrado por
+defecto para depuracion.
+
+La pantalla `/admin/institutional-csp` usa por defecto la fuente **Oferta
+academica moderna**, basada en `section_offerings`. En ese modo llama a
+`/institutional-csp/preview-from-offerings`,
+`/institutional-csp/generate-from-offerings` y
+`/institutional-csp/save-offering-solution`. El generador clasico se mantiene
+como opcion `legacy` explicita para datos antiguos basados en `course_sections`.
+
+Para una demo completa, el rol `ADMIN` dispone del boton **Preparar datos demo
+completo**. Este boton crea/completa ofertas para todos los ciclos del plan
+activo, asigna docentes, aulas y disponibilidad, y ejecuta una vista previa
+moderna sin requerir comandos SQL durante la presentacion.

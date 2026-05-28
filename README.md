@@ -1,39 +1,33 @@
 # OptiAcademic
 
-**Sistema inteligente para generar, validar y optimizar horarios academicos universitarios.**
+![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react&logoColor=111)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 
-OptiAcademic es una aplicacion web full-stack que centraliza datos academicos,
-genera horarios institucionales mediante un modelo CSP y permite a estudiantes
-construir alternativas personales con menor conflicto. El proyecto incorpora
-observabilidad de impacto ambiental y analisis GreenFrame para evaluar un
-flujo critico de la aplicacion.
+**Sistema inteligente para generar, validar y publicar horarios académicos
+universitarios.**
 
-## Problema
+OptiAcademic es una aplicación web full-stack para planificación académica
+universitaria. Centraliza la gestión de períodos, programas, malla curricular,
+oferta académica, disponibilidad docente, aulas y horarios. Su flujo principal
+usa un motor CSP institucional conectado a ofertas académicas modernas, con
+publicación segura y portal por roles.
 
-La programacion manual de horarios debe coordinar cursos, secciones, docentes,
-aulas, disponibilidad, cruces y preferencias estudiantiles. Este proceso
-consume tiempo y puede producir conflictos que afectan la planificacion del
-periodo academico.
+## Stack
 
-## Objetivo General
-
-Automatizar la generacion y evaluacion de horarios validos mediante
-restricciones formales, una interfaz por roles y evidencia tecnica
-reproducible para calidad y sostenibilidad.
-
-## Tecnologias
-
-| Capa | Tecnologias |
+| Capa | Tecnologías |
 | --- | --- |
 | Frontend | React, Vite, Tailwind CSS, Axios, Zustand |
 | Backend | FastAPI, Python, SQLAlchemy, Alembic, Pydantic |
 | Base de datos | MySQL |
-| Seguridad | JWT y autorizacion por roles |
-| Optimizacion | CSP con validacion de restricciones y scoring |
+| Seguridad | JWT y autorización por roles |
+| Optimización | CSP institucional con restricciones y scoring |
+| Operación local | Docker Compose |
 | Sostenibilidad | Dashboard ambiental y GreenFrame |
-| Operacion local | Docker Compose |
 
-## Arquitectura General
+## Arquitectura Resumida
 
 ```text
 Navegador
@@ -42,161 +36,116 @@ Navegador
 React + Vite :5173
   |  HTTP / JWT
   v
-FastAPI :8000  ---- GreenFrame report ----> GET /api/v1/sustainability
+FastAPI :8000
   |
   | SQLAlchemy + Alembic
   v
 MySQL :3306 (publicado localmente en :3307)
 ```
 
-Ver [arquitectura general](docs/arquitectura/arquitectura-general.md).
+## Módulos Principales
 
-## Modulos
-
-| Modulo | Alcance |
+| Módulo | Alcance |
 | --- | --- |
-| Autenticacion | Inicio de sesion JWT y proteccion por rol. |
-| Administracion academica | Usuarios, docentes, estudiantes, cursos, aulas y secciones. |
-| Horario institucional | Diagnostico, generacion CSP, validacion y publicacion. |
-| Experiencia estudiante | Oferta disponible, preferencias y horarios personales. |
-| Sostenibilidad | Metricas HTTP, dashboard ambiental y reporte GreenFrame publico. |
+| Autenticación | Login JWT, sesión persistente y protección por rol. |
+| Dominio académico | Períodos, programas, planes curriculares y malla. |
+| Oferta académica | Secciones por período, docentes, aulas, cupos y estados. |
+| CSP institucional | Diagnóstico, vista previa, generación, guardado y publicación. |
+| Portal coordinador | Gestión de oferta, conflictos, solicitudes y reportes. |
+| Portal docente | Horario publicado, disponibilidad, carga y solicitudes de cambio. |
+| Portal estudiante | Malla, oferta publicada y horarios personales. |
+| Reportes | Panel ejecutivo, carga docente, aulas, estudiantes y CSV. |
+| Trazabilidad | Notificaciones, auditoría y seguimiento de publicaciones. |
+| Sostenibilidad | Métricas ambientales y soporte GreenFrame. |
 
 ## Roles
 
-| Rol tecnico | Vista principal |
+| Rol técnico | Vista principal |
 | --- | --- |
-| `ADMIN` | Administracion completa y dashboards. |
-| `COORDINATOR` | Gestion academica, generacion y publicacion. |
-| `TEACHER` | Consulta docente y disponibilidad. |
-| `STUDENT` | Oferta y generacion de horario personal. |
+| `ADMIN` | Administración completa, panel ejecutivo, auditoría y demo. |
+| `COORDINATOR` | Oferta académica, CSP, solicitudes docentes y reportes. |
+| `TEACHER` | Horario docente, disponibilidad, carga y solicitudes. |
+| `STUDENT` | Malla, oferta publicada y generación de horario personal. |
 
-## Inicio Rapido Con Docker
+## Inicio Rápido Con Docker
 
 ```powershell
-Copy-Item .env.docker.example .docker.env
-docker compose --env-file .docker.env up --build -d
-docker compose --env-file .docker.env exec backend python seed_realistic_demo.py
+docker compose --env-file .env.docker.example up --build -d
+docker compose --env-file .env.docker.example exec backend alembic upgrade head
+docker compose --env-file .env.docker.example exec backend python seed_realistic_demo.py
+docker compose --env-file .env.docker.example exec backend python seed_uc_ingenieria_sistemas_curriculum.py
+docker compose --env-file .env.docker.example exec backend python seed_uc_isi_offerings_ready_demo.py
 ```
-
-Servicios:
 
 | Servicio | URL |
 | --- | --- |
-| Aplicacion React | <http://localhost:5173> |
+| Aplicación React | <http://localhost:5173> |
 | Swagger FastAPI | <http://localhost:8000/docs> |
 | API base | <http://localhost:8000/api/v1> |
 | MySQL publicado | `localhost:3307` |
 
-Guia completa: [docs/instalacion/guia-docker.md](docs/instalacion/guia-docker.md).
-
-## Instalacion Manual Opcional
-
-Backend:
-
-```powershell
-cd backend
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-alembic upgrade head
-uvicorn app.main:app --reload
-```
-
-Frontend:
-
-```powershell
-cd frontend
-npm install
-npm run dev
-```
-
-La instalacion manual requiere una instancia MySQL configurada con las
-variables descritas en [backend/README.md](backend/README.md).
-
 ## Credenciales Demo
 
-Despues de ejecutar `seed_realistic_demo.py`:
-
-```text
-Administrador: admin@optiacademic.com / admin123
-```
-
-Estas credenciales se usan solo en desarrollo y en el escenario GreenFrame.
-
-## Endpoints Principales
-
-| Metodo | Endpoint | Uso |
+| Rol | Usuario | Contraseña |
 | --- | --- | --- |
-| `POST` | `/api/v1/auth/login-json` | Autenticacion del frontend. |
-| `GET` | `/api/v1/dashboard/admin-summary` | Resumen administrativo. |
-| `POST` | `/api/v1/institutional-csp/generate` | Generacion institucional CSP. |
-| `GET` | `/api/v1/environmental-impact` | Dashboard ambiental HTML publico. |
-| `GET` | `/api/v1/environmental-impact/summary` | Indicadores ambientales protegidos. |
-| `GET` | `/api/v1/sustainability` | Ultimo reporte GreenFrame publico. |
+| Admin | `admin@optiacademic.com` | `admin123` |
+| Coordinador | `coordinator@optiacademic.com` | `coordinator123` |
+| Docente | `docente.demo1@optiacademic.com` | `docente123` |
+| Estudiante | `estudiante.demo1@optiacademic.com` | `estudiante123` |
 
-La referencia navegable completa se expone en Swagger.
+> Estas credenciales son solo para desarrollo y demostración.
 
-## Sostenibilidad Y GreenFrame
+## Flujo Rápido De Demo
 
-El dashboard ambiental estima impacto a partir del trafico HTTP observado por
-FastAPI. GreenFrame ejecuta con Playwright el flujo de login administrativo y
-consulta de `/admin/environmental-impact` sobre los tres contenedores.
+1. Levantar servicios con Docker.
+2. Ejecutar migraciones y seeds.
+3. Iniciar sesión como administrador.
+4. Ir a **Horarios → Generación institucional**.
+5. Presionar **Preparar datos demo completo**.
+6. Ejecutar **Vista previa**.
+7. Generar horario.
+8. Guardar solución.
+9. Publicar horario.
 
-```bash
-greenframe analyze 2>&1 | tee backend/public/assets/greenframe-latest.txt
-```
+## Documentación
 
-El reporte generado se consulta en:
+| Sección | Descripción |
+| --- | --- |
+| [Proyecto](docs/01-proyecto/) | Introducción, tecnologías y decisiones técnicas |
+| [Arquitectura](docs/02-arquitectura/) | Arquitectura general, backend, frontend y base de datos |
+| [Instalación](docs/03-instalacion/) | Configuración local, Docker y mantenimiento Git |
+| [Módulos](docs/04-modulos/) | Roles, permisos, estudiantes, coordinadores y motor CSP |
+| [Demo](docs/05-demo/) | Flujo de demostración y preparación de datos |
+| [Calidad](docs/06-calidad/) | Validaciones, pruebas y criterios de calidad |
 
-```http
-GET /api/v1/sustainability
-```
+Índice completo: [docs/README.md](docs/README.md).
 
-Detalles: [docs/sostenibilidad/02-greenframe-report.md](docs/sostenibilidad/02-greenframe-report.md).
+## Endpoints Relevantes
 
-## Reportes Academicos
+| Método | Endpoint | Uso |
+| --- | --- | --- |
+| `POST` | `/api/v1/auth/login-json` | Autenticación del frontend. |
+| `POST` | `/api/v1/admin/demo/prepare-institutional-csp` | Preparación demo completa. |
+| `POST` | `/api/v1/institutional-csp/preview-from-offerings` | Vista previa desde oferta académica. |
+| `POST` | `/api/v1/institutional-csp/generate-from-offerings` | Generación CSP moderna. |
+| `POST` | `/api/v1/institutional-csp/save-offering-solution` | Guardar solución como horario institucional. |
+| `PATCH` | `/api/v1/schedule-publication/{id}/publish-safe` | Publicación segura. |
+| `GET` | `/api/v1/sustainability` | Reporte GreenFrame disponible. |
 
-La Fase 5 incorpora un panel ejecutivo para administradores y reportes
-operativos para coordinacion. El administrador accede en
-`/admin/executive-dashboard` y el coordinador en `/coordinator/reports`.
-Los reportes combinan oferta, horarios publicados, carga docente, aulas,
-estudiantes, solicitudes e indicadores ambientales, con exportacion CSV para
-las tablas principales.
-
-## Notificaciones, Auditoria Y Trazabilidad
-
-La Fase 6 agrega notificaciones internas para todos los roles y evidencia de
-operaciones criticas. `ADMIN` consulta auditoria global; `COORDINATOR` sigue
-publicaciones y solicitudes; docentes y estudiantes reciben los avisos que les
-corresponden. La auditoria no guarda contrasenas, tokens ni secretos.
-
-## Capturas Sugeridas Para La Presentacion
-
-1. Pantalla de login y seleccion de rol.
-2. Dashboard administrativo institucional.
-3. Generador o diagnostico CSP de horarios.
-4. Oferta y horario generado para estudiante.
-5. Dashboard de impacto ambiental.
-6. Resultado GreenFrame y endpoint publico de sostenibilidad.
+La referencia navegable completa está disponible en Swagger.
 
 ## Estado Del Proyecto
 
-Proyecto academico funcional en evolucion. Incluye backend, frontend,
-persistencia MySQL, generacion CSP, ejecucion Docker y componentes de
-sostenibilidad. Antes de una demostracion debe levantarse el stack, aplicar
-migraciones y cargar datos demo.
-
-## Documentacion
-
-El indice general se encuentra en [docs/README.md](docs/README.md).
-La guia de sustentacion esta en
-[docs/presentacion/demo-flow.md](docs/presentacion/demo-flow.md).
+Proyecto académico funcional en evolución. Incluye frontend, backend,
+persistencia MySQL, generación CSP, ejecución Docker, reportes, trazabilidad y
+componentes de sostenibilidad. Antes de una demostración debe levantarse el
+stack, aplicar migraciones y cargar datos demo.
 
 ## Autores
 
-- Repositorio academico mantenido por `ArweNMera` y el equipo OptiAcademic.
+- Repositorio académico mantenido por `ArweNMera` y el equipo OptiAcademic.
 
 ## Licencia
 
-No se ha publicado aun un archivo de licencia. Definir la licencia antes de
-redistribuir el proyecto fuera del contexto academico.
+No se ha publicado aún un archivo de licencia. Definir la licencia antes de
+redistribuir el proyecto fuera del contexto académico.

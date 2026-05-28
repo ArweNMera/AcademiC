@@ -1,44 +1,70 @@
-# Documentacion De OptiAcademic
+# Documentación de OptiAcademic
 
-Este directorio reune la documentacion tecnica y academica del sistema. Las
-guias por area permiten una lectura rapida para presentacion; los documentos
-numerados preservan el desarrollo detallado ya elaborado.
+OptiAcademic es un sistema inteligente para la generación, validación y
+publicación de horarios académicos universitarios mediante un motor CSP,
+gestión por roles y soporte para demostraciones reproducibles.
 
-## Guias Por Area
+Esta carpeta organiza la documentación del proyecto por temas para facilitar
+la lectura en GitHub, la sustentación académica y el mantenimiento técnico.
 
-| Area | Documento principal | Contenido |
-| --- | --- | --- |
-| Arquitectura | [arquitectura/arquitectura-general.md](arquitectura/arquitectura-general.md) | Componentes y flujos clave. |
-| Instalacion | [instalacion/guia-docker.md](instalacion/guia-docker.md) | Puesta en marcha reproducible. |
-| Base de datos | [base-datos/README.md](base-datos/README.md) | MySQL, Alembic y seeds. |
-| API | [api/README.md](api/README.md) | Acceso, endpoints y Swagger. |
-| Sostenibilidad | [sostenibilidad/README.md](sostenibilidad/README.md) | Dashboard y GreenFrame. |
-| Presentacion | [presentacion/README.md](presentacion/README.md) | Guion y evidencias sugeridas. |
+## Índice General
 
-## Requerimientos Y Validacion
-
-| Conjunto | Indice |
+| Sección | Contenido |
 | --- | --- |
+| [01-proyecto](01-proyecto/) | Introducción, tecnologías y decisiones técnicas |
+| [02-arquitectura](02-arquitectura/) | Arquitectura general, frontend, backend y base de datos |
+| [03-instalacion](03-instalacion/) | Instalación local, Docker y mantenimiento Git |
+| [04-modulos](04-modulos/) | Roles, permisos, módulos funcionales y motor CSP |
+| [05-demo](05-demo/) | Flujo de demostración y preparación de datos demo |
+| [06-calidad](06-calidad/) | Validaciones, calidad y pruebas |
+
+## Documentos Principales
+
+### Proyecto
+
+- [Introducción](01-proyecto/introduccion.md)
+- [Tecnologías utilizadas](01-proyecto/tecnologias-utilizadas.md)
+- [Decisiones técnicas](01-proyecto/decisiones-tecnicas.md)
+
+### Arquitectura
+
+- [Arquitectura general](02-arquitectura/arquitectura-general.md)
+- [Frontend React](02-arquitectura/frontend-react.md)
+- [Backend API](02-arquitectura/backend-api.md)
+- [Base de datos y malla curricular](02-arquitectura/base-datos-y-malla.md)
+
+### Instalación
+
+- [Instalación y configuración](03-instalacion/instalacion-configuracion.md)
+- [Mantenimiento Git](03-instalacion/mantenimiento-git.md)
+- [Guía Docker existente](instalacion/guia-docker.md)
+
+### Módulos
+
+- [Roles y permisos](04-modulos/roles-y-permisos.md)
+- [Módulo admin y coordinador](04-modulos/modulo-admin-coordinador.md)
+- [Módulo estudiante](04-modulos/modulo-estudiante.md)
+- [Motor CSP institucional](04-modulos/motor-csp-institucional.md)
+
+### Demo
+
+- [Flujo de demostración](05-demo/flujo-demostracion.md)
+- [Preparación de datos demo](05-demo/preparacion-datos-demo.md)
+- [Guía de presentación actual](presentacion/demo-flow.md)
+
+### Calidad
+
+- [Validaciones y calidad](06-calidad/validaciones-y-calidad.md)
+- [Plan TDD y pruebas](tdd/README.md)
+
+## Documentación Complementaria
+
+| Área | Índice |
+| --- | --- |
+| API operativa | [api/README.md](api/README.md) |
+| Arquitectura por fases | [arquitectura/](arquitectura/) |
+| Base de datos | [base-datos/README.md](base-datos/README.md) |
 | Requerimientos | [requerimientos/README.md](requerimientos/README.md) |
-| Validacion del problema | [validacion-problema/README.md](validacion-problema/README.md) |
-| Pruebas/TDD | [tdd/README.md](tdd/README.md) |
-
-## Documentos Tecnicos Existentes
-
-| Documento | Tema |
-| --- | --- |
-| [01-introduccion.md](01-introduccion.md) | Contexto inicial. |
-| [02-arquitectura-general.md](02-arquitectura-general.md) | Arquitectura original. |
-| [03-instalacion-configuracion.md](03-instalacion-configuracion.md) | Instalacion manual. |
-| [04-base-datos-malla.md](04-base-datos-malla.md) | Datos academicos. |
-| [05-roles-permisos.md](05-roles-permisos.md) | Seguridad y perfiles. |
-| [06-modulo-admin-coordinador.md](06-modulo-admin-coordinador.md) | Flujo administrativo. |
-| [07-motor-csp-institucional.md](07-motor-csp-institucional.md) | Optimizacion. |
-| [08-modulo-estudiante.md](08-modulo-estudiante.md) | Flujo estudiante. |
-| [09-api-backend.md](09-api-backend.md) | API. |
-| [10-frontend-react.md](10-frontend-react.md) | Frontend. |
-| [11-flujo-demostracion.md](11-flujo-demostracion.md) | Demo. |
-| [12-validaciones-calidad.md](12-validaciones-calidad.md) | Validaciones. |
-| [13-decisiones-tecnicas.md](13-decisiones-tecnicas.md) | Decisiones. |
-| [14-mantenimiento-git.md](14-mantenimiento-git.md) | Versionamiento. |
-| [15-tecnologias-utilizadas.md](15-tecnologias-utilizadas.md) | Stack extendido. |
+| Sostenibilidad | [sostenibilidad/README.md](sostenibilidad/README.md) |
+| Presentación | [presentacion/README.md](presentacion/README.md) |
+| Validación del problema | [validacion-problema/README.md](validacion-problema/README.md) |

@@ -39,8 +39,23 @@ Las consultas de facultades y sedes están disponibles para `ADMIN`,
 /api/v1/campuses
 ```
 
+## Alcance De La Fase 11
+
+La Fase 11 agrega estudiantes institucionales e historial académico sin
+calcular todavía demanda, proyección de NRC ni CSP masivo. Conserva los campos
+legacy, incluido `students.career`, y suma relaciones nullable hacia sede,
+programa, plan curricular y período de admisión.
+
+El historial se guarda en `student_academic_history` y admite los estados
+`APPROVED`, `FAILED`, `IN_PROGRESS`, `WITHDRAWN` y `PENDING_REVIEW`.
+
+```text
+/api/v1/student-academic-history
+/api/v1/students/{student_id}/academic-summary
+```
+
 ## Próximos Pasos
 
-Las fases posteriores incorporarán historial académico, demanda estudiantil,
-proyección de NRC, disponibilidad institucional y generación CSP masiva por
-particiones.
+La Fase 12 podrá usar esta base para calcular demanda estudiantil y proyección
+académica. La disponibilidad institucional y la generación CSP masiva por
+particiones siguen fuera del alcance de esta fase.

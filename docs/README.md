@@ -46,6 +46,7 @@ la lectura en GitHub, la sustentación académica y el mantenimiento técnico.
 - [Módulo estudiante](04-modulos/modulo-estudiante.md)
 - [Motor CSP institucional](04-modulos/motor-csp-institucional.md)
 - [Escalabilidad institucional Huancayo](04-modulos/escalabilidad-institucional.md)
+- [Estudiantes institucionales e historial académico](04-modulos/estudiantes-historial-academico.md)
 
 ### Demo
 

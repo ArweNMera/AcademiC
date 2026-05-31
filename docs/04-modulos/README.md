@@ -8,3 +8,4 @@ de OptiAcademic.
 - [Módulo estudiante](modulo-estudiante.md)
 - [Motor CSP institucional](motor-csp-institucional.md)
 - [Escalabilidad institucional Huancayo](escalabilidad-institucional.md)
+- [Estudiantes institucionales e historial académico](estudiantes-historial-academico.md)

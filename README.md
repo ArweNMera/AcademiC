@@ -50,6 +50,7 @@ MySQL :3306 (publicado localmente en :3307)
 | Autenticación | Login JWT, sesión persistente y protección por rol. |
 | Dominio académico | Períodos, programas, planes curriculares y malla. |
 | Base institucional Huancayo | Sede única, facultades y relaciones iniciales compatibles. |
+| Estudiantes institucionales | Matrícula, carrera, plan curricular, ciclo e historial académico. |
 | Oferta académica | Secciones por período, docentes, aulas, cupos y estados. |
 | CSP institucional | Diagnóstico, vista previa, generación, guardado y publicación. |
 | Portal coordinador | Gestión de oferta, conflictos, solicitudes y reportes. |
@@ -77,6 +78,7 @@ docker compose --env-file .env.docker.example exec backend python seed_realistic
 docker compose --env-file .env.docker.example exec backend python seed_uc_ingenieria_sistemas_curriculum.py
 docker compose --env-file .env.docker.example exec backend python seed_uc_isi_offerings_ready_demo.py
 docker compose --env-file .env.docker.example exec backend python seed_huancayo_institutional_base.py
+docker compose --env-file .env.docker.example exec backend python seed_huancayo_students_history_demo.py
 ```
 
 | Servicio | URL |
@@ -133,6 +135,8 @@ docker compose --env-file .env.docker.example exec backend python seed_huancayo_
 | `POST` | `/api/v1/institutional-csp/save-offering-solution` | Guardar solución como horario institucional. |
 | `PATCH` | `/api/v1/schedule-publication/{id}/publish-safe` | Publicación segura. |
 | `GET` | `/api/v1/sustainability` | Reporte GreenFrame disponible. |
+| `GET` | `/api/v1/student-academic-history` | Historial académico institucional. |
+| `GET` | `/api/v1/students/{id}/academic-summary` | Resumen académico por estudiante. |
 
 La referencia navegable completa está disponible en Swagger.
 

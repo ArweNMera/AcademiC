@@ -38,6 +38,8 @@ const pageTitles = {
     '/admin/audit-logs': 'Auditoria',
     '/admin/faculties': 'Facultades',
     '/admin/campuses': 'Sede Huancayo',
+    '/admin/institutional-students': 'Estudiantes institucionales',
+    '/admin/academic-history': 'Historial academico',
     '/admin/traceability': 'Trazabilidad',
     '/admin/reports/teacher-load': 'Reporte de carga docente',
     '/admin/reports/classroom-usage': 'Reporte de uso de aulas',
@@ -99,12 +101,6 @@ export default function AppLayout() {
     const [openSections, setOpenSections] = useState(() => readOpenSections(storageKey))
 
     useEffect(() => {
-        if (activeSection && !openSections[activeSection]) {
-            setOpenSections({ [activeSection]: true })
-        }
-    }, [activeSection])
-
-    useEffect(() => {
         localStorage.setItem(storageKey, JSON.stringify(openSections))
     }, [openSections, storageKey])
 
@@ -141,7 +137,7 @@ export default function AppLayout() {
                             title={section.title}
                             icon={section.icon}
                             active={section.id === activeSection}
-                            open={Boolean(openSections[section.id])}
+                            open={Boolean(openSections[section.id] || section.id === activeSection)}
                             onToggle={() => toggleSection(section.id)}
                         >
                             {section.items.map((item) => (
@@ -199,6 +195,8 @@ function buildMenu(role, dashboardPath) {
                 items: [
                     { to: '/admin/faculties', label: 'Facultades', icon: <School size={18} /> },
                     { to: '/admin/campuses', label: 'Sede Huancayo', icon: <Building2 size={18} /> },
+                    { to: '/admin/institutional-students', label: 'Estudiantes institucionales', icon: <Users size={18} /> },
+                    { to: '/admin/academic-history', label: 'Historial academico', icon: <ClipboardList size={18} /> },
                 ],
             },
             {

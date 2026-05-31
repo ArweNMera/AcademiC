@@ -25,6 +25,7 @@ from app.models import (
     User,
     Student,
     StudentCourseEnrollment,
+    StudentAcademicHistory,
     Teacher,
     TeacherAvailability,
     Course,

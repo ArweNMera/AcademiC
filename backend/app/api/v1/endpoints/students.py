@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import require_roles
-from app.models.student import Student
+from app.models.student import Student, StudentEnrollmentStatus
 from app.models.user import User, UserRole
 from app.schemas.student_schema import (
     StudentCreate,
@@ -17,6 +17,8 @@ from app.schemas.academic_schema import (
 )
 from app.services.academic_service import CurriculumService
 from app.services.student_service import StudentService
+from app.services.student_academic_history_service import StudentAcademicHistoryService
+from app.schemas.student_academic_history_schema import StudentAcademicHistorySummary
 from app.schemas.enrollment_schedule_schema import EnrolledCourseResponse, PublishedEnrollmentSectionResponse
 from app.services.enrollment_schedule_service import EnrollmentScheduleService
 
@@ -32,13 +34,26 @@ router = APIRouter()
 def list_students(
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=100, ge=1, le=500),
+    academic_program_id: int | None = Query(default=None, gt=0),
+    curriculum_plan_id: int | None = Query(default=None, gt=0),
+    campus_id: int | None = Query(default=None, gt=0),
+    current_cycle: int | None = Query(default=None, ge=1, le=10),
+    enrollment_status: StudentEnrollmentStatus | None = Query(default=None),
     db: Session = Depends(get_db),
     current_user: User = Depends(
         require_roles(UserRole.ADMIN, UserRole.COORDINATOR)
     ),
 ):
     student_service = StudentService(db)
-    return student_service.list_students(skip=skip, limit=limit)
+    return student_service.list_students(
+        skip=skip,
+        limit=limit,
+        academic_program_id=academic_program_id,
+        curriculum_plan_id=curriculum_plan_id,
+        campus_id=campus_id,
+        current_cycle=current_cycle,
+        enrollment_status=enrollment_status,
+    )
 
 
 @router.post(
@@ -130,6 +145,34 @@ def get_my_published_sections(
     current_user: User = Depends(require_roles(UserRole.STUDENT)),
 ):
     return EnrollmentScheduleService(db).published_sections(current_user.id)
+
+
+@router.get(
+    "/me/academic-summary",
+    response_model=StudentAcademicHistorySummary,
+    summary="Obtener el resumen academico propio",
+)
+def get_my_academic_summary(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.STUDENT)),
+):
+    student = db.query(Student).filter(Student.user_id == current_user.id).first()
+    if not student:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Perfil estudiante no encontrado")
+    return StudentAcademicHistoryService(db).get_student_academic_summary(student.id)
+
+
+@router.get(
+    "/{student_id}/academic-summary",
+    response_model=StudentAcademicHistorySummary,
+    summary="Obtener resumen academico del estudiante",
+)
+def get_student_academic_summary(
+    student_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.COORDINATOR, UserRole.TEACHER)),
+):
+    return StudentAcademicHistoryService(db).get_student_academic_summary(student_id)
 
 
 @router.get(

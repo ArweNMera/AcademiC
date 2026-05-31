@@ -65,6 +65,12 @@ class Course(Base, TimestampMixin):
         cascade="all, delete-orphan",
     )
 
+    academic_history = relationship(
+        "StudentAcademicHistory",
+        back_populates="course",
+        cascade="all, delete-orphan",
+    )
+
     curriculum_courses = relationship(
         "CurriculumCourse",
         back_populates="course",

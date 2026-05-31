@@ -1,7 +1,13 @@
 from app.core.database import Base
 
 from app.models.user import User, UserRole
-from app.models.student import Student, StudentCourseEnrollment
+from app.models.student import (
+    Student,
+    StudentAcademicHistory,
+    StudentAcademicHistoryStatus,
+    StudentCourseEnrollment,
+    StudentEnrollmentStatus,
+)
 from app.models.teacher import Teacher, TeacherAvailability
 from app.models.course import Course, CourseSection
 from app.models.classroom import Classroom, ClassroomType
@@ -62,6 +68,9 @@ __all__ = [
     "UserRole",
     "Student",
     "StudentCourseEnrollment",
+    "StudentAcademicHistory",
+    "StudentAcademicHistoryStatus",
+    "StudentEnrollmentStatus",
     "Teacher",
     "TeacherAvailability",
     "Course",

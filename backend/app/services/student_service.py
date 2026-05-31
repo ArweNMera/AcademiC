@@ -17,9 +17,21 @@ class StudentService:
         self,
         skip: int = 0,
         limit: int = 100,
+        academic_program_id: int | None = None,
+        curriculum_plan_id: int | None = None,
+        campus_id: int | None = None,
+        current_cycle: int | None = None,
+        enrollment_status: str | None = None,
     ):
-        total = self.student_repository.count_all()
-        students = self.student_repository.get_all(skip=skip, limit=limit)
+        filters = {
+            "academic_program_id": academic_program_id,
+            "curriculum_plan_id": curriculum_plan_id,
+            "campus_id": campus_id,
+            "current_cycle": current_cycle,
+            "enrollment_status": enrollment_status,
+        }
+        total = self.student_repository.count_all(**filters)
+        students = self.student_repository.get_all(skip=skip, limit=limit, **filters)
 
         return {
             "total": total,

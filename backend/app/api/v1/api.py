@@ -34,6 +34,7 @@ from app.api.v1.endpoints import (
     faculties,
     student_csp,
     student_enrollments,
+    student_academic_history,
     students,
     sustainability,
     teachers,
@@ -261,6 +262,12 @@ api_router.include_router(
     student_enrollments.router,
     prefix="/student-enrollments",
     tags=["Student Enrollments"],
+)
+
+api_router.include_router(
+    student_academic_history.router,
+    prefix="/student-academic-history",
+    tags=["Student Academic History"],
 )
 
 api_router.include_router(

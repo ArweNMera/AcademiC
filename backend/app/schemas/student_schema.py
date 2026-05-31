@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, model_validator
 
+from app.models.student import StudentEnrollmentStatus
+
 
 class StudentBase(BaseModel):
     user_id: int = Field(..., gt=0)
@@ -10,6 +12,13 @@ class StudentBase(BaseModel):
     current_cycle: int = Field(..., ge=1, le=10)
     min_credits: int = Field(default=7, ge=1, le=25)
     max_credits: int = Field(default=25, ge=1, le=30)
+    academic_program_id: int | None = Field(default=None, gt=0)
+    curriculum_plan_id: int | None = Field(default=None, gt=0)
+    campus_id: int | None = Field(default=None, gt=0)
+    admission_period_id: int | None = Field(default=None, gt=0)
+    max_credits_allowed: int | None = Field(default=25, ge=1, le=30)
+    enrollment_status: StudentEnrollmentStatus = StudentEnrollmentStatus.ENROLLED
+    is_active: bool = True
 
     @model_validator(mode="after")
     def validate_credit_range(self):
@@ -35,6 +44,13 @@ class StudentUpdate(BaseModel):
     current_cycle: int | None = Field(default=None, ge=1, le=10)
     min_credits: int | None = Field(default=None, ge=1, le=25)
     max_credits: int | None = Field(default=None, ge=1, le=30)
+    academic_program_id: int | None = Field(default=None, gt=0)
+    curriculum_plan_id: int | None = Field(default=None, gt=0)
+    campus_id: int | None = Field(default=None, gt=0)
+    admission_period_id: int | None = Field(default=None, gt=0)
+    max_credits_allowed: int | None = Field(default=None, ge=1, le=30)
+    enrollment_status: StudentEnrollmentStatus | None = None
+    is_active: bool | None = None
 
     @model_validator(mode="after")
     def validate_credit_range(self):
@@ -62,6 +78,17 @@ class StudentResponse(BaseModel):
     current_cycle: int
     min_credits: int
     max_credits: int
+    academic_program_id: int | None = None
+    academic_program_name: str | None = None
+    curriculum_plan_id: int | None = None
+    curriculum_plan_code: str | None = None
+    campus_id: int | None = None
+    campus_name: str | None = None
+    admission_period_id: int | None = None
+    max_credits_allowed: int | None = None
+    enrollment_status: StudentEnrollmentStatus
+    is_active: bool
+    student_name: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -73,3 +100,29 @@ class StudentResponse(BaseModel):
 class StudentListResponse(BaseModel):
     total: int
     students: list[StudentResponse]
+
+
+class StudentInstitutionalUpdate(BaseModel):
+    academic_program_id: int | None = Field(default=None, gt=0)
+    curriculum_plan_id: int | None = Field(default=None, gt=0)
+    campus_id: int | None = Field(default=None, gt=0)
+    admission_period_id: int | None = Field(default=None, gt=0)
+    current_cycle: int | None = Field(default=None, ge=1, le=10)
+    enrollment_status: StudentEnrollmentStatus | None = None
+    max_credits_allowed: int | None = Field(default=None, ge=1, le=30)
+    is_active: bool | None = None
+
+
+class StudentInstitutionalRead(StudentResponse):
+    pass
+
+
+class StudentInstitutionalSummary(BaseModel):
+    student_id: int
+    student_code: str
+    student_name: str | None = None
+    current_cycle: int
+    academic_program: str | None = None
+    curriculum_plan: str | None = None
+    campus: str | None = None
+    enrollment_status: StudentEnrollmentStatus

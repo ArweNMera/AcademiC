@@ -108,6 +108,7 @@ class DemoPreparationService:
                 offering = SectionOffering(
                     academic_period_id=period.id,
                     academic_program_id=program.id,
+                    campus_id=program.campus_id,
                     curriculum_plan_id=plan.id,
                     curriculum_course_id=curriculum_course.id,
                     course_id=curriculum_course.course_id,
@@ -133,6 +134,8 @@ class DemoPreparationService:
             changed = False
             if fix_existing:
                 offering.academic_program_id = program.id
+                if not offering.campus_id:
+                    offering.campus_id = program.campus_id
                 offering.curriculum_plan_id = plan.id
                 offering.academic_period_id = period.id
                 offering.cycle_number = offering.curriculum_course.cycle_number

@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Boolean, Enum, Integer, String
+from sqlalchemy import Boolean, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -52,6 +52,12 @@ class Classroom(Base, TimestampMixin):
         default="Principal",
     )
 
+    campus_id: Mapped[int | None] = mapped_column(
+        ForeignKey("campuses.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     building: Mapped[str | None] = mapped_column(
         String(80),
         nullable=True,
@@ -88,4 +94,9 @@ class Classroom(Base, TimestampMixin):
     section_offerings = relationship(
         "SectionOffering",
         back_populates="classroom",
+    )
+
+    campus_entity = relationship(
+        "Campus",
+        back_populates="classrooms",
     )

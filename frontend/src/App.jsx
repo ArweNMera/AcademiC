@@ -30,6 +30,8 @@ const AcademicProgramsPage = lazy(() => import('./pages/admin/AcademicProgramsPa
 const CurriculumPlansPage = lazy(() => import('./pages/admin/CurriculumPlansPage'))
 const CurriculumPage = lazy(() => import('./pages/admin/CurriculumPage'))
 const AuditLogsPage = lazy(() => import('./pages/admin/AuditLogsPage'))
+const FacultiesPage = lazy(() => import('./pages/admin/FacultiesPage'))
+const CampusesPage = lazy(() => import('./pages/admin/CampusesPage'))
 
 const CoordinatorDashboard = lazy(() => import('./pages/coordinator/CoordinatorDashboard'))
 const OfferingsPage = lazy(() => import('./pages/coordinator/OfferingsPage'))
@@ -113,6 +115,8 @@ export default function App() {
                                 <Route path="/admin/dashboard" element={Page(<AdminDashboardPage />)} />
                                 <Route path="/admin/executive-dashboard" element={Page(<ExecutiveDashboardPage />)} />
                                 <Route path="/admin/audit-logs" element={Page(<AuditLogsPage />)} />
+                                <Route path="/admin/faculties" element={Page(<FacultiesPage />)} />
+                                <Route path="/admin/campuses" element={Page(<CampusesPage />)} />
                                 <Route path="/admin/reports/teacher-load" element={Page(<ReportDetailPage reportType="teacher-load" />)} />
                                 <Route path="/admin/reports/classroom-usage" element={Page(<ReportDetailPage reportType="classroom-usage" />)} />
                                 <Route path="/admin/reports/offerings" element={Page(<ReportDetailPage reportType="offerings" />)} />

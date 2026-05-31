@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 
 from app.csp.offering_engine import OfferingCSPEngine
-from app.models.academic import AcademicPeriod
+from app.models.academic import AcademicPeriod, AcademicProgram
 from app.models.classroom import ClassroomType
 from app.models.offering import (
     OfferingConflict,
@@ -106,11 +106,19 @@ class OfferingCSPService:
             raise HTTPException(status_code=400, detail="Indice de solucion no valido.")
         selected = result["solutions"][request.solution_index]
         period = self.db.query(AcademicPeriod).filter(AcademicPeriod.id == request.academic_period_id).first()
+        program = (
+            self.db.query(AcademicProgram)
+            .filter(AcademicProgram.id == request.academic_program_id)
+            .first()
+            if request.academic_program_id else None
+        )
         schedule = AcademicSchedule(
             name=request.schedule_name,
             academic_period=period.code if period else str(request.academic_period_id),
             academic_period_id=request.academic_period_id,
             academic_program_id=request.academic_program_id,
+            campus_id=program.campus_id if program else None,
+            faculty_id=program.faculty_id if program else None,
             curriculum_plan_id=request.curriculum_plan_id,
             schedule_type=ScheduleType.INSTITUTIONAL,
             source_type=ScheduleSourceType.SECTION_OFFERINGS,

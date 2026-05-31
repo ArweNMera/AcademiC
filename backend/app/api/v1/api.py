@@ -5,6 +5,7 @@ from app.api.v1.endpoints import (
     admin_demo,
     academic_periods,
     academic_programs,
+    campuses,
     classrooms,
     courses,
     course_prerequisites,
@@ -30,6 +31,7 @@ from app.api.v1.endpoints import (
     sections,
     curriculum_courses,
     curriculum_plans,
+    faculties,
     student_csp,
     student_enrollments,
     students,
@@ -121,6 +123,18 @@ api_router.include_router(
     coordinator_dashboard.router,
     prefix="/coordinator/dashboard",
     tags=["Coordinator Dashboard"],
+)
+
+api_router.include_router(
+    faculties.router,
+    prefix="/faculties",
+    tags=["Faculties"],
+)
+
+api_router.include_router(
+    campuses.router,
+    prefix="/campuses",
+    tags=["Campuses"],
 )
 
 api_router.include_router(

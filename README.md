@@ -49,6 +49,7 @@ MySQL :3306 (publicado localmente en :3307)
 | --- | --- |
 | Autenticación | Login JWT, sesión persistente y protección por rol. |
 | Dominio académico | Períodos, programas, planes curriculares y malla. |
+| Base institucional Huancayo | Sede única, facultades y relaciones iniciales compatibles. |
 | Oferta académica | Secciones por período, docentes, aulas, cupos y estados. |
 | CSP institucional | Diagnóstico, vista previa, generación, guardado y publicación. |
 | Portal coordinador | Gestión de oferta, conflictos, solicitudes y reportes. |
@@ -75,6 +76,7 @@ docker compose --env-file .env.docker.example exec backend alembic upgrade head
 docker compose --env-file .env.docker.example exec backend python seed_realistic_demo.py
 docker compose --env-file .env.docker.example exec backend python seed_uc_ingenieria_sistemas_curriculum.py
 docker compose --env-file .env.docker.example exec backend python seed_uc_isi_offerings_ready_demo.py
+docker compose --env-file .env.docker.example exec backend python seed_huancayo_institutional_base.py
 ```
 
 | Servicio | URL |

@@ -64,6 +64,18 @@ class AcademicSchedule(Base, TimestampMixin):
         index=True,
     )
 
+    campus_id: Mapped[int | None] = mapped_column(
+        ForeignKey("campuses.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    faculty_id: Mapped[int | None] = mapped_column(
+        ForeignKey("faculties.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     curriculum_plan_id: Mapped[int | None] = mapped_column(
         ForeignKey("curriculum_plans.id", ondelete="SET NULL"),
         nullable=True,
@@ -123,6 +135,8 @@ class AcademicSchedule(Base, TimestampMixin):
 
     academic_period_entity = relationship("AcademicPeriod")
     academic_program = relationship("AcademicProgram")
+    campus_entity = relationship("Campus", back_populates="academic_schedules")
+    faculty_entity = relationship("Faculty", back_populates="academic_schedules")
     curriculum_plan = relationship("CurriculumPlan")
 
 

@@ -19,6 +19,7 @@ from app.models.academic import (
     AcademicPeriodStatus,
     AcademicProgram,
     AcademicProgramStatus,
+    Campus,
     CoursePrerequisite,
     CurriculumCourse,
     CurriculumCourseType,
@@ -26,6 +27,7 @@ from app.models.academic import (
     CurriculumPlanStatus,
     ElectiveArea,
     ElectiveBankCourse,
+    Faculty,
     PrerequisiteType,
 )
 from app.models.offering import (
@@ -77,6 +79,8 @@ __all__ = [
     "AcademicPeriodStatus",
     "AcademicProgram",
     "AcademicProgramStatus",
+    "Campus",
+    "Faculty",
     "CurriculumPlan",
     "CurriculumPlanStatus",
     "CurriculumCourse",

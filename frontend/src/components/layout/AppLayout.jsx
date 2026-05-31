@@ -36,6 +36,8 @@ const pageTitles = {
     '/admin/dashboard': 'Dashboard institucional',
     '/admin/executive-dashboard': 'Panel ejecutivo',
     '/admin/audit-logs': 'Auditoria',
+    '/admin/faculties': 'Facultades',
+    '/admin/campuses': 'Sede Huancayo',
     '/admin/traceability': 'Trazabilidad',
     '/admin/reports/teacher-load': 'Reporte de carga docente',
     '/admin/reports/classroom-usage': 'Reporte de uso de aulas',
@@ -190,6 +192,15 @@ function buildMenu(role, dashboardPath) {
     if (role === 'ADMIN') {
         return [
             { id: 'home', title: 'Inicio', icon: <LayoutDashboard size={16} />, items: [{ to: dashboardPath, label: 'Dashboard', icon: <LayoutDashboard size={18} /> }] },
+            {
+                id: 'institutional-base',
+                title: 'Institucional',
+                icon: <Building2 size={16} />,
+                items: [
+                    { to: '/admin/faculties', label: 'Facultades', icon: <School size={18} /> },
+                    { to: '/admin/campuses', label: 'Sede Huancayo', icon: <Building2 size={18} /> },
+                ],
+            },
             {
                 id: 'analytics',
                 title: 'Analitica',

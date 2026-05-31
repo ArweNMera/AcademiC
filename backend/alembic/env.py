@@ -37,6 +37,8 @@ from app.models import (
     StudentScheduleBlock,
     AcademicPeriod,
     AcademicProgram,
+    Campus,
+    Faculty,
     CurriculumPlan,
     CurriculumCourse,
     CoursePrerequisite,

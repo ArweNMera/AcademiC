@@ -14,6 +14,34 @@ class AcademicPeriodStatus(str, enum.Enum):
     CLOSED = "CLOSED"
 
 
+class Faculty(Base, TimestampMixin):
+    __tablename__ = "faculties"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(180), unique=True, nullable=False)
+    code: Mapped[str] = mapped_column(String(30), unique=True, index=True, nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    academic_programs = relationship("AcademicProgram", back_populates="faculty_entity")
+    academic_schedules = relationship("AcademicSchedule", back_populates="faculty_entity")
+
+
+class Campus(Base, TimestampMixin):
+    __tablename__ = "campuses"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(180), unique=True, nullable=False)
+    city: Mapped[str] = mapped_column(String(120), nullable=False)
+    address: Mapped[str | None] = mapped_column(String(240), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    academic_programs = relationship("AcademicProgram", back_populates="campus_entity")
+    classrooms = relationship("Classroom", back_populates="campus_entity")
+    section_offerings = relationship("SectionOffering", back_populates="campus_entity")
+    academic_schedules = relationship("AcademicSchedule", back_populates="campus_entity")
+
+
 class AcademicProgramStatus(str, enum.Enum):
     ACTIVE = "ACTIVE"
     INACTIVE = "INACTIVE"
@@ -72,6 +100,12 @@ class AcademicProgram(Base, TimestampMixin):
     name: Mapped[str] = mapped_column(String(180), nullable=False)
     university: Mapped[str] = mapped_column(String(180), nullable=False)
     faculty: Mapped[str | None] = mapped_column(String(180), nullable=True)
+    faculty_id: Mapped[int | None] = mapped_column(
+        ForeignKey("faculties.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    campus_id: Mapped[int | None] = mapped_column(
+        ForeignKey("campuses.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     modality: Mapped[str | None] = mapped_column(String(80), nullable=True)
     status: Mapped[AcademicProgramStatus] = mapped_column(
         Enum(AcademicProgramStatus), nullable=False, default=AcademicProgramStatus.ACTIVE
@@ -80,6 +114,8 @@ class AcademicProgram(Base, TimestampMixin):
     curriculum_plans = relationship(
         "CurriculumPlan", back_populates="program", cascade="all, delete-orphan"
     )
+    faculty_entity = relationship("Faculty", back_populates="academic_programs")
+    campus_entity = relationship("Campus", back_populates="academic_programs")
     section_offerings = relationship(
         "SectionOffering", back_populates="academic_program", cascade="all, delete-orphan"
     )

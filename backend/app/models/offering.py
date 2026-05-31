@@ -68,6 +68,9 @@ class SectionOffering(Base, TimestampMixin):
     academic_program_id: Mapped[int] = mapped_column(
         ForeignKey("academic_programs.id", ondelete="CASCADE"), nullable=False, index=True
     )
+    campus_id: Mapped[int | None] = mapped_column(
+        ForeignKey("campuses.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     curriculum_plan_id: Mapped[int] = mapped_column(
         ForeignKey("curriculum_plans.id", ondelete="CASCADE"), nullable=False, index=True
     )
@@ -101,6 +104,7 @@ class SectionOffering(Base, TimestampMixin):
 
     academic_period = relationship("AcademicPeriod", back_populates="section_offerings")
     academic_program = relationship("AcademicProgram", back_populates="section_offerings")
+    campus_entity = relationship("Campus", back_populates="section_offerings")
     curriculum_plan = relationship("CurriculumPlan", back_populates="section_offerings")
     curriculum_course = relationship("CurriculumCourse", back_populates="section_offerings")
     course = relationship("Course", back_populates="section_offerings")

@@ -7,3 +7,4 @@ de OptiAcademic.
 - [Módulo admin y coordinador](modulo-admin-coordinador.md)
 - [Módulo estudiante](modulo-estudiante.md)
 - [Motor CSP institucional](motor-csp-institucional.md)
+- [Escalabilidad institucional Huancayo](escalabilidad-institucional.md)

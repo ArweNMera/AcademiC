@@ -212,6 +212,7 @@ class SectionOfferingService:
             item = SectionOffering(
                 academic_period_id=period.id,
                 academic_program_id=plan.program_id,
+                campus_id=plan.program.campus_id,
                 curriculum_plan_id=plan.id,
                 curriculum_course_id=curriculum_course.id,
                 course_id=curriculum_course.course_id,
@@ -267,6 +268,7 @@ class SectionOfferingService:
         if duplicate and duplicate.id != current_id:
             raise HTTPException(status_code=400, detail="La seccion ya existe para este curso y periodo")
         values = {**values, "course_id": course_id, "cycle_number": cycle}
+        values["campus_id"] = values.get("campus_id") or plan.program.campus_id
         values["display_name"] = values.get("display_name") or f"{curriculum_course.course.name} - Seccion {values['section_code']}"
         return SectionOffering(**values)
 

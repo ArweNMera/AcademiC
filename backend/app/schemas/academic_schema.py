@@ -52,6 +52,8 @@ class AcademicProgramBase(BaseModel):
     name: str = Field(..., min_length=3, max_length=180)
     university: str = Field(..., min_length=3, max_length=180)
     faculty: str | None = Field(default=None, max_length=180)
+    faculty_id: int | None = Field(default=None, gt=0)
+    campus_id: int | None = Field(default=None, gt=0)
     modality: str | None = Field(default=None, max_length=80)
     status: AcademicProgramStatus = AcademicProgramStatus.ACTIVE
 
@@ -65,6 +67,8 @@ class AcademicProgramUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=3, max_length=180)
     university: str | None = Field(default=None, min_length=3, max_length=180)
     faculty: str | None = Field(default=None, max_length=180)
+    faculty_id: int | None = Field(default=None, gt=0)
+    campus_id: int | None = Field(default=None, gt=0)
     modality: str | None = Field(default=None, max_length=80)
     status: AcademicProgramStatus | None = None
 

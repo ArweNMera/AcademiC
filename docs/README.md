@@ -45,11 +45,13 @@ la lectura en GitHub, la sustentación académica y el mantenimiento técnico.
 - [Módulo admin y coordinador](04-modulos/modulo-admin-coordinador.md)
 - [Módulo estudiante](04-modulos/modulo-estudiante.md)
 - [Motor CSP institucional](04-modulos/motor-csp-institucional.md)
+- [Escalabilidad institucional Huancayo](04-modulos/escalabilidad-institucional.md)
 
 ### Demo
 
 - [Flujo de demostración](05-demo/flujo-demostracion.md)
 - [Preparación de datos demo](05-demo/preparacion-datos-demo.md)
+- [Demo institucional Huancayo](05-demo/demo-institucional-huancayo.md)
 - [Guía de presentación actual](presentacion/demo-flow.md)
 
 ### Calidad

@@ -59,6 +59,14 @@ class StudentAcademicHistoryBulkResult(BaseModel):
     errors: list[str]
 
 
+class StudentAcademicHistoryPage(BaseModel):
+    items: list[StudentAcademicHistoryRead]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
 class StudentAcademicHistorySummary(BaseModel):
     student_id: int
     student_code: str

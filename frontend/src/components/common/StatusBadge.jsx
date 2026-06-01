@@ -1,29 +1,35 @@
-const palette = {
-    ACTIVE: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    INACTIVE: 'bg-slate-100 text-slate-600 border-slate-200',
-    PUBLISHED: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    APPROVED: 'bg-blue-50 text-blue-700 border-blue-100',
-    ENROLLED: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    RESERVED: 'bg-amber-50 text-amber-700 border-amber-100',
-    GRADUATED: 'bg-indigo-50 text-indigo-700 border-indigo-100',
-    WITHDRAWN: 'bg-slate-100 text-slate-600 border-slate-200',
-    SUSPENDED: 'bg-red-50 text-red-700 border-red-100',
-    FAILED: 'bg-red-50 text-red-700 border-red-100',
-    IN_PROGRESS: 'bg-amber-50 text-amber-700 border-amber-100',
-    PENDING_REVIEW: 'bg-indigo-50 text-indigo-700 border-indigo-100',
-    READY: 'bg-indigo-50 text-indigo-700 border-indigo-100',
-    DRAFT: 'bg-slate-100 text-slate-700 border-slate-200',
-    PENDING: 'bg-amber-50 text-amber-700 border-amber-100',
-    REJECTED: 'bg-red-50 text-red-700 border-red-100',
-    OVERLOADED: 'bg-red-50 text-red-700 border-red-100',
-    WARNING: 'bg-amber-50 text-amber-700 border-amber-100',
-    NORMAL: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+import { AlertTriangle, CheckCircle2, Clock3, Info, XCircle } from 'lucide-react'
+
+const statuses = {
+    ACTIVE: ['Activo', 'bg-emerald-50 text-emerald-900 border-emerald-700', CheckCircle2],
+    INACTIVE: ['Inactivo', 'bg-slate-100 text-slate-900 border-slate-600', XCircle],
+    PUBLISHED: ['Publicado', 'bg-emerald-50 text-emerald-900 border-emerald-700', CheckCircle2],
+    APPROVED: ['Aprobado', 'bg-blue-50 text-blue-900 border-blue-700', CheckCircle2],
+    ENROLLED: ['Matriculado', 'bg-emerald-50 text-emerald-900 border-emerald-700', CheckCircle2],
+    RESERVED: ['Reserva', 'bg-amber-50 text-amber-950 border-amber-700', Clock3],
+    GRADUATED: ['Graduado', 'bg-indigo-50 text-indigo-950 border-indigo-700', CheckCircle2],
+    WITHDRAWN: ['Retirado', 'bg-slate-100 text-slate-900 border-slate-600', XCircle],
+    SUSPENDED: ['Suspendido', 'bg-red-50 text-red-950 border-red-700', XCircle],
+    FAILED: ['Desaprobado', 'bg-red-50 text-red-950 border-red-700', XCircle],
+    IN_PROGRESS: ['En progreso', 'bg-amber-50 text-amber-950 border-amber-700', Clock3],
+    PENDING_REVIEW: ['Revisión pendiente', 'bg-indigo-50 text-indigo-950 border-indigo-700', Clock3],
+    READY: ['Listo', 'bg-indigo-50 text-indigo-950 border-indigo-700', CheckCircle2],
+    DRAFT: ['Borrador', 'bg-slate-100 text-slate-900 border-slate-600', Info],
+    PENDING: ['Pendiente', 'bg-amber-50 text-amber-950 border-amber-700', Clock3],
+    REJECTED: ['Rechazado', 'bg-red-50 text-red-950 border-red-700', XCircle],
+    OVERLOADED: ['Sobrecargado', 'bg-red-50 text-red-950 border-red-700', AlertTriangle],
+    WARNING: ['Advertencia', 'bg-amber-50 text-amber-950 border-amber-700', AlertTriangle],
+    ERROR: ['Error', 'bg-red-50 text-red-950 border-red-700', XCircle],
+    SUCCESS: ['Éxito', 'bg-emerald-50 text-emerald-900 border-emerald-700', CheckCircle2],
+    INFO: ['Información', 'bg-blue-50 text-blue-900 border-blue-700', Info],
+    NORMAL: ['Normal', 'bg-emerald-50 text-emerald-900 border-emerald-700', CheckCircle2],
 }
 
 export default function StatusBadge({ value }) {
-    const label = value || '-'
+    const [label, className, Icon] = statuses[value] || [value || 'Sin estado', 'bg-slate-50 text-slate-900 border-slate-600', Info]
     return (
-        <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-bold ${palette[label] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+        <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-bold ${className}`}>
+            <Icon size={13} aria-hidden="true" />
             {label}
         </span>
     )

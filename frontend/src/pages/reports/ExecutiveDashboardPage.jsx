@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AlertTriangle, BarChart3, BookOpen, Building2, CalendarDays, ClipboardCheck, Leaf, Users } from 'lucide-react'
+import { AlertTriangle, BarChart3, BookOpen, Building2, CalendarDays, ClipboardCheck, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
@@ -7,6 +7,9 @@ import { reportService } from '../../services/reportService'
 import { useAuthStore } from '../../stores/authStore'
 import LoadingState from '../../components/common/LoadingState'
 import EmptyState from '../../components/common/EmptyState'
+import MetricCard from '../../components/common/MetricCard'
+import SectionCard from '../../components/common/SectionCard'
+import { formatCO2, formatInteger } from '../../utils/formatters'
 
 export default function ExecutiveDashboardPage() {
     const [data, setData] = useState(null)
@@ -92,7 +95,9 @@ export default function ExecutiveDashboardPage() {
                 Seguimiento del periodo, oferta, recursos, estudiantes, incidencias y sostenibilidad en una sola vista.
             </p>
             <div className="mt-5 flex max-w-sm gap-2">
+                <label htmlFor="executive-period-id" className="sr-only">ID del período activo</label>
                 <input
+                    id="executive-period-id"
                     type="number"
                     min="1"
                     value={periodId}
@@ -108,11 +113,14 @@ export default function ExecutiveDashboardPage() {
 
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {cards.map(([label, value, Icon]) => (
-                <div key={label} className="rounded-2xl border bg-white p-5 shadow-sm">
-                    <Icon size={20} className={label.includes('Conflictos') ? 'text-red-600' : 'text-orange-600'} />
-                    <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-                    <p className="mt-1 text-3xl font-bold text-slate-900">{value}</p>
-                </div>
+                <MetricCard
+                    key={label}
+                    title={label}
+                    value={typeof value === 'number' ? formatInteger(value) : value}
+                    description="Indicador consolidado del periodo"
+                    icon={Icon}
+                    tone={label.includes('Conflictos') ? 'red' : 'orange'}
+                />
             ))}
         </section>
 
@@ -128,9 +136,9 @@ export default function ExecutiveDashboardPage() {
                 ))}
             </Panel>
             <Panel title="Sostenibilidad">
-                <Line label="Requests medidos" value={sustainabilityMetrics.total_requests || 0} />
-                <Line label="CO2 estimado (g)" value={Number(sustainabilityMetrics.total_co2 || 0).toFixed(8)} />
-                <p className="mt-4 text-sm text-slate-500">{support?.sustainability?.message || 'Sin reporte ambiental disponible.'}</p>
+                <Line label="Solicitudes analizadas" value={sustainabilityMetrics.total_requests || 0} />
+                <Line label="CO₂ estimado total" value={formatCO2(sustainabilityMetrics.total_co2)} />
+                <p className="mt-4 text-sm text-slate-700">{support?.sustainability?.message || 'Sin reporte ambiental disponible.'}</p>
             </Panel>
         </section>
 
@@ -174,15 +182,14 @@ export default function ExecutiveDashboardPage() {
 }
 
 function Panel({ title, children }) {
-    return <div className="rounded-2xl border bg-white p-5 shadow-sm">
-        <h2 className="mb-4 text-lg font-bold text-slate-900">{title}</h2>
-        <div className="space-y-3">{children}</div>
-    </div>
+    return <SectionCard title={title}>
+        <div className="space-y-3 p-5">{children}</div>
+    </SectionCard>
 }
 
 function Line({ label, value }) {
     return <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-2.5 text-sm">
-        <span className="font-medium text-slate-600">{label}</span>
+        <span className="font-medium text-slate-800">{label}</span>
         <span className="font-bold text-slate-900">{value}</span>
     </div>
 }

@@ -62,3 +62,45 @@ SELECT status, COUNT(*) AS total
 FROM student_academic_history
 GROUP BY status;
 ```
+
+## Accesibilidad Web
+
+La validación frontend incluye:
+
+- foco visible al navegar con teclado;
+- enlace para saltar al contenido principal;
+- modo claro, modo oscuro y escala de texto persistentes;
+- reducción de movimiento cuando el sistema operativo la solicita;
+- etiquetas visibles en formularios prioritarios;
+- mensajes de carga y error anunciables;
+- estados representados con texto, icono y color;
+- tablas institucionales con caption y encabezados semánticos.
+
+Referencia ampliada: [Accesibilidad web](accesibilidad-web.md).
+
+Para tablas y paneles tambien se valida:
+
+- tipografia de datos de al menos tamano `text-sm`;
+- encabezados de tabla semanticos y captions descriptivos;
+- unidades visibles en metricas ambientales y operativas;
+- barras de progreso acompanadas por porcentaje textual;
+- scroll horizontal controlado en tablas extensas.
+
+La validacion de lenguaje visual comprueba ademas que:
+
+- las rutas `/api/v1/...` no aparezcan como titulo principal de una metrica;
+- cada ruta tecnica tenga un nombre funcional comprensible;
+- el endpoint original permanezca disponible solo en un detalle colapsable;
+- los modos claro y oscuro mantengan contraste suficiente en tablas, cards e
+  inputs.
+
+## Optimizacion Tecnica Frontend
+
+Los listados prioritarios usan paginacion visible y cargas acotadas. El
+historial academico dispone de una ruta paginada aditiva para conservar el
+contrato legacy. Los catalogos estables de facultades, sedes, programas,
+periodos y planes curriculares reutilizan respuestas recientes y deduplican
+solicitudes concurrentes; las mutaciones invalidan la cache.
+
+La guia operativa para registrar resultados antes y despues esta en
+[Validacion Lighthouse](sostenibilidad/07-validacion-lighthouse.md).

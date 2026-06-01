@@ -81,6 +81,38 @@ class StudentAcademicHistoryService:
         records = query.order_by(StudentAcademicHistory.id.desc()).offset(skip).limit(limit).all()
         return [self._serialize(record) for record in records]
 
+    def list_history_page(self, page: int = 1, page_size: int = 20, **filters) -> dict:
+        query = self._query()
+        student_id = filters.get("student_id")
+        academic_program_id = filters.get("academic_program_id")
+        curriculum_plan_id = filters.get("curriculum_plan_id")
+        course_id = filters.get("course_id")
+        history_status = filters.get("history_status")
+        academic_period_id = filters.get("academic_period_id")
+        if student_id is not None:
+            query = query.filter(StudentAcademicHistory.student_id == student_id)
+        if academic_program_id is not None or curriculum_plan_id is not None:
+            query = query.join(Student)
+        if academic_program_id is not None:
+            query = query.filter(Student.academic_program_id == academic_program_id)
+        if curriculum_plan_id is not None:
+            query = query.filter(Student.curriculum_plan_id == curriculum_plan_id)
+        if course_id is not None:
+            query = query.filter(StudentAcademicHistory.course_id == course_id)
+        if history_status is not None:
+            query = query.filter(StudentAcademicHistory.status == history_status)
+        if academic_period_id is not None:
+            query = query.filter(StudentAcademicHistory.academic_period_id == academic_period_id)
+        total = query.count()
+        records = query.order_by(StudentAcademicHistory.id.desc()).offset((page - 1) * page_size).limit(page_size).all()
+        return {
+            "items": [self._serialize(record) for record in records],
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": (total + page_size - 1) // page_size,
+        }
+
     def get_history_record(self, record_id: int) -> dict:
         record = self._query().filter(StudentAcademicHistory.id == record_id).first()
         if not record:

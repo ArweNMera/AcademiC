@@ -15,11 +15,10 @@ export default function SidebarItem({ to, icon, label, badge }) {
             }
         >
             <span className="flex min-w-0 items-center gap-3">
-                {icon}
+                <span aria-hidden="true">{icon}</span>
                 <span className="truncate">{label}</span>
             </span>
             {badge && <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs">{badge}</span>}
         </NavLink>
     )
 }
-

@@ -2,7 +2,7 @@ import api from '../api/axios'
 
 export const institutionalStudentService = {
     async getStudents(params = {}) {
-        const response = await api.get('/students', { params: { skip: 0, limit: 500, ...params } })
+        const response = await api.get('/students', { params: { skip: 0, limit: 20, ...params } })
         return response.data
     },
     async updateStudent(id, payload) {

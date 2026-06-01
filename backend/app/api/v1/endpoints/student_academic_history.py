@@ -9,12 +9,38 @@ from app.schemas.student_academic_history_schema import (
     StudentAcademicHistoryBulkCreate,
     StudentAcademicHistoryBulkResult,
     StudentAcademicHistoryCreate,
+    StudentAcademicHistoryPage,
     StudentAcademicHistoryRead,
     StudentAcademicHistoryUpdate,
 )
 from app.services.student_academic_history_service import StudentAcademicHistoryService
 
 router = APIRouter()
+
+
+@router.get("/page", response_model=StudentAcademicHistoryPage, summary="Listar historial academico paginado")
+def list_history_page(
+    student_id: int | None = Query(default=None, gt=0),
+    academic_program_id: int | None = Query(default=None, gt=0),
+    curriculum_plan_id: int | None = Query(default=None, gt=0),
+    course_id: int | None = Query(default=None, gt=0),
+    history_status: StudentAcademicHistoryStatus | None = Query(default=None, alias="status"),
+    academic_period_id: int | None = Query(default=None, gt=0),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.COORDINATOR, UserRole.TEACHER)),
+):
+    return StudentAcademicHistoryService(db).list_history_page(
+        student_id=student_id,
+        academic_program_id=academic_program_id,
+        curriculum_plan_id=curriculum_plan_id,
+        course_id=course_id,
+        history_status=history_status,
+        academic_period_id=academic_period_id,
+        page=page,
+        page_size=page_size,
+    )
 
 
 @router.get("", response_model=list[StudentAcademicHistoryRead], summary="Listar historial academico")

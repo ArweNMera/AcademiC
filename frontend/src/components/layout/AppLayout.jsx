@@ -20,6 +20,8 @@ import {
 } from 'lucide-react'
 
 import ErrorBoundary from '../common/ErrorBoundary'
+import ThemeToggle from '../common/ThemeToggle'
+import SkipToContent from '../accessibility/SkipToContent'
 import NotificationBell from '../notifications/NotificationBell'
 import SidebarItem from './SidebarItem'
 import SidebarSection from './SidebarSection'
@@ -117,7 +119,8 @@ export default function AppLayout() {
 
     return (
         <div className="flex min-h-screen bg-slate-100">
-            <aside className="flex w-72 shrink-0 flex-col bg-slate-950 text-white">
+            <SkipToContent />
+            <aside className="flex w-72 shrink-0 flex-col bg-slate-950 text-white" aria-label="Navegación principal">
                 <div className="border-b border-slate-800 p-6">
                     <div className="flex items-center gap-3">
                         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-600">
@@ -130,7 +133,7 @@ export default function AppLayout() {
                     </div>
                 </div>
 
-                <nav className="flex-1 space-y-2 overflow-y-auto p-4">
+                <nav className="flex-1 space-y-2 overflow-y-auto p-4" aria-label="Menú por módulos">
                     {menu.map((section) => (
                         <SidebarSection
                             key={section.id}
@@ -159,15 +162,18 @@ export default function AppLayout() {
                 </div>
             </aside>
 
-            <main className="flex min-w-0 flex-1 flex-col">
+            <main id="main-content" tabIndex="-1" className="flex min-w-0 flex-1 flex-col">
                 <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-8">
                     <div className="min-w-0">
                         <p className="text-sm text-slate-500">{roleLabels[user?.role] || 'Usuario'}</p>
                         <h2 className="truncate text-lg font-bold text-slate-800">{currentTitle}</h2>
                     </div>
-                    <NotificationBell />
+                    <div className="flex items-center gap-3">
+                        <ThemeToggle />
+                        <NotificationBell />
+                    </div>
                 </header>
-                <section className="flex-1 overflow-y-auto p-8">
+                <section className="flex-1 overflow-y-auto p-8" aria-label={currentTitle}>
                     <ErrorBoundary>
                         <Outlet />
                     </ErrorBoundary>

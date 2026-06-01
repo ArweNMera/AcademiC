@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import {
     Ban,
     BookOpen,
-    CalendarDays,
     CheckCircle,
     GraduationCap,
     Loader2,
@@ -507,7 +506,7 @@ export default function StudentOfferPage() {
             <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <div>
-                        <label className="mb-2 block text-sm font-bold text-slate-700">
+                        <label htmlFor="student-offer-search" className="mb-2 block text-sm font-bold text-slate-700">
                             Estudiante
                         </label>
 
@@ -569,6 +568,7 @@ export default function StudentOfferPage() {
                             />
 
                             <input
+                                id="student-offer-search"
                                 value={search}
                                 onChange={(event) => setSearch(event.target.value)}
                                 placeholder="Curso, docente, sección..."
@@ -592,6 +592,7 @@ export default function StudentOfferPage() {
                                     key={day.id}
                                     type="button"
                                     onClick={() => toggleUnavailableDay(day.id)}
+                                    aria-pressed={active}
                                     className={[
                                         'rounded-xl border px-3 py-2 text-sm font-bold transition',
                                         active
@@ -615,6 +616,7 @@ export default function StudentOfferPage() {
                         <button
                             type="button"
                             onClick={() => setSelectedDay('ALL')}
+                            aria-pressed={selectedDay === 'ALL'}
                             className={[
                                 'rounded-xl border px-3 py-2 text-sm font-bold transition',
                                 selectedDay === 'ALL'
@@ -630,6 +632,7 @@ export default function StudentOfferPage() {
                                 key={day.id}
                                 type="button"
                                 onClick={() => setSelectedDay(day.id)}
+                                aria-pressed={Number(selectedDay) === day.id}
                                 className={[
                                     'rounded-xl border px-3 py-2 text-sm font-bold transition',
                                     Number(selectedDay) === day.id

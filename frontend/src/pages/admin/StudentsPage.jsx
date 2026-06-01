@@ -10,6 +10,7 @@ import {
     X,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import PaginationControls from '../../components/common/PaginationControls'
 import { studentService } from '../../services/studentService'
 import { userService } from '../../services/userService'
 import { extractList, getErrorMessage } from '../../utils/extractList'
@@ -31,6 +32,9 @@ export default function StudentsPage() {
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
+    const [total, setTotal] = useState(0)
+    const [page, setPage] = useState(1)
+    const [pageSize, setPageSize] = useState(20)
 
     const studentUsers = useMemo(() => {
         return users.filter((user) => user.role === 'STUDENT')
@@ -54,17 +58,20 @@ export default function StudentsPage() {
         })
     }, [students, users, search])
 
-    const loadAll = async () => {
+    const loadAll = async (nextPage = page, nextPageSize = pageSize) => {
         setLoading(true)
 
         try {
             const [studentsData, usersData] = await Promise.all([
-                studentService.getStudents(),
-                userService.getUsers(),
+                studentService.getStudents({ skip: (nextPage - 1) * nextPageSize, limit: nextPageSize }),
+                userService.getUsers({ limit: 500 }),
             ])
 
             setStudents(extractList(studentsData))
             setUsers(extractList(usersData))
+            setTotal(studentsData.total || 0)
+            setPage(nextPage)
+            setPageSize(nextPageSize)
         } catch (error) {
             toast.error(getErrorMessage(error, 'No se pudieron cargar los estudiantes'))
         } finally {
@@ -316,7 +323,7 @@ export default function StudentsPage() {
                                 Estudiantes registrados
                             </h2>
                             <p className="text-sm text-slate-500">
-                                Total: {filteredStudents.length} / {students.length}
+                                Mostrados: {filteredStudents.length} / {total}
                             </p>
                         </div>
 
@@ -406,6 +413,7 @@ export default function StudentsPage() {
                             </table>
                         </div>
                     )}
+                    {!loading && students.length > 0 && <PaginationControls page={page} pageSize={pageSize} total={total} onPageChange={(nextPage) => loadAll(nextPage)} onPageSizeChange={(nextSize) => loadAll(1, nextSize)} />}
                 </section>
             </section>
         </div>

@@ -877,20 +877,21 @@ function ScheduleBlocksTable({ blocks, title = "Bloques" }) {
             </div>
             <div className="max-h-[520px] overflow-auto">
                 <table className="w-full min-w-[900px] text-sm">
-                    <thead className="sticky top-0 z-10 bg-slate-100 text-slate-700">
+                    <caption className="sr-only">{title}: bloques de horario con sección, curso, docente, aula y duración.</caption>
+                    <thead className="sticky top-0 z-10 bg-slate-100 font-bold text-slate-800">
                         <tr>
-                            <th className="px-4 py-3 text-left">Día</th>
-                            <th className="px-4 py-3 text-left">Hora</th>
-                            <th className="px-4 py-3 text-left">Sección</th>
-                            <th className="px-4 py-3 text-left">Curso ID</th>
-                            <th className="px-4 py-3 text-left">Docente ID</th>
-                            <th className="px-4 py-3 text-left">Aula ID</th>
-                            <th className="px-4 py-3 text-left">Duración</th>
+                            <th className="px-4 py-3 text-left" scope="col">Día</th>
+                            <th className="px-4 py-3 text-left" scope="col">Hora</th>
+                            <th className="px-4 py-3 text-left" scope="col">Sección</th>
+                            <th className="px-4 py-3 text-left" scope="col">Curso ID</th>
+                            <th className="px-4 py-3 text-left" scope="col">Docente ID</th>
+                            <th className="px-4 py-3 text-left" scope="col">Aula ID</th>
+                            <th className="px-4 py-3 text-left" scope="col">Duración</th>
                         </tr>
                     </thead>
                     <tbody>
                         {blocks.map((block, idx) => (
-                            <tr key={`${block.section_id}-${block.day_of_week}-${block.start_time}-${idx}`} className="border-t border-slate-200">
+                            <tr key={`${block.section_id}-${block.day_of_week}-${block.start_time}-${idx}`} className="border-t border-slate-200 hover:bg-blue-50">
                                 <td className="px-4 py-3">{dayNames[block.day_of_week] || block.day_of_week}</td>
                                 <td className="px-4 py-3">{formatTime(block.start_time)} - {formatTime(block.end_time)}</td>
                                 <td className="px-4 py-3">{block.section_id}</td>

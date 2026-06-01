@@ -381,7 +381,7 @@ function WeeklyScheduleCard({ blocks, activeDay, setActiveDay, todayClasses, wee
                                           : 'bg-slate-50 text-slate-500 hover:bg-slate-100',
                                 ].join(' ')}
                             >
-                                <span className="text-[10px] uppercase tracking-wide opacity-70">
+                                <span className="text-xs uppercase tracking-wide opacity-80">
                                     {day.short}
                                 </span>
                                 <span className="mt-0.5 text-sm font-black">{day.id}</span>
@@ -441,7 +441,7 @@ function ClassRow({ block, index }) {
                     {formatShortTime(block.start_time)}
                 </span>
                 <div className={`my-1 h-4 w-px ${colors.dot}`} />
-                <span className={`text-[10px] font-semibold ${colors.label}`}>
+                <span className={`text-xs font-semibold ${colors.label}`}>
                     {formatShortTime(block.end_time)}
                 </span>
             </div>
@@ -501,7 +501,7 @@ function NextClassCard({ nextClass }) {
                     />
                     <h2 className="text-base font-black text-slate-900">Próxima clase</h2>
                 </div>
-                <span className={`rounded-xl px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${colors.badge}`}>
+                <span className={`rounded-xl px-2.5 py-1 text-xs font-black uppercase tracking-wide ${colors.badge}`}>
                     {getDayName(nextClass.day_of_week)}
                 </span>
             </div>
@@ -626,7 +626,7 @@ function FinalScheduleSummary({ schedule, totalCredits, totalCourses }) {
                     { label: 'Score', val: formatNumber(schedule.score) },
                 ].map((m) => (
                     <div key={m.label} className="rounded-xl bg-white/60 p-3 text-center">
-                        <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{m.label}</p>
+                        <p className="text-xs font-bold uppercase tracking-wide text-slate-700">{m.label}</p>
                         <p className="mt-0.5 text-lg font-black text-slate-900">{m.val || 0}</p>
                     </div>
                 ))}

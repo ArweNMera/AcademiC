@@ -59,6 +59,7 @@ MySQL :3306 (publicado localmente en :3307)
 | Reportes | Panel ejecutivo, carga docente, aulas, estudiantes y CSV. |
 | Trazabilidad | Notificaciones, auditoría y seguimiento de publicaciones. |
 | Sostenibilidad | Métricas ambientales y soporte GreenFrame. |
+| Accesibilidad web | Tema claro/oscuro, escala de texto, foco visible y navegación por teclado. |
 
 ## Roles
 
@@ -121,6 +122,7 @@ docker compose --env-file .env.docker.example exec backend python seed_huancayo_
 | [Módulos](docs/04-modulos/) | Roles, permisos, estudiantes, coordinadores y motor CSP |
 | [Demo](docs/05-demo/) | Flujo de demostración y preparación de datos |
 | [Calidad](docs/06-calidad/) | Validaciones, pruebas y criterios de calidad |
+| [Sostenibilidad y optimización](docs/06-calidad/sostenibilidad/) | Sensibilización, matriz de oportunidades y plan de evidencias |
 
 Índice completo: [docs/README.md](docs/README.md).
 

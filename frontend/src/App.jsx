@@ -7,6 +7,7 @@ import ErrorBoundary from './components/common/ErrorBoundary'
 import ProtectedRoute from './components/layout/ProtectedRoute'
 import RoleRoute from './components/layout/RoleRoute'
 import LoadingPage from './pages/common/LoadingPage'
+import AccessibilityToolbar from './components/accessibility/AccessibilityToolbar'
 import NotFoundPage from './pages/common/NotFoundPage'
 import UnauthorizedPage from './pages/common/UnauthorizedPage'
 import { useAuthStore } from './stores/authStore'
@@ -98,6 +99,7 @@ export default function App() {
 
     return (
         <>
+            <AccessibilityToolbar />
             <Toaster position="top-right" />
             <Suspense fallback={<LoadingPage />}>
                 <Routes>

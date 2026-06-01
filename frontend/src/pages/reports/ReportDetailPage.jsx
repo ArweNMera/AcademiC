@@ -3,10 +3,14 @@ import { Download, RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 import { reportService } from '../../services/reportService'
+import DataTable from '../../components/common/DataTable'
 import LoadingState from '../../components/common/LoadingState'
 import ErrorState from '../../components/common/ErrorState'
-import EmptyState from '../../components/common/EmptyState'
+import MetricCard from '../../components/common/MetricCard'
+import ReadableNumber from '../../components/common/ReadableNumber'
+import SectionCard from '../../components/common/SectionCard'
 import { safeArray, safeObject } from '../../utils/safeData'
+import { formatBytes, formatCO2, formatDecimal, formatInteger, formatMilliseconds } from '../../utils/formatters'
 
 const definitions = {
     'teacher-load': {
@@ -72,10 +76,10 @@ const definitions = {
     },
     sustainability: {
         title: 'Sostenibilidad',
-        description: 'Metricas HTTP ambientales y disponibilidad del ultimo analisis GreenFrame.',
+        description: 'Estimacion del consumo digital generado por el uso de las funcionalidades del sistema.',
         load: reportService.getSustainabilityReport,
         rows: (data) => Object.entries(safeObject(data.environmental_metrics)).map(([indicator, value]) => ({ indicator, value })),
-        cards: (data) => [['Requests medidos', safeObject(data.environmental_metrics).total_requests || 0], ['Bytes', safeObject(data.environmental_metrics).total_bytes || 0], ['CO2 estimado (g)', Number(safeObject(data.environmental_metrics).total_co2 || 0).toFixed(8)], ['GreenFrame', safeObject(data.latest_greenframe_result).available ? 'Disponible' : 'Pendiente']],
+        cards: (data) => [['Solicitudes analizadas', safeObject(data.environmental_metrics).total_requests || 0], ['Datos transferidos', safeObject(data.environmental_metrics).total_bytes || 0], ['CO2 estimado total', Number(safeObject(data.environmental_metrics).total_co2 || 0)], ['Analisis complementario', safeObject(data.latest_greenframe_result).available ? 'Disponible' : 'Pendiente']],
         columns: [['indicator', 'Indicador'], ['value', 'Valor']],
     },
 }
@@ -104,7 +108,6 @@ export default function ReportDetailPage({ reportType }) {
     useEffect(() => {
         let active = true
         if (!config) {
-            setLoading(false)
             return () => { active = false }
         }
         config.load()
@@ -128,16 +131,19 @@ export default function ReportDetailPage({ reportType }) {
                 <p className="mt-2 text-sm text-slate-500">{config.description}</p>
                 {data?.active_period && <p className="mt-2 text-sm font-semibold text-slate-600">Periodo: {data.active_period.code}</p>}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap items-end gap-2">
                 {reportType !== 'sustainability' && (
-                    <input
-                        type="number"
-                        min="1"
-                        value={periodId}
-                        onChange={(event) => setPeriodId(event.target.value)}
-                        placeholder="ID periodo"
-                        className="w-32 rounded-xl border px-3 py-2 text-sm text-slate-700"
-                    />
+                    <label className="text-sm font-semibold text-slate-700">
+                        ID de periodo
+                        <input
+                            type="number"
+                            min="1"
+                            value={periodId}
+                            onChange={(event) => setPeriodId(event.target.value)}
+                            placeholder="Ej. 1"
+                            className="mt-1 block w-32 rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800"
+                        />
+                    </label>
                 )}
                 {config.export && (
                     <button onClick={() => config.export(periodId ? { academic_period_id: Number(periodId) } : {}).then(() => toast.success('Exportacion registrada.')).catch(() => toast.error('No se pudo exportar CSV'))} className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 font-semibold text-white">
@@ -156,29 +162,32 @@ export default function ReportDetailPage({ reportType }) {
             <>
                 <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {config.cards(data).map(([title, value]) => (
-                        <div key={title} className="rounded-2xl border bg-white p-5">
-                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</p>
-                            <p className="mt-2 text-3xl font-bold text-slate-900">{value ?? '-'}</p>
-                        </div>
+                        <MetricCard
+                            key={title}
+                            title={title}
+                            value={formatCardValue(title, value)}
+                            description="Indicador consolidado del reporte"
+                            tone={title.includes('Critic') || title.includes('Sobrecarg') ? 'red' : 'slate'}
+                        />
                     ))}
                 </section>
-                <section className="overflow-hidden rounded-2xl border bg-white">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full text-sm">
-                            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-                                <tr>{config.columns.map(([, label]) => <th key={label} className="px-4 py-3">{label}</th>)}</tr>
-                            </thead>
-                            <tbody className="divide-y">
-                                {rows.map((row, index) => (
-                                    <tr key={row.id || row.teacher_id || row.classroom_id || row.schedule_id || `${reportType}-${index}`}>
-                                        {config.columns.map(([field]) => <td key={field} className="max-w-sm px-4 py-3 text-slate-700">{display(row[field])}</td>)}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    {!rows.length && <div className="p-6"><EmptyState title="No hay registros para mostrar." /></div>}
-                </section>
+                <SectionCard
+                    title={`Detalle de ${config.title.toLowerCase()}`}
+                    subtitle="Los valores incluyen unidades visibles y se pueden revisar con desplazamiento horizontal en pantallas pequeñas."
+                >
+                    <DataTable
+                        caption={`Tabla de ${config.title.toLowerCase()}`}
+                        columns={config.columns.map(([field, label]) => ({
+                            key: field,
+                            label,
+                            className: 'max-w-sm',
+                            render: (row) => formatTableValue(reportType, field, row[field], row),
+                        }))}
+                        rows={rows}
+                        getRowKey={(row, index) => row.id || row.teacher_id || row.classroom_id || row.schedule_id || `${reportType}-${index}`}
+                        emptyTitle="No hay registros para mostrar."
+                    />
+                </SectionCard>
                 {reportType === 'sustainability' && <p className="rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-800">{data.message}</p>}
             </>
         )}
@@ -189,4 +198,38 @@ function display(value) {
     if (typeof value === 'boolean') return value ? 'Si' : 'No'
     if (value === null || value === undefined) return '-'
     return String(value)
+}
+
+function formatCardValue(title, value) {
+    if (title.includes('CO2')) return formatCO2(value)
+    if (title === 'Datos transferidos') return formatBytes(value)
+    if (typeof value === 'number') return formatInteger(value)
+    return display(value)
+}
+
+function formatTableValue(reportType, field, value, row) {
+    if (field.includes('percentage')) return <ReadableNumber type="percent" value={value} digits={1} />
+    if (field === 'quality_score') return formatDecimal(value, 2)
+    if (['assigned_weekly_hours', 'max_weekly_hours', 'used_hours'].includes(field)) return `${formatDecimal(value, 2)} h`
+    if (reportType === 'sustainability') {
+        if (field === 'indicator') return sustainabilityIndicatorLabel(value)
+        if (field === 'value' && row.indicator === 'total_bytes') return formatBytes(value)
+        if (field === 'value' && row.indicator?.includes('co2')) return formatCO2(value)
+        if (field === 'value' && row.indicator?.includes('time')) return formatMilliseconds(value)
+        if (field === 'value' && typeof value === 'number') return formatInteger(value)
+    }
+    if (typeof value === 'number') return formatInteger(value)
+    if (field === 'is_resolved') return value ? 'Sí, resuelto' : 'No, pendiente'
+    return display(value)
+}
+
+function sustainabilityIndicatorLabel(indicator) {
+    const labels = {
+        total_requests: 'Solicitudes analizadas',
+        total_bytes: 'Datos transferidos',
+        total_co2: 'CO2 estimado total',
+        average_co2: 'CO2 promedio por solicitud',
+        average_response_time: 'Tiempo promedio de respuesta',
+    }
+    return labels[indicator] || display(indicator).replaceAll('_', ' ')
 }

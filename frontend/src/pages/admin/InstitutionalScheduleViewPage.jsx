@@ -304,7 +304,7 @@ export default function InstitutionalScheduleViewPage() {
                                             style={{ height: `${Math.max(pct, 8)}%` }}
                                         />
                                     </div>
-                                    <span className="text-[10px] font-black text-slate-600">{day.short}</span>
+                                    <span className="text-xs font-black text-slate-700">{day.short}</span>
                                     {count > 0 && (
                                         <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-black ${colors.code}`}>
                                             {count}
@@ -457,7 +457,7 @@ export default function InstitutionalScheduleViewPage() {
                         <table className="w-full min-w-[1100px] text-sm">
                             <thead>
                                 <tr>
-                                    <th className="w-28 border-r border-slate-200 bg-slate-100 px-4 py-4 text-left text-xs font-black uppercase tracking-wide text-slate-500">
+                                    <th className="w-28 border-r border-slate-200 bg-slate-100 px-4 py-4 text-left text-sm font-black text-slate-800">
                                         Hora
                                     </th>
                                     {DAYS.map((day, i) => (
@@ -532,13 +532,13 @@ export default function InstitutionalScheduleViewPage() {
                         <table className="w-full text-sm">
                             <thead className="bg-slate-100 text-slate-700">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide">ID</th>
-                                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide">Día</th>
-                                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide">Hora</th>
-                                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide">Curso</th>
-                                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide">Sección</th>
-                                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide">Docente</th>
-                                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide">Aula</th>
+                                    <th className="px-4 py-3 text-left text-sm font-black" scope="col">ID</th>
+                                    <th className="px-4 py-3 text-left text-sm font-black" scope="col">Día</th>
+                                    <th className="px-4 py-3 text-left text-sm font-black" scope="col">Hora</th>
+                                    <th className="px-4 py-3 text-left text-sm font-black" scope="col">Curso</th>
+                                    <th className="px-4 py-3 text-left text-sm font-black" scope="col">Sección</th>
+                                    <th className="px-4 py-3 text-left text-sm font-black" scope="col">Docente</th>
+                                    <th className="px-4 py-3 text-left text-sm font-black" scope="col">Aula</th>
                                 </tr>
                             </thead>
 
@@ -640,7 +640,7 @@ function ScheduleCard({ block, colors }) {
     return (
         <div className={`rounded-xl border p-2.5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md ${colors.border} ${colors.bg}`}>
             <div className="mb-1.5 flex items-center justify-between gap-1">
-                <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-black ${colors.code}`}>
+                <span className={`rounded-md px-1.5 py-0.5 text-xs font-black ${colors.code}`}>
                     {block.course_code || `C${block.course_id}`}
                 </span>
                 <span className="text-[9px] font-bold text-slate-400">
@@ -652,11 +652,11 @@ function ScheduleCard({ block, colors }) {
                 {block.course_name || `Curso ${block.course_id}`}
             </p>
 
-            <p className="mt-1 text-[10px] text-slate-500">
+            <p className="mt-1 text-xs text-slate-700">
                 §{block.section_code || block.section_id}
             </p>
 
-            <p className="truncate text-[10px] text-slate-500">
+            <p className="truncate text-xs text-slate-700">
                 {block.teacher_name || block.teacher_code || '—'}
             </p>
 

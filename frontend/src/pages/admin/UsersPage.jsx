@@ -11,6 +11,7 @@ import {
     X,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import PaginationControls from '../../components/common/PaginationControls'
 import { userService } from '../../services/userService'
 import { extractList, getErrorMessage } from '../../utils/extractList'
 
@@ -61,6 +62,9 @@ export default function UsersPage() {
     const [roleFilter, setRoleFilter] = useState('')
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
+    const [total, setTotal] = useState(0)
+    const [page, setPage] = useState(1)
+    const [pageSize, setPageSize] = useState(20)
 
     const filteredUsers = useMemo(() => {
         return users.filter((user) => {
@@ -74,12 +78,15 @@ export default function UsersPage() {
         })
     }, [users, search, roleFilter])
 
-    const loadUsers = async () => {
+    const loadUsers = async (nextPage = page, nextPageSize = pageSize) => {
         setLoading(true)
 
         try {
-            const data = await userService.getUsers()
+            const data = await userService.getUsers({ skip: (nextPage - 1) * nextPageSize, limit: nextPageSize })
             setUsers(extractList(data))
+            setTotal(data.total || 0)
+            setPage(nextPage)
+            setPageSize(nextPageSize)
         } catch (error) {
             toast.error(getErrorMessage(error, 'No se pudieron cargar los usuarios'))
         } finally {
@@ -316,7 +323,7 @@ export default function UsersPage() {
                                 Usuarios registrados
                             </h2>
                             <p className="text-sm text-slate-500">
-                                Total: {filteredUsers.length} / {users.length}
+                                Mostrados: {filteredUsers.length} / {total}
                             </p>
                         </div>
 
@@ -411,6 +418,7 @@ export default function UsersPage() {
                             </table>
                         </div>
                     )}
+                    {!loading && users.length > 0 && <PaginationControls page={page} pageSize={pageSize} total={total} onPageChange={(nextPage) => loadUsers(nextPage)} onPageSizeChange={(nextSize) => loadUsers(1, nextSize)} />}
                 </section>
             </section>
         </div>

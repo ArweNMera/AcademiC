@@ -5,7 +5,7 @@ export const classroomService = {
         const response = await api.get('/classrooms', {
             params: {
                 skip: 0,
-                limit: 100,
+                limit: 20,
                 ...params,
             },
         })

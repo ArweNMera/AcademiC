@@ -10,6 +10,7 @@ import {
     X,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import PaginationControls from '../../components/common/PaginationControls'
 import { classroomService } from '../../services/classroomService'
 import { extractList, getErrorMessage } from '../../utils/extractList'
 
@@ -32,13 +33,19 @@ export default function ClassroomsPage() {
     const [editingClassroom, setEditingClassroom] = useState(null)
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
+    const [total, setTotal] = useState(0)
+    const [page, setPage] = useState(1)
+    const [pageSize, setPageSize] = useState(20)
 
-    const loadClassrooms = async () => {
+    const loadClassrooms = async (nextPage = page, nextPageSize = pageSize) => {
         setLoading(true)
 
         try {
-            const data = await classroomService.getClassrooms()
+            const data = await classroomService.getClassrooms({ skip: (nextPage - 1) * nextPageSize, limit: nextPageSize })
             setClassrooms(extractList(data))
+            setTotal(data.total || 0)
+            setPage(nextPage)
+            setPageSize(nextPageSize)
         } catch (error) {
             toast.error(getErrorMessage(error, 'No se pudieron cargar las aulas'))
         } finally {
@@ -276,7 +283,7 @@ export default function ClassroomsPage() {
                         </h2>
 
                         <span className="text-sm text-slate-500">
-                            Total: {classrooms.length}
+                            Mostrados: {classrooms.length} / {total}
                         </span>
                     </div>
 
@@ -360,6 +367,7 @@ export default function ClassroomsPage() {
                             </table>
                         </div>
                     )}
+                    {!loading && classrooms.length > 0 && <PaginationControls page={page} pageSize={pageSize} total={total} onPageChange={(nextPage) => loadClassrooms(nextPage)} onPageSizeChange={(nextSize) => loadClassrooms(1, nextSize)} />}
                 </section>
             </section>
         </div>

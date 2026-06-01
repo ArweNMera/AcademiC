@@ -47,8 +47,6 @@ export const useAuthStore = create((set, get) => ({
             const meResponse = await authService.getMe()
             const me = normalizeUser(meResponse)
 
-            console.log('USUARIO NORMALIZADO:', me)
-
             localStorage.setItem('optiacademic_user', JSON.stringify(me))
 
             set({

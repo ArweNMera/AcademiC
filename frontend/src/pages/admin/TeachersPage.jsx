@@ -11,6 +11,7 @@ import {
     X,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import PaginationControls from '../../components/common/PaginationControls'
 import { teacherService } from '../../services/teacherService'
 import { extractList, getErrorMessage } from '../../utils/extractList'
 
@@ -50,13 +51,19 @@ export default function TeachersPage() {
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
     const [savingAvailability, setSavingAvailability] = useState(false)
+    const [total, setTotal] = useState(0)
+    const [page, setPage] = useState(1)
+    const [pageSize, setPageSize] = useState(20)
 
-    const loadTeachers = async () => {
+    const loadTeachers = async (nextPage = page, nextPageSize = pageSize) => {
         setLoading(true)
 
         try {
-            const data = await teacherService.getTeachers()
+            const data = await teacherService.getTeachers({ skip: (nextPage - 1) * nextPageSize, limit: nextPageSize })
             setTeachers(extractList(data))
+            setTotal(data.total || 0)
+            setPage(nextPage)
+            setPageSize(nextPageSize)
         } catch (error) {
             toast.error(getErrorMessage(error, 'No se pudieron cargar los docentes'))
         } finally {
@@ -269,7 +276,7 @@ export default function TeachersPage() {
                 <section className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 xl:col-span-2">
                     <div className="flex items-center justify-between mb-5">
                         <h2 className="text-xl font-bold text-slate-900">Docentes registrados</h2>
-                        <span className="text-sm text-slate-500">Total: {teachers.length}</span>
+                        <span className="text-sm text-slate-500">Mostrados: {teachers.length} / {total}</span>
                     </div>
 
                     {loading ? (
@@ -325,6 +332,7 @@ export default function TeachersPage() {
                             </table>
                         </div>
                     )}
+                    {!loading && teachers.length > 0 && <PaginationControls page={page} pageSize={pageSize} total={total} onPageChange={(nextPage) => loadTeachers(nextPage)} onPageSizeChange={(nextSize) => loadTeachers(1, nextSize)} />}
                 </section>
             </section>
 

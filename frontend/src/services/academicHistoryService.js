@@ -5,6 +5,10 @@ export const academicHistoryService = {
         const response = await api.get('/student-academic-history', { params: { limit: 500, ...params } })
         return response.data
     },
+    async getHistoryPage(params = {}) {
+        const response = await api.get('/student-academic-history/page', { params })
+        return response.data
+    },
     async createHistory(payload) {
         const response = await api.post('/student-academic-history', payload)
         return response.data

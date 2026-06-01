@@ -5,7 +5,7 @@ export const teacherService = {
         const response = await api.get('/teachers', {
             params: {
                 skip: 0,
-                limit: 100,
+                limit: 20,
                 ...params,
             },
         })

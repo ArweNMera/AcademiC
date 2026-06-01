@@ -5,7 +5,7 @@ export const studentService = {
         const response = await api.get('/students', {
             params: {
                 skip: 0,
-                limit: 100,
+                limit: 20,
                 ...params,
             },
         })

@@ -5,7 +5,7 @@ export const userService = {
         const response = await api.get('/users', {
             params: {
                 skip: 0,
-                limit: 500,
+                limit: 20,
                 ...params,
             },
         })

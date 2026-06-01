@@ -58,6 +58,8 @@ la lectura en GitHub, la sustentación académica y el mantenimiento técnico.
 ### Calidad
 
 - [Validaciones y calidad](06-calidad/validaciones-y-calidad.md)
+- [Accesibilidad web](06-calidad/accesibilidad-web.md)
+- [Sostenibilidad digital y optimizacion](06-calidad/sostenibilidad/README.md)
 - [Plan TDD y pruebas](tdd/README.md)
 
 ## Documentación Complementaria
@@ -68,6 +70,7 @@ la lectura en GitHub, la sustentación académica y el mantenimiento técnico.
 | Arquitectura por fases | [arquitectura/](arquitectura/) |
 | Base de datos | [base-datos/README.md](base-datos/README.md) |
 | Requerimientos | [requerimientos/README.md](requerimientos/README.md) |
-| Sostenibilidad | [sostenibilidad/README.md](sostenibilidad/README.md) |
+| Sostenibilidad operativa | [sostenibilidad/README.md](sostenibilidad/README.md) |
+| Sostenibilidad y optimizacion | [06-calidad/sostenibilidad/README.md](06-calidad/sostenibilidad/README.md) |
 | Presentación | [presentacion/README.md](presentacion/README.md) |
 | Validación del problema | [validacion-problema/README.md](validacion-problema/README.md) |

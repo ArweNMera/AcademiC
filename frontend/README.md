@@ -143,3 +143,36 @@ Para una demo completa, el rol `ADMIN` dispone del boton **Preparar datos demo
 completo**. Este boton crea/completa ofertas para todos los ciclos del plan
 activo, asigna docentes, aulas y disponibilidad, y ejecuta una vista previa
 moderna sin requerir comandos SQL durante la presentacion.
+
+## Accesibilidad Visual Y Navegacion
+
+La interfaz incluye una barra compacta para aumentar o reducir texto y
+restablecer preferencias guardadas en `localStorage`. El selector de apariencia
+permite elegir modo claro u oscuro desde login y desde la cabecera autenticada.
+
+El layout ofrece **Saltar al contenido principal**, foco reforzado, navegación
+lateral semántica, estados que combinan texto e icono, anuncios accesibles para
+cargas y errores, y reducción de movimiento mediante
+`prefers-reduced-motion`.
+
+## Tablas Y Reportes Legibles
+
+Los reportes administrativos usan encabezados semanticos, captions para
+lectores de pantalla, scroll horizontal controlado y tipografia minima
+`text-sm`. Los indicadores ambientales muestran unidades explicitas
+(`g CO2`, `ms`, `KB`) y barras de participacion con valor textual.
+
+Las rutas tecnicas de API se presentan con nombres funcionales comprensibles.
+Cuando el dato tecnico aporta valor para soporte, queda disponible dentro de
+`Ver detalle tecnico`, cerrado por defecto. La barra visual ofrece modo claro
+y modo oscuro suave, ademas del ajuste persistente de tamano de texto.
+
+## Optimizacion De Listados Y Solicitudes
+
+Los listados administrativos prioritarios cargan paginas acotadas y muestran
+el total de registros. Facultades, sedes, programas academicos, periodos y
+planes curriculares usan una cache breve con deduplicacion de solicitudes
+concurrentes e invalidacion despues de cambios.
+
+La preparacion de mediciones antes y despues se documenta en
+[`docs/06-calidad/sostenibilidad/07-validacion-lighthouse.md`](../docs/06-calidad/sostenibilidad/07-validacion-lighthouse.md).

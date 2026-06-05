@@ -21,6 +21,20 @@ Este documento separa mejoras ya presentes de propuestas pendientes. La
 integracion documental no implementa paginacion masiva ni cambios profundos
 de backend.
 
+## Resumen De Estado
+
+| Mejora | Estado en OptiAcademic |
+| --- | --- |
+| `React.lazy` y `Suspense` | Implementado en `frontend/src/App.jsx`. |
+| Paginacion visual | Implementada en usuarios, docentes, estudiantes, aulas, auditoria, estudiantes institucionales e historial academico. |
+| Paginacion API o limites | Disponible en cursos, secciones, horarios y bloques mediante `skip`/`limit`; pendiente control visual uniforme. |
+| Cache de catalogos | Implementada para facultades, sedes, programas academicos, periodos y planes curriculares mediante `serviceCache.js`. |
+| Nombres amigables de endpoints | Implementado con `endpointLabels.js`; el endpoint tecnico queda en detalle colapsable. |
+| Modo claro/oscuro | Implementado con `useTheme`, `ThemeToggle`, `localStorage` y clase `dark`. |
+| Reporte ambiental | Implementado con `/api/v1/environmental-impact/*`, `/api/v1/reports/sustainability`, `/admin/environmental-impact` y `/admin/reports/sustainability`. |
+| Optimizacion de imagenes | Pendiente. |
+| Lighthouse | Documentado; pendiente captura manual antes/despues. |
+
 ### 1. Optimizar consultas en MySQL
 
 Se revisan las consultas realizadas por SQLAlchemy hacia MySQL. El objetivo es
@@ -58,6 +72,15 @@ Resultado esperado:
 - Respuestas mas ligeras.
 - Menor transferencia de datos.
 - Carga mas rapida de pantallas administrativas.
+
+Evidencia en el proyecto:
+
+- `PaginationControls` se usa en usuarios, docentes, estudiantes, aulas,
+  auditoria, estudiantes institucionales e historial academico.
+- `student-academic-history/page` usa respuesta paginada con `items`, `total`,
+  `page`, `page_size` y `total_pages`.
+- Cursos, secciones y horarios aceptan `skip` y `limit` en backend y servicios,
+  pero su paginacion visual queda documentada como pendiente.
 
 ### 3. Comprimir imagenes y recursos visuales
 
@@ -140,6 +163,13 @@ Resultado esperado:
 - Menor consumo de red.
 - Navegacion mas fluida para el usuario.
 
+Evidencia en el proyecto:
+
+- Varias pantallas agrupan solicitudes relacionadas con `Promise.all`.
+- Los servicios Axios centralizan la URL base y el token JWT.
+- `serviceCache.js` deduplica solicitudes concurrentes y reutiliza por un
+  periodo corto catalogos estables.
+
 ### 7. Implementar cache de recursos o datos estables
 
 El cache permite reutilizar informacion que no cambia constantemente. Esto
@@ -157,6 +187,14 @@ Resultado esperado:
 - Menos consultas repetidas.
 - Mejor velocidad percibida.
 - Menor carga sobre backend y base de datos.
+
+Evidencia en el proyecto:
+
+- La configuracion del backend usa `lru_cache` para reutilizar settings.
+- El estado de autenticacion conserva token y usuario en `localStorage`.
+- Los catalogos de facultades, sedes, programas academicos, periodos y planes
+  curriculares usan cache breve en frontend e invalidan al crear, editar o
+  eliminar.
 
 ### 8. Optimizar APIs desarrolladas con FastAPI
 
@@ -176,6 +214,16 @@ Resultado esperado:
 - API mas rapida y estable.
 - Menor uso de recursos del backend.
 - Respuestas mas claras y especificas.
+
+Evidencia en el proyecto:
+
+- El middleware ambiental mide tiempo de respuesta, bytes transferidos y CO2
+  estimado por solicitud.
+- Los endpoints `/api/v1/environmental-impact/summary`,
+  `/api/v1/environmental-impact/metrics` y
+  `/api/v1/environmental-impact/ranking` permiten observar el impacto HTTP.
+- El reporte `/api/v1/reports/sustainability` resume las metricas ambientales
+  para reportes administrativos.
 
 ### 9. Verificar funcionamiento despues de cada mejora
 

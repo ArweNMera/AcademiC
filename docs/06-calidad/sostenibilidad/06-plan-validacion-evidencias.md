@@ -33,12 +33,15 @@ Repetir exactamente las mismas mediciones y registrar:
 
 1. Login.
 2. Dashboard administrativo.
-3. Generacion institucional.
-4. Reporte de sostenibilidad.
-5. Estudiantes institucionales.
-6. Historial academico.
-7. Auditoria.
-8. Notificaciones.
+3. Listado de usuarios.
+4. Listado de docentes.
+5. Listado de estudiantes.
+6. Modulo de cursos.
+7. Modulo de horarios.
+8. Dashboard o reporte de impacto ambiental y sostenibilidad.
+9. Generacion institucional.
+10. Auditoria.
+11. Notificaciones.
 
 ## 4. Indicadores
 
@@ -49,8 +52,9 @@ Repetir exactamente las mismas mediciones y registrar:
 | Solicitudes HTTP | Network | Detectar duplicados. |
 | Tamano de respuesta | Network o dashboard ambiental | Reducir bytes innecesarios. |
 | Errores de consola | DevTools | No introducir errores nuevos. |
-| Score Lighthouse | Lighthouse | Registrar rendimiento y buenas practicas. |
-| Accesibilidad | Lighthouse y revision manual | Mantener foco, labels y contraste. |
+| Lighthouse Performance | Lighthouse | Registrar rendimiento antes y despues. |
+| Lighthouse Accessibility | Lighthouse y revision manual | Mantener foco, labels y contraste. |
+| Lighthouse Best Practices | Lighthouse | Confirmar que no aparecen advertencias nuevas. |
 | Bloques generados | Resultado CSP | Confirmar capacidad del flujo. |
 | Ofertas elegibles | Preview CSP | Validar `READY` y `APPROVED`. |
 | Errores backend | Logs Docker | No introducir errores `500`. |
@@ -81,10 +85,13 @@ docker compose --env-file .env.docker.example logs --tail 200 backend
 | --- | --- | --- | --- | --- |
 | Login | Pendiente | Pendiente | Pendiente | Captura / Lighthouse |
 | Dashboard administrativo | Pendiente | Pendiente | Pendiente | Captura / Network |
+| Listado de usuarios | Pendiente | Pendiente | Paginacion visible | Captura / Network |
+| Listado de docentes | Pendiente | Pendiente | Paginacion visible | Captura / Network |
+| Listado de estudiantes | Pendiente | Pendiente | Paginacion visible | Captura / Network |
+| Modulo de cursos | Pendiente | Pendiente | Pendiente de control visual completo | Captura / Network |
+| Modulo de horarios | Pendiente | Pendiente | Pendiente de control visual completo | Captura / Network |
+| Impacto ambiental / sostenibilidad | Pendiente | Pendiente | Nombres amigables y detalle tecnico | Dashboard ambiental / Lighthouse |
 | Generacion institucional | Pendiente | Pendiente | Pendiente | Preview, bloques y logs |
-| Sostenibilidad | Pendiente | Pendiente | Pendiente | Dashboard ambiental |
-| Estudiantes institucionales | Pendiente | Pendiente | Pendiente | Captura / Network |
-| Historial academico | Pendiente | Pendiente | Pendiente | Captura / Network |
 | Auditoria | Pendiente | Pendiente | Pendiente | Captura / Network |
 | Notificaciones | Pendiente | Pendiente | Pendiente | Captura / Network |
 

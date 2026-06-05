@@ -24,10 +24,12 @@ red y conjunto de datos en cada ronda.
 
 1. `/login`
 2. `/admin/executive-dashboard`
-3. `/admin/reports/sustainability`
-4. `/admin/institutional-csp`
-5. `/admin/institutional-students`
-6. `/admin/academic-history`
+3. `/admin/users`
+4. `/admin/teachers`
+5. `/admin/students`
+6. `/admin/courses`
+7. `/admin/schedules`
+8. `/admin/reports/sustainability`
 
 ## Indicadores
 
@@ -35,10 +37,13 @@ red y conjunto de datos en cada ronda.
 - Accessibility.
 - Best Practices.
 - SEO, cuando aplique a una pantalla publica como `/login`.
+- tiempo de carga inicial;
+- tiempo de respuesta de endpoints FastAPI;
 - cantidad de solicitudes HTTP observadas en Network;
-- tamano transferido;
+- tamano de respuestas descargadas;
+- fluidez al navegar;
 - errores de consola;
-- tiempo de respuesta de endpoints criticos.
+- errores en backend.
 
 ## Plantilla Antes Y Despues
 
@@ -46,10 +51,12 @@ red y conjunto de datos en cada ronda.
 | --- | ---: | ---: | ---: | ---: | --- |
 | `/login` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
 | `/admin/executive-dashboard` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
+| `/admin/users` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
+| `/admin/teachers` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
+| `/admin/students` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
+| `/admin/courses` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
+| `/admin/schedules` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
 | `/admin/reports/sustainability` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
-| `/admin/institutional-csp` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
-| `/admin/institutional-students` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
-| `/admin/academic-history` | Pendiente | Pendiente | Pendiente | Pendiente | Reporte / captura |
 
 ## Evidencias Complementarias
 
@@ -61,6 +68,18 @@ red y conjunto de datos en cada ronda.
 - comparacion del numero de solicitudes HTTP;
 - paginacion visible en listados grandes;
 - logs backend sin errores `500`.
+
+## Relacion Con Commits GitHub
+
+```text
+docs: document environmental impact analysis
+docs: document optimization opportunities
+docs: document implemented sustainability improvements
+docs: document validation evidence plan
+perf: add pagination to academic listings
+perf: reduce repeated dashboard requests
+perf: optimize environmental metrics responses
+```
 
 ## Interpretacion
 

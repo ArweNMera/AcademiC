@@ -130,7 +130,7 @@ export default function App() {
                                 <Route path="/admin/reports/schedules" element={Page(<ReportDetailPage reportType="schedules" />)} />
                                 <Route path="/admin/reports/students" element={Page(<ReportDetailPage reportType="students" />)} />
                                 <Route path="/admin/reports/change-requests" element={Page(<ReportDetailPage reportType="change-requests" />)} />
-                                <Route path="/admin/reports/sustainability" element={Page(<ReportDetailPage reportType="sustainability" />)} />
+                                <Route path="/admin/reports/sustainability" element={Page(<EnvironmentalImpactPage />)} />
                                 <Route path="/admin/environmental-impact" element={Page(<EnvironmentalImpactPage />)} />
                                 <Route path="/admin/users" element={Page(<UsersPage />)} />
                                 <Route path="/admin/teachers" element={Page(<TeachersPage />)} />

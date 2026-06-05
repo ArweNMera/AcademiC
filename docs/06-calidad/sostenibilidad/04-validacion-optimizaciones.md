@@ -72,12 +72,12 @@ Pantallas sugeridas para comparar:
 
 - Login.
 - Dashboard administrativo.
-- Generacion institucional.
-- Reporte de sostenibilidad.
-- Estudiantes institucionales.
-- Historial academico.
-- Auditoria.
-- Notificaciones.
+- Listado de usuarios.
+- Listado de docentes.
+- Listado de estudiantes.
+- Modulo de cursos.
+- Modulo de horarios.
+- Dashboard o reporte de impacto ambiental y sostenibilidad.
 
 Indicadores a observar:
 
@@ -87,8 +87,11 @@ Indicadores a observar:
 - Tamano de respuestas descargadas.
 - Fluidez al navegar entre pantallas.
 - Ausencia de errores en consola o backend.
-- Cantidad de bloques generados.
-- Cantidad de ofertas elegibles.
+- Lighthouse Performance.
+- Lighthouse Accessibility.
+- Lighthouse Best Practices.
+- Cantidad de bloques generados cuando se evalua generacion institucional.
+- Cantidad de ofertas elegibles cuando se evalua CSP.
 
 ### 4. Medir con Lighthouse
 
@@ -149,6 +152,17 @@ Algunas mejoras esperadas son:
 
 ## Plantilla de comparacion
 
+| Pantalla | Antes | Despues | Mejora observada | Evidencia |
+| --- | --- | --- | --- | --- |
+| Login | Pendiente | Pendiente | Pendiente | Captura / Lighthouse |
+| Dashboard administrativo | Pendiente | Pendiente | Pendiente | Captura / Network |
+| Listado de usuarios | Pendiente | Pendiente | Paginacion visible | Captura / Network |
+| Listado de docentes | Pendiente | Pendiente | Paginacion visible | Captura / Network |
+| Listado de estudiantes | Pendiente | Pendiente | Paginacion visible | Captura / Network |
+| Modulo de cursos | Pendiente | Pendiente | Pendiente de control visual completo | Captura / Network |
+| Modulo de horarios | Pendiente | Pendiente | Pendiente de control visual completo | Captura / Network |
+| Impacto ambiental / sostenibilidad | Pendiente | Pendiente | Nombres amigables y detalle tecnico | Captura / Lighthouse |
+
 La siguiente plantilla puede completarse con los valores obtenidos durante la
 validacion:
 
@@ -170,6 +184,20 @@ Medicion despues de optimizar: menor tiempo de carga y menos solicitudes
 Mejora observada: navegacion mas fluida y menor trafico HTTP
 Evidencia adjunta: captura Lighthouse antes/despues
 Conclusion: la optimizacion redujo carga innecesaria en frontend y backend
+```
+
+## Relacion Con GitHub
+
+Cada evidencia debe asociarse con commits claros:
+
+```text
+docs: document environmental impact analysis
+docs: document optimization opportunities
+docs: document implemented sustainability improvements
+docs: document validation evidence plan
+perf: add pagination to academic listings
+perf: reduce repeated dashboard requests
+perf: optimize environmental metrics responses
 ```
 
 ## Analisis de resultados

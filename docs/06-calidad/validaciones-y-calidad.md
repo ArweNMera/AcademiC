@@ -104,3 +104,10 @@ solicitudes concurrentes; las mutaciones invalidan la cache.
 
 La guia operativa para registrar resultados antes y despues esta en
 [Validacion Lighthouse](sostenibilidad/07-validacion-lighthouse.md).
+
+La validacion de optimizaciones debe cubrir login, dashboard administrativo,
+usuarios, docentes, estudiantes, cursos, horarios e impacto ambiental. Para
+cada pantalla se registran tiempo de carga, tiempo de respuesta FastAPI,
+solicitudes HTTP, tamano de respuestas, fluidez, errores de consola, errores
+backend y resultados Lighthouse en Performance, Accessibility y Best
+Practices.

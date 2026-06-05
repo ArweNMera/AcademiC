@@ -235,6 +235,17 @@ Oportunidades:
 | Media | Lazy loading de componentes | Reduce el JavaScript inicial descargado por el navegador. |
 | Baja | Ajustes visuales menores | Mejoran la experiencia, pero tienen menor impacto ambiental directo. |
 
+## Estado Actual De Mejoras
+
+| Mejora | Estado |
+| --- | --- |
+| Paginacion en listados principales | Implementado parcialmente: usuarios, docentes, estudiantes, aulas, auditoria, estudiantes institucionales e historial academico tienen control visual. Cursos, secciones y horarios conservan `skip` y `limit`, pero queda pendiente un control visual uniforme. |
+| Reduccion de solicitudes repetidas | Implementado parcialmente: cache breve en catalogos estables y reutilizacion de sesion; quedan pendientes revisiones profundas en dashboards y notificaciones. |
+| Lazy loading | Implementado en rutas principales mediante `React.lazy` y `Suspense`. |
+| Medicion ambiental | Implementado con middleware, endpoints `/api/v1/environmental-impact/*`, vista `/admin/environmental-impact` y ruta `/admin/reports/sustainability`. |
+| Lighthouse | Pendiente de captura manual con evidencias antes/despues. |
+| Optimizacion de imagenes | Pendiente; no se documenta como implementada. |
+
 ## Justificacion tecnica
 
 Las mejoras propuestas son necesarias porque el rendimiento de una aplicacion
